@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Spark基本概念 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Spark基本概念</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">October 19, 2019&nbsp;&nbsp;19:27:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="Spark中的一些基本概念"><a href="#Spark中的一些基本概念" class="headerlink" title="Spark中的一些基本概念"></a>Spark中的一些基本概念</h2><h3 id="RDD-Resilient-Distributed-Dataset-弹性分布式数据集"><a href="#RDD-Resilient-Distributed-Dataset-弹性分布式数据集" class="headerlink" title="RDD(Resilient Distributed Dataset): 弹性分布式数据集"></a>RDD(Resilient Distributed Dataset): 弹性分布式数据集</h3><blockquote>
+<p>Spark中基本的数据类型，还有<code>DataFrame</code> 以及 <code>DataSet</code></p><p><br>        三者的关系：<br>    - RDD: 最基本的数据类型, 类比于数据库中列的概念, 即单个字段的一列数据<code>DataFrame</code> 和 <code>Dataset</code> 也是基于 RDD 提供的<br>    - DataFrame: <code>DataFrame[Row]</code>, 分布式的<code>Row</code>的集合, 类比于数据库中的一张表, 有很多行数据(Row), 每一行的数据又有许多不同字段的值<br>    - DataSet: 相当于<code>DataFrame</code>的一个特例, 特例在于<code>DataSet</code>中存储的是强类型的数据, 不再是<code>Row</code></p>
+</blockquote>
+<h3 id="算子"><a href="#算子" class="headerlink" title="算子"></a>算子</h3><blockquote>
+<p>计算的类型, 分为<code>Transformation</code>和<code>Action</code>两种算子, 这就涉及到惰性运算的概念了, 参考<a href="http://allenn.cn/articles/2016-10/2016-10-26-spark-is-lazy/" target="_blank" rel="noopener">Spark中的惰性运算</a></p><p></p>
+<ul>
+<li><code>Transformation</code>算子主要包括：map、mapPartitions、flatMap、filter、union、groupByKey、repartition、cache等</li>
+<li><code>Action</code>算子主要包括：reduce、collect、show、count、foreach、saveAsTextFile等<p><br>注意: 如果声明了数据需要cache或者persist，但在action操作前释放掉的话，该数据实际上并没有被缓存</p></li>
+</ul>
+</blockquote>
+<h3 id="Job"><a href="#Job" class="headerlink" title="Job"></a>Job</h3><blockquote>
+<p>用户提交的任务, 当在程序中遇到一个<code>action</code>算子的时候，就会提交一个<code>job</code>，执行前面的一系列操作</p>
+</blockquote>
+<h3 id="Stage"><a href="#Stage" class="headerlink" title="Stage"></a>Stage</h3><blockquote>
+<p>Job拆分的执行阶段, 一个 <code>Job</code>可能被划分为一到多个 <code>Stage</code>, <code>Stage</code>的划分是根据<code>shuffle</code>依赖进行的</p>
+</blockquote>
+<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><blockquote>
+<p>具体执行任务, Spark中最细的执行单位, Stage继续往下分解就是Task<br>分为<code>ShuffleMapTask</code> 和 <code>ResultTask</code>两种, 类比于 <code>Hadoop</code>中的<code>Map</code> 和 <code>Reduce</code></p><p><br>RDD在计算的时候，每个分区都会起一个task，所以rdd的分区数目决定了总的的task数目。每个Task执行的结果就是生成了目标RDD的一个partiton。在Map阶段partition数目保持不变。在Reduce阶段，RDD的聚合会触发shuffle操作，聚合后的RDD的partition数目跟具体操作有关，例如repartition操作会聚合成指定分区数。coalesce算子同样可以改变partition的数目，不过只能减少不能增加。repartition和coalesce算子的区别在于前者会引发shuffle，后者则不会</p>
+</blockquote>
+<h3 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h3><blockquote>
+<p>数据分区, 即一个RDD的数据可以划分为多少个分区</p>
+</blockquote>
+<h3 id="NarrowDependcy"><a href="#NarrowDependcy" class="headerlink" title="NarrowDependcy"></a>NarrowDependcy</h3><blockquote>
+<p>窄依赖, 即子RDD依赖于父RDD中固定的Partion分区, 分为 OneToOneDependency 和 RangeDependency, 比如map、union等操作</p>
+</blockquote>
+<h3 id="ShuffleDependcy"><a href="#ShuffleDependcy" class="headerlink" title="ShuffleDependcy"></a>ShuffleDependcy</h3><blockquote>
+<p>shuffle依赖, 也称为宽依赖, 即子RDD对父RDD的所有Partition都有依赖, 比如groupByKey等操作</p>
+</blockquote>
+<h3 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h3><blockquote>
+<p>有向无环图, 反映RDD之间的依赖关系</p>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/10/19/Spark基本概念/">http://cjwdream.top/2019/10/19/Spark基本概念/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Spark/"># Spark</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2019/10/14/resource-collection/">学习资源收集</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
