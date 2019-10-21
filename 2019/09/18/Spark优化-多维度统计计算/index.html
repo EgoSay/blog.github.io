@@ -7,7 +7,7 @@
 
 
 
-<title>搭建博客记录 | EgoSay</title>
+<title>Spark优化-多维度统计计算 | EgoSay</title>
 
 
 
@@ -176,7 +176,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">搭建博客记录</h1>
+            <h1 class="post-title">Spark优化-多维度统计计算</h1>
             
                 <div class="post-meta">
                     
@@ -185,14 +185,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 9, 2019&nbsp;&nbsp;15:48:49</a>
+                        Date: <a href="#">September 18, 2019&nbsp;&nbsp;20:16:12</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/Life/">Life</a>
+                                <a href="/categories/Learning/">Learning</a>
                             
                         </span>
                     
@@ -201,29 +201,21 @@
         </header>
 
         <div class="post-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
-<p>博客基于MIT License开源于GitHub, 感谢<br>博客引擎来自于<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">hexo</a>, 感谢<br>博客模版来自于<a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank" rel="noopener">Siricee的Chic</a>, 感谢<br>动态背景来自于<a href="https://github.com/chaoticvirus/canvas-colorful-nest.js" target="_blank" rel="noopener">canvas-colorful-nest.js</a>, 感谢<br>书单页面来自于插件<a href="https://github.com/mythsman/hexo-douban" target="_blank" rel="noopener">hexo-douban</a>, 感谢<br>CDN加速服务来自于<a href="https://support.cloudflare.com/hc/zh-cn" target="_blank" rel="noopener">Cloudflare</a>, 感谢</p>
-</blockquote>
-<h2 id="Why"><a href="#Why" class="headerlink" title="Why?"></a>Why?</h2><h3 id="为什么选择搭建这样一个博客呢？"><a href="#为什么选择搭建这样一个博客呢？" class="headerlink" title="为什么选择搭建这样一个博客呢？"></a>为什么选择搭建这样一个博客呢？</h3><blockquote>
+            <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>需要对数据进行加工处理, 返回计算指标数据给前端绘制成折线图展示<br>目标字段和对比字段类型都没有限制，所以存在几种情况</p>
 <ol>
-<li>搭建博客去记录自己的一些学习总结,CSDN、简书等虽然很完善，但难免自己的一些小需求满足不了, 还是自己的博客自己随便折腾的好哈哈</li>
-<li>也会记录一些自己的经历成长吧, 自己有时候难免胡思乱想吧</li>
-<li>整了一个书单页面督促自己多看点书吧, 发现每天看几页, 一年下来也是能学不少东西的, 坚持了两个多月吧已经看完了几本书来, 后面有时间再总结一下写写读书笔记</li>
+<li>当对比字段是连续型时:<br>  横轴是目标字段，纵轴为“对比字段的均值、最大值、最小值、中位数”，共4条折线</li>
+<li>当对比字段是离散型时：<br> 横轴是目标字段，纵轴为对比字段对于不同目标字段的Count统计值, 对不同的对比字段生成不同的折线</li>
 </ol>
-</blockquote>
-<h2 id="What"><a href="#What" class="headerlink" title="What?"></a>What?</h2><h3 id="做什么样的博客？"><a href="#做什么样的博客？" class="headerlink" title="做什么样的博客？"></a>做什么样的博客？</h3><blockquote>
-<ol>
-<li>简简单单就好, 包括模版主题也是简约风格, 没有什么酷炫的动画啊, 一些我觉得不是必要的功能也都没开, 让自己专注踏实一点吧, 有时间就写点东西挺好的</li>
-<li>在这里可能会看到一些我的胡思乱想, 所以评论留言啊, 赞赏什么的功能也都没有, 当然欢迎大家来认识交个朋友, GitHub留言或者邮箱都行, 后面看看再留些其他联系方式吧</li>
+<h2 id="最初的想法"><a href="#最初的想法" class="headerlink" title="最初的想法"></a>最初的想法</h2><ol>
+<li>针对第1种情况: 先按目标字段的值分组进行统计, 然后统计对比字段在不同组别中的最大最小值等统计信息, 实现方法就是先 <code>groupby</code>, 然后利用<code>max()</code>, <code>min()</code>等算子统计</li>
+<li>对于第2种情况: 也是先按目标字段的值分组进行统计, 但是接着还需要对对比字段的值进行分组统计不同值的Count计数, 这涉及到 2次 <code>groupby</code>分组操作</li>
 </ol>
-</blockquote>
-<h2 id="How"><a href="#How" class="headerlink" title="How?"></a>How?</h2><h3 id="怎么搭建的这个博客？"><a href="#怎么搭建的这个博客？" class="headerlink" title="怎么搭建的这个博客？"></a>怎么搭建的这个博客？</h3><blockquote>
-<ol>
-<li>从开始想搭建博客的想法到诞生差不多一周的时间吧, 想过一些方案,比如自己买服务器搭独立站点, <code>Jekyll</code>, <code>Hexo</code>, <code>Hugo</code>等等,最后选择了 <code>hexo + github pages</code></li>
-<li>博客全部都是基于开源方案实现, 基本上就是前言提到的那些, 再次感谢伟大的开源贡献者们</li>
-<li>后面可能还会添加一些小功能完善改进一下, 比如统计分析的插件啊, 页面的一些优化啊等等, 反正生命在于折腾哈哈</li>
+<h2 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h2><ol>
+<li>当目标字段有很多时, 第一种情况就需要循环遍历计算过程了, 不太合理</li>
+<li>目标字段和对比字段都很多时, 针对第二种情况, 假如各有 1000 个, 两次<code>groupby</code>操作就是 1000 * 1000 = 100万的量级了, 性能太差, 实际中也发现很容易就发生内存溢出.</li>
+<li>两种情况的难点都在于随着字段一多然后因为涉及到多维度的指标统计计算成本呈指数级增长</li>
 </ol>
-</blockquote>
+<h2 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h2><p>偶然联想到Mysql的查询优化, 有场景类似, 也是多条件联合查询时, 然后通过建联合索引进行优化, 于是我尝试用<code>SparkSQL</code>借鉴这种思想来实现优化我的计算过程</p>
 
         </div>
 
@@ -238,7 +230,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/10/09/搭建博客记录/">http://cjwdream.top/2019/10/09/搭建博客记录/</a></span>
+                        <span><a href="http://cjwdream.top/2019/09/18/Spark优化-多维度统计计算/">http://cjwdream.top/2019/09/18/Spark优化-多维度统计计算/</a></span>
                     </p>
                 
                 
@@ -257,7 +249,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/blog/"># blog</a>
+                        <a href="/tags/Spark/"># Spark</a>
                     
                         
                 </span>
@@ -270,10 +262,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/10/14/resource-collection/">学习资源收集</a>
+                <a class="prev" rel="prev" href="/2019/10/09/搭建博客记录/">搭建博客记录</a>
             
-            
-            <a class="next" rel="next" href="/2019/09/18/Spark优化-多维度统计计算/">Spark优化-多维度统计计算</a>
             
         </section>
 
