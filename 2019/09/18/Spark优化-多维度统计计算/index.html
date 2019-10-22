@@ -203,8 +203,8 @@
         <div class="post-content">
             <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>需要对数据进行加工处理, 返回计算指标数据给前端绘制成折线图展示<br>目标字段和对比字段类型都没有限制，所以存在几种情况</p>
 <ol>
-<li>当对比字段是连续型时:<br>  横轴是目标字段，纵轴为“对比字段的均值、最大值、最小值、中位数”，共4条折线</li>
-<li>当对比字段是离散型时：<br> 横轴是目标字段，纵轴为对比字段对于不同目标字段的Count统计值, 对不同的对比字段生成不同的折线</li>
+<li>当对比字段是连续型时:<br>  横轴是目标字段，纵轴为“对比字段的均值、最大值、最小值、中位数”，共4条折线, 如下图：<br><img src="http://pzr8xq5pe.bkt.clouddn.com/%E5%A4%9A%E7%BB%B4%E5%BA%A6%E8%AE%A1%E7%AE%97-1.jpg" alt></li>
+<li>当对比字段是离散型时：<br> 横轴是目标字段，纵轴为对比字段对于不同目标字段的Count统计值, 对不同的对比字段生成不同的折线<br><img src="http://pzr8xq5pe.bkt.clouddn.com/%E5%A4%9A%E7%BB%B4%E5%BA%A6%E8%AE%A1%E7%AE%97-2.jpg" alt></li>
 </ol>
 <h2 id="最初的想法"><a href="#最初的想法" class="headerlink" title="最初的想法"></a>最初的想法</h2><ol>
 <li>针对第1种情况: 先按目标字段的值分组进行统计, 然后统计对比字段在不同组别中的最大最小值等统计信息, 实现方法就是先 <code>groupby</code>, 然后利用<code>max()</code>, <code>min()</code>等算子统计</li>
@@ -215,7 +215,27 @@
 <li>目标字段和对比字段都很多时, 针对第二种情况, 假如各有 1000 个, 两次<code>groupby</code>操作就是 1000 * 1000 = 100万的量级了, 性能太差, 实际中也发现很容易就发生内存溢出.</li>
 <li>两种情况的难点都在于随着字段一多然后因为涉及到多维度的指标统计计算成本呈指数级增长</li>
 </ol>
-<h2 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h2><p>偶然联想到Mysql的查询优化, 有场景类似, 也是多条件联合查询时, 然后通过建联合索引进行优化, 于是我尝试用<code>SparkSQL</code>借鉴这种思想来实现优化我的计算过程</p>
+<h2 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h2><p>偶然联想到Mysql的查询优化, 有场景类似, 也是多条件联合查询时, 然后通过建<code>联合索引</code>进行优化, 于是我尝试借鉴这种思想来实现优化我的计算过程</p>
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><ol>
+<li><p>我这里主要编程语言为<code>Python</code>,  示例代码针对于上面难点2的情况, 不过思想都是一样的</p>
+</li>
+<li><p><code>Pyspark</code>支持自定义函数,然后通过<code>lambda表达式</code>应用处理数据, 就是一个 UDF(用户自定义函数)的概念</p>
+</li>
+<li><p>自定义函数拼接key</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_grouped_data_discrete</span><span class="params">(row)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    分别以目标字段和对比字段作为key分组统计的话性能太差，所以将目标字段和对比字段的值合并作为一个key然后进行计算</span></span><br><span class="line"><span class="string">    :param row:</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    field_key_list = list()</span><br><span class="line"></span><br><span class="line">	 <span class="comment"># 核心思想实现, 将目标字段名, 目标字段值以及对比字段值合并成一个key</span></span><br><span class="line">    <span class="keyword">for</span> field <span class="keyword">in</span> self.aims_fields:</span><br><span class="line">        key = field[<span class="string">"name"</span>] + <span class="string">'&amp;&amp;KEY&amp;&amp;'</span> + \</span><br><span class="line">              str(row[field[<span class="string">"name"</span>]]) + <span class="string">'&amp;&amp;KEY&amp;&amp;'</span> + \</span><br><span class="line">              str(row[self.compared_fields[<span class="number">0</span>][<span class="string">"name"</span>]])</span><br><span class="line">        field_key_list.append(key)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> field_key_list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后利用RDD计算统计Count值</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">reduce_result = df.rdd.flatMap(</span><br><span class="line">    <span class="keyword">lambda</span> row: generate_grouped_data_discrete(row)).map(</span><br><span class="line">    <span class="keyword">lambda</span> word: [word, <span class="number">1</span>]).reduceByKey(</span><br><span class="line">    <span class="keyword">lambda</span> a, b: a + b)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后将数据切割处理成我们需要的数据格式</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result_rdd = reduce_result.map(</span><br><span class="line">	<span class="keyword">lambda</span> group_data: generate_map_collect(group_data))</span><br></pre></td></tr></table></figure>
+
+<p> 切割数据处理的自定义函数实现如下:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">def generate_map_collect(group_data):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    拆分结果</span><br><span class="line">    :param group_data: 字典数据</span><br><span class="line">    :return:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    all_data = str(group_data[0]).split(&apos;&amp;&amp;KEY&amp;&amp;&apos;)</span><br><span class="line">    # 目标字段名</span><br><span class="line">    aim_field_name = all_data[0]</span><br><span class="line">    # 目标字段对应值</span><br><span class="line">    aim_field_value = all_data[1]</span><br><span class="line">    # 对比字段对应值</span><br><span class="line">    compared_field_value = all_data[2]</span><br><span class="line">    # 组内总和, 即每个目标字段区间上对比字段的count计数</span><br><span class="line">    section_sum = group_data[1]</span><br><span class="line"></span><br><span class="line">    return (aim_field_name, &#123;aim_field_value:</span><br><span class="line">                                 &#123;compared_field_value: section_sum&#125;&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>核心思想实现就在于两个自定义处理函数, 主要是第一个函数中的拼接操作,<br> RDD最开始的数据类似这样: <code>Row(k1=v1, k2=v2)</code>, 拼接后会变成<code>Row(k1&amp;&amp;KEY&amp;&amp;v1&amp;&amp;KEY&amp;&amp;k2)</code>, 就相当于将本来需要两次<code>groupby</code>分组的key合并成了一个</p>
+</li>
+</ol>
 
         </div>
 
