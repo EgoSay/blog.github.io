@@ -7,7 +7,7 @@
 
 
 
-<title>Spark基本概念 | EgoSay</title>
+<title>shell脚本基础 | EgoSay</title>
 
 
 
@@ -176,7 +176,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Spark基本概念</h1>
+            <h1 class="post-title">shell脚本基础</h1>
             
                 <div class="post-meta">
                     
@@ -185,7 +185,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">January 19, 2019&nbsp;&nbsp;19:27:27</a>
+                        Date: <a href="#">May 13, 2018&nbsp;&nbsp;21:36:40</a>
                         </span>
                     
                     
@@ -201,19 +201,29 @@
         </header>
 
         <div class="post-content">
-            <h2 id="Spark中的基本概念"><a href="#Spark中的基本概念" class="headerlink" title="Spark中的基本概念"></a>Spark中的基本概念</h2><h3 id="RDD"><a href="#RDD" class="headerlink" title="RDD"></a>RDD</h3><p><code>Resilient Distributed Dataset</code>, 弹性分布式数据集, Spark中基本的数据类型，还有<code>DataFrame</code> 以及 <code>DataSet</code></p><p><br>        三者的关系：<br>    - <code>RDD</code>: 最基本的数据类型, 类比于数据库中列的概念, 即单个字段的一列数据<code>DataFrame</code> 和 <code>Dataset</code> 也是基于 RDD 提供的<br>    - <code>DataFrame</code>: <code>DataFrame[Row]</code>, 分布式的<code>Row</code>的集合, 类比于数据库中的一张表, 有很多行数据(Row), 每一行的数据又有许多不同字段的值<br>    - <code>DataSet</code>: 相当于<code>DataFrame</code>的一个特例, 特例在于<code>DataSet</code>中存储的是强类型的数据, 不再是<code>Row</code></p>
-<h3 id="算子"><a href="#算子" class="headerlink" title="算子"></a>算子</h3><p>计算的类型, 分为<code>Transformation</code>和<code>Action</code>两种算子, 这就涉及到惰性运算的概念了, 参考<a href="http://allenn.cn/articles/2016-10/2016-10-26-spark-is-lazy/" target="_blank" rel="noopener">Spark中的惰性运算</a></p><p></p>
-<ul>
-<li><code>Transformation</code>算子主要包括：map、mapPartitions、flatMap、filter、union、groupByKey、repartition、cache等</li>
-<li><code>Action</code>算子主要包括：reduce、collect、show、count、foreach、saveAsTextFile等<p><br>注意: 如果声明了数据需要cache或者persist，但在action操作前释放掉的话，该数据实际上并没有被缓存</p></li>
-</ul>
-<h3 id="Job"><a href="#Job" class="headerlink" title="Job"></a>Job</h3><p>用户提交的任务, 当在程序中遇到一个<code>action</code>算子的时候，就会提交一个<code>job</code>，执行前面的一系列操作</p>
-<h3 id="Stage"><a href="#Stage" class="headerlink" title="Stage"></a>Stage</h3><p>Job拆分的执行阶段, 一个 <code>Job</code>可能被划分为一到多个 <code>Stage</code>, <code>Stage</code>的划分是根据<code>shuffle</code>依赖进行的</p>
-<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><p>具体执行任务, Spark中最细的执行单位, <code>Stage</code>继续往下分解就是<code>Task</code><br>分为<code>ShuffleMapTask</code> 和 <code>ResultTask</code>两种, 类比于 <code>Hadoop</code>中的<code>Map</code> 和 <code>Reduce</code></p><p><br><code>RDD</code>在计算的时候，每个分区都会起一个task，所以rdd的分区数目决定了总的的task数目。每个Task执行的结果就是生成了目标RDD的一个partiton。在Map阶段partition数目保持不变。在Reduce阶段，RDD的聚合会触发shuffle操作，聚合后的RDD的partition数目跟具体操作有关，例如repartition操作会聚合成指定分区数。coalesce算子同样可以改变partition的数目，不过只能减少不能增加。repartition和coalesce算子的区别在于前者会引发shuffle，后者则不会</p>
-<h3 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h3><p>数据分区, 即一个<code>RDD</code>的数据可以划分为多少个分区</p>
-<h3 id="NarrowDependcy"><a href="#NarrowDependcy" class="headerlink" title="NarrowDependcy"></a>NarrowDependcy</h3><p>窄依赖, 即<code>子RDD</code>依赖于<code>父RDD</code>中固定的<code>Partion</code>分区, 分为 <code>OneToOneDependency</code> 和 <code>RangeDependency</code>, 比如map、union等操作</p>
-<h3 id="ShuffleDependcy"><a href="#ShuffleDependcy" class="headerlink" title="ShuffleDependcy"></a>ShuffleDependcy</h3><p><code>shuffle</code>依赖, 也称为宽依赖, 即<code>子RDD</code>对<code>父RDD</code>的所有<code>Partition</code>都有依赖, 比如<code>groupByKey</code>等操作</p>
-<h3 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h3><p> 有向无环图, 反映<code>RDD</code>之间的依赖关系</p>
+            <h2 id="shell脚本基础"><a href="#shell脚本基础" class="headerlink" title="shell脚本基础"></a>shell脚本基础</h2><h3 id="shell脚本调试"><a href="#shell脚本调试" class="headerlink" title="shell脚本调试"></a>shell脚本调试</h3><p>-n，读一遍脚本中的命令但不执行，用于检查脚本中的语法错误<br>-v，一边执行脚本，一边将执行过的脚本命令打印到标准错误输出<br>-x，提供跟踪执行信息，将执行的每一条命令和结果依次打印出来</p>
+<h3 id="shell脚本对文本中无序的一列数字排序"><a href="#shell脚本对文本中无序的一列数字排序" class="headerlink" title="shell脚本对文本中无序的一列数字排序"></a>shell脚本对文本中无序的一列数字排序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># sort -n 190307.txt | awk '&#123;a+=$0;print$0&#125; END &#123;print "sum="a&#125;'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="shell命令查看文件空行行号"><a href="#shell命令查看文件空行行号" class="headerlink" title="shell命令查看文件空行行号"></a>shell命令查看文件空行行号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># grep -n ^$ filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/[a-zA-Z0-9@#$%^&amp;*]!=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/^$/=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># awk '/^$/&#123;print NR&#125;' filename</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="shell文件夹操作"><a href="#shell文件夹操作" class="headerlink" title="shell文件夹操作"></a>shell文件夹操作</h3><ol>
+<li><p>删除一个文件夹下所有文件但是不删除文件夹</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find . -type f | xargs rm -f</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>只复制目录的结构，而不复制目录的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find ~ -type d -exec mkdir -p demo/\&#123;\&#125; \;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查找当前文件夹下所有的文本文件内容中包含有字符”math”的文件名称</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># grep -r "math" /home/chenjiawei/test/shell/ | cut -d ":" -f 1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遍历目录及其子目录中的所有文件</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/bash</span><br><span class="line">function read_dir()&#123;</span><br><span class="line">    for file in `ls $1`       #注意此处这是两个反引号，表示运行系统命令</span><br><span class="line">    do</span><br><span class="line">        if [ -d $1&quot;/&quot;$file ]  #注意此处之间一定要加上空格，否则会报错</span><br><span class="line">        then</span><br><span class="line">            read_dir $1&quot;/&quot;$file</span><br><span class="line">        else</span><br><span class="line">            echo $1&quot;/&quot;$file   #在此处处理文件即可</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line">#读取第一个参数</span><br><span class="line">read_dir $1</span><br></pre></td></tr></table></figure>
+
+<p> 执行命令</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh traveDir.sh DIR_NAME</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
 
         </div>
 
@@ -228,7 +238,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/01/19/Spark基本概念/">http://cjwdream.top/2019/01/19/Spark基本概念/</a></span>
+                        <span><a href="http://cjwdream.top/2018/05/13/shell脚本基础/">http://cjwdream.top/2018/05/13/shell脚本基础/</a></span>
                     </p>
                 
                 
@@ -247,7 +257,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Spark/"># Spark</a>
+                        <a href="/tags/Linux/"># Linux</a>
                     
                         
                 </span>
@@ -260,10 +270,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/07/14/resource-collection/">学习资源收集</a>
+                <a class="prev" rel="prev" href="/2019/01/19/Spark基本概念/">Spark基本概念</a>
             
-            
-            <a class="next" rel="next" href="/2018/05/13/shell脚本基础/">shell脚本基础</a>
             
         </section>
 
