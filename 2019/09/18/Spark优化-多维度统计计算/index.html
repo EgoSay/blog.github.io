@@ -237,7 +237,10 @@
 <li><p>核心思想实现就在于两个自定义处理函数, 主要是第一个函数中的拼接操作,<br> RDD最开始的数据类似这样: <code>Row(k1=v1, k2=v2)</code>, 拼接后会变成<code>Row(k1&amp;&amp;KEY&amp;&amp;v1&amp;&amp;KEY&amp;&amp;k2)</code>, 就相当于将本来需要多次<code>groupby</code>分组的key合并成了一个</p>
 </li>
 </ol>
-
+<h2 id="举一反三"><a href="#举一反三" class="headerlink" title="举一反三"></a>举一反三</h2><p>总结的时候发现还有很多类似的场景：</p>
+<h3 id="大数据场景中的二次排序"><a href="#大数据场景中的二次排序" class="headerlink" title="大数据场景中的二次排序"></a>大数据场景中的二次排序</h3><p>参考链接: <a href="https://blog.csdn.net/u011026329/article/details/67040068" target="_blank" rel="noopener">二次排序的应用</a></p>
+<h3 id="redis的组合优化思想"><a href="#redis的组合优化思想" class="headerlink" title="redis的组合优化思想"></a>redis的组合优化思想</h3><p>参考链接: <a href="https://mp.weixin.qq.com/s/vKV0ENUdCmjgRvt8MV-C2Q" target="_blank" rel="noopener">每秒30W次的点赞业务，怎么优化?</a></p>
+<h3 id="再往上抽象还可以联想到网络IO多路复用，hdfs批量处理小文件等场景"><a href="#再往上抽象还可以联想到网络IO多路复用，hdfs批量处理小文件等场景" class="headerlink" title="再往上抽象还可以联想到网络IO多路复用，hdfs批量处理小文件等场景"></a>再往上抽象还可以联想到网络IO多路复用，hdfs批量处理小文件等场景</h3>
         </div>
 
         
