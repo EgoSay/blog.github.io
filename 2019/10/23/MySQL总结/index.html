@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>MySQL总结 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">MySQL总结</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">October 23, 2019&nbsp;&nbsp;17:24:28</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="MySQL总结"><a href="#MySQL总结" class="headerlink" title="MySQL总结"></a>MySQL总结</h1><h2 id="事务四大特性-ACID"><a href="#事务四大特性-ACID" class="headerlink" title="事务四大特性(ACID)"></a>事务四大特性(ACID)</h2><h3 id="原子性-Atomicity"><a href="#原子性-Atomicity" class="headerlink" title="原子性(Atomicity)"></a><code>原子性(Atomicity)</code></h3><p>原子性是指事务是一个不可分割的工作单位，事务中的操作要么都发生，要么都不发生。</p>
+<h3 id="一致性-Consistency"><a href="#一致性-Consistency" class="headerlink" title="一致性(Consistency)"></a><code>一致性(Consistency)</code></h3><p>如果事务执行之前数据库是一个完整性的状态，那么事务结束后，无论事务是否执行成功，数据库仍然是一个完整性状态(数据库的完整性状态:当一个数据库中的所有的数据都符合数据库中所定义的所有的约束，此时可以称数据库是一个完整性状态)<br>###<code>隔离性(Isolation)</code><br>事务的隔离性是指多个用户并发访问数据库时，一个用户的事务不能被其它用户的事务所干扰，多个并发事务之间数据要相互隔离</p>
+<h3 id="持久性-durability"><a href="#持久性-durability" class="headerlink" title="持久性(durability)"></a><code>持久性(durability)</code></h3><p>持久性是指一个事务一旦被提交，它对数据库中数据的改变就是永久性的，接下来即使数据库发生故障也不应该对其有任何影响</p>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><ul>
+<li><p>CAP定理和BASE理论: 参考:<a href="https://www.jianshu.com/p/bc0b7b9610e4" target="_blank" rel="noopener">CAP和BASE理论</a><br><code>dubbo+zookeeper</code> 主要实现<code>CP</code><br><code>springcloud eureka [hystrix]</code> 主要实现<code>AP</code></p>
+</li>
+<li><p>一次业务场景思考<br><a href="https://mp.weixin.qq.com/s/-Hx2KKYMEQCcTC-ADEuwVA" target="_blank" rel="noopener">事务已提交，数据却丢了</a></p>
+</li>
+</ul>
+<h2 id="数据库隔离级别"><a href="#数据库隔离级别" class="headerlink" title="数据库隔离级别"></a>数据库隔离级别</h2><h3 id="Read-Uncommitted"><a href="#Read-Uncommitted" class="headerlink" title="Read Uncommitted"></a><code>Read Uncommitted</code></h3><p>读取未提交内容, 在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。读取未提交的数据，也被称之为<code>脏读（Dirty Read）</code></p>
+<h3 id="Read-Committed"><a href="#Read-Committed" class="headerlink" title="Read Committed"></a><code>Read Committed</code></h3><p>读取提交内容, 这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。 这种隔离级别也支持所谓的<code>不可重复读（Nonrepeatable Read）</code>，因为同一事务的其他实例在该实例处理其间可能会有新的commit，所以同一select可能返回不同结果</p>
+<h3 id="Repeatable-Read"><a href="#Repeatable-Read" class="headerlink" title="Repeatable Read"></a><code>Repeatable Read</code></h3><p>这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：<code>幻读 （Phantom Read）</code></p>
+<h3 id="Serializable"><a href="#Serializable" class="headerlink" title="Serializable"></a><code>Serializable</code></h3><p>序列化, 这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，从而解决幻读问题。简言之，它是在每个读的数据行上加上共享锁。在这个级别，可能导致大量的超时现象和锁竞争</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Read Uncommitted</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>✔️</td>
+</tr>
+<tr>
+<td>Read Committed</td>
+<td>✖️</td>
+<td>✔️</td>
+<td>✔️</td>
+</tr>
+<tr>
+<td>Repeatable Read</td>
+<td>✖️</td>
+<td>✖️</td>
+<td>✔️</td>
+</tr>
+<tr>
+<td>Serializable</td>
+<td>✖️</td>
+<td>✖️</td>
+<td>✖️</td>
+</tr>
+</tbody></table>
+<h3 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h3><p>某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个RollBack了操作，则后一个事务所读取的数据就会是不正确的</p>
+<h3 id="幻读"><a href="#幻读" class="headerlink" title="幻读:"></a>幻读:</h3><p>在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几行(Row)数据，而另一个事务却在此时插入了新的几行数据，先前的事务在接下来的查询中，就会发现有几行数据是它先前所没有的, InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题</p>
+<h3 id="MySQL的锁算法"><a href="#MySQL的锁算法" class="headerlink" title="MySQL的锁算法"></a>MySQL的锁算法</h3><ul>
+<li><code>Record Lock</code>：单个行记录上的锁。</li>
+<li><code>Gap Lock</code>：间隙锁，锁定一个范围，但不包括记录本身。GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。</li>
+<li><code>Next-Key Lock：Record + Gap</code>，锁定一个范围，并且锁定记录本身。对于行的查询，都是采用该方法，主要目的是解决幻读的问题</li>
+</ul>
+<h2 id="MySQL的MVCC机制"><a href="#MySQL的MVCC机制" class="headerlink" title="MySQL的MVCC机制"></a>MySQL的<code>MVCC</code>机制</h2><h3 id="MVCC机制是什么？"><a href="#MVCC机制是什么？" class="headerlink" title="MVCC机制是什么？"></a><code>MVCC</code>机制是什么？</h3><p>其实就是在每一行记录的后面增加两个隐藏列，记录创建版本号和删除版本号，而每一个事务在启动的时候，都有一个唯一的递增的版本号。 在<code>InnoDB</code>中，给每行增加两个隐藏字段来实现MVCC，两个列都用来存储事务的版本号，每开启一个新事务，事务的版本号就会递增</p>
+<h3 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h3><p>consistent read （一致性读），InnoDB用多版本来提供查询数据库在某个时间点的快照。如果隔离级别是REPEATABLE READ，那么在同一个事务中的所有一致性读都读的是事务中第一个这样的读读到的快照； 如果是READ COMMITTED，那么一个事务中的每一个一致性读都会读到它自己刷新的快照版本。Consistent read（一致性读）是READ COMMITTED和REPEATABLE READ隔离级别下普通SELECT语句默认的模式。 一致性读不会给它所访问的表加任何形式的锁，因此其它事务可以同时并发的修改它们<br><code>MVCC</code>实现一致性非锁定读，这就有保证在同一个事务中多次读取相同的数据返回的结果是一样的，解决了不可重复读的问题</p>
+<h3 id="通过etcd学习MVCC机制-ectd"><a href="#通过etcd学习MVCC机制-ectd" class="headerlink" title="通过etcd学习MVCC机制: ectd"></a>通过<code>etcd</code>学习<code>MVCC</code>机制: <a href="https://github.com/etcd-io/etcd/tree/master/mvcc" target="_blank" rel="noopener">ectd</a></h3><p><a href="https://blog.betacat.io/post/mvcc-implementation-in-etcd/" target="_blank" rel="noopener">MVCC 在 etcd 中的实现</a></p>
+<h2 id="MySQL的存储引擎"><a href="#MySQL的存储引擎" class="headerlink" title="MySQL的存储引擎"></a>MySQL的存储引擎</h2><h3 id="InnoDB-MySQL5-5以后默认使用"><a href="#InnoDB-MySQL5-5以后默认使用" class="headerlink" title="InnoDB(MySQL5.5以后默认使用)"></a><code>InnoDB</code>(MySQL5.5以后默认使用)</h3><h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ol>
+<li>支持ACID的事务，支持事务的四种隔离级别;</li>
+<li>支持行级锁及外键约束：因此可以支持写并发;</li>
+<li>不存储总行数;</li>
+<li>一个InnoDB引擎存储在一个文件空间（共享表空间，表大小不受操作系统控制，一个表可能分布在多个文件里），也有可能为多个（设置为独立表空间，表大小受操作系统文件大小限制，一般为2G），受操作系统文件大小的限制;</li>
+<li>主键索引采用聚集索引（索引的数据域存储数据文件本身），辅索引的数据域存储主键的值；因此从辅索引查找数据，需要先通过辅索引找到主键值，再访问辅索引;</li>
+<li>最好使用自增主键，防止插入数据时，为维持B+树结构，文件的大调整;</li>
+<li>适用OLTP<h4 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h4>插入缓存（insert buffer）、两次写(double write)、自适应哈希(Adaptive Hash index)、异步IO(Async IO)、刷新邻接页(Flush Neighbor Page)<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><a href="https://blog.csdn.net/MySQL_lover/article/details/54617765" target="_blank" rel="noopener">InnoDB关键特性</a></li>
+</ol>
+<h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a><code>MyISAM</code></h3><ol>
+<li>不支持事务，但是每次查询都是原子的；</li>
+<li>支持表级锁，即每次操作是对整个表加锁；</li>
+<li>存储表的总行数；</li>
+<li>一个MyISAM表有三个文件：索引文件、表结构文件、数据文件；</li>
+<li>采用非聚集索引，索引文件的数据域存储指向数据文件的指针。辅索引与主索引基本一致，但是辅索引不用保证唯一性。</li>
+<li>适用OLAP</li>
+</ol>
+<h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><h3 id="ARCHIVE"><a href="#ARCHIVE" class="headerlink" title="ARCHIVE"></a>ARCHIVE</h3><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://juejin.im/post/5c8785baf265da2dd2190707" target="_blank" rel="noopener">MySQL数据库存储引擎简介</a></li>
+<li><a href="https://mp.weixin.qq.com/s/FUXPXKfKyjxAvMUFHZm9UQ" target="_blank" rel="noopener">1分钟了解MyISAM与InnoDB的索引差异</a></li>
+</ul>
+<h2 id="MySQL的索引"><a href="#MySQL的索引" class="headerlink" title="MySQL的索引"></a>MySQL的索引</h2><h3 id="主要有有B-索引和hash索引-区别："><a href="#主要有有B-索引和hash索引-区别：" class="headerlink" title="主要有有B+索引和hash索引, 区别："></a>主要有有B+索引和hash索引, 区别：</h3><ol>
+<li>如果是等值查询，那么哈希索引明显有绝对优势，因为只需要经过一次算法即可找到相应的键值；当然了，这个前提是，键值都是唯一的。如果键值不是唯一的，就需要先找到该键所在位置，然后再根据链表往后扫描，直到找到相应的数据；</li>
+<li>如果是范围查询检索，这时候哈希索引就毫无用武之地了，因为原先是有序的键值，经过哈希算法后，有可能变成不连续的了，就没办法再利用索引完成范围查询检索；</li>
+<li>同理，哈希索引也没办法利用索引完成排序，以及like ‘xxx%’ 这样的部分模糊查询（这种部分模糊查询，其实本质上也是范围查询）；</li>
+<li>哈希索引也不支持多列联合索引的最左匹配规则；</li>
+<li>B+树索引的关键字检索效率比较平均，不像B树那样波动幅度大，在有大量重复键值情况下，哈希索引的效率也是极低的，因为存在所谓的哈希碰撞问题</li>
+</ol>
+<h3 id="B-索引数据结构，和B树的区别"><a href="#B-索引数据结构，和B树的区别" class="headerlink" title="B+索引数据结构，和B树的区别"></a>B+索引数据结构，和B树的区别</h3><ol>
+<li><p>B树：有序数组+平衡多叉树<br>它的特点是：<br>(1)不再是二叉搜索，而是m叉搜索；<br>(2)叶子节点，非叶子节点，都存储数据；<br>(3)中序遍历，可以获得所有节点；</p>
+</li>
+<li><p>B+树：有序数组链表+平衡多叉树, 在B树的基础上，做了一些改进<br>(1)非叶子节点不再存储数据，数据只存储在同一层的叶子节点上<br>(2)叶子之间，增加了链表，获取所有节点，不再需要中序遍历</p>
+</li>
+<li><p>B+树改进后更优的特性<br>(1)范围查找，定位min与max之后，中间叶子节点，就是结果集，不用中序回溯<br>(2)叶子节点存储实际记录行，记录行相对比较紧密的存储，适合大数据量磁盘存储；非叶子节点存储记录的PK，用于查询加速，适合内存存储；<br>(3)非叶子节点，不存储实际记录，而只存储记录的KEY的话，那么在相同内存的情况下，B+树能够存储更多索引</p>
+</li>
+</ol>
+<h3 id="为什么B-树适合作为索引的结构"><a href="#为什么B-树适合作为索引的结构" class="headerlink" title="为什么B+树适合作为索引的结构"></a>为什么B+树适合作为索引的结构</h3><ol>
+<li>不同于二叉搜索树, B树是m分叉的, 树高度能大大降低，所以能够存储大量数据</li>
+<li>很适合磁盘存储，能够充分利用局部性原理，磁盘预读<br>(1)内存读写块，磁盘读写慢，而且慢很多；<br>(2)磁盘预读：磁盘读写并不是按需读取，而是按页预读，一次会读一页(一页数据是4K)的数据，每次加载更多的数据，如果未来要读取的数据就在这一页中，可以避免未来的磁盘IO，提高效率；<br>(3)局部性原理：软件设计要尽量遵循“数据读取集中”与“使用到一个数据，大概率会使用其附近的数据”，这样磁盘预读能充分提高磁盘IO</li>
+<li>MyISAM和InnoDB都使用了B+树作为索引存储结构，但是叶子上数据的存储方式不同。前者索引文件和数据文件是分离的，索引文件仅保存记录所在页的指针（物理位置）， 而后者直接存储数据，或者存储主键值（存储主键值并检索辅助索引，此时实际上进行了二次查询，增加IO次数</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/10/23/MySQL总结/">http://cjwdream.top/2019/10/23/MySQL总结/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/MySQL/"># MySQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2019/10/09/搭建博客记录/">搭建博客记录</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
