@@ -202,7 +202,8 @@
 
         <div class="post-content">
             <h1 id="MySQL总结"><a href="#MySQL总结" class="headerlink" title="MySQL总结"></a>MySQL总结</h1><h2 id="事务四大特性-ACID"><a href="#事务四大特性-ACID" class="headerlink" title="事务四大特性(ACID)"></a>事务四大特性(ACID)</h2><h3 id="原子性-Atomicity"><a href="#原子性-Atomicity" class="headerlink" title="原子性(Atomicity)"></a><code>原子性(Atomicity)</code></h3><p>原子性是指事务是一个不可分割的工作单位，事务中的操作要么都发生，要么都不发生。</p>
-<h3 id="一致性-Consistency"><a href="#一致性-Consistency" class="headerlink" title="一致性(Consistency)"></a><code>一致性(Consistency)</code></h3><p>如果事务执行之前数据库是一个完整性的状态，那么事务结束后，无论事务是否执行成功，数据库仍然是一个完整性状态(数据库的完整性状态:当一个数据库中的所有的数据都符合数据库中所定义的所有的约束，此时可以称数据库是一个完整性状态)<br>###<code>隔离性(Isolation)</code><br>事务的隔离性是指多个用户并发访问数据库时，一个用户的事务不能被其它用户的事务所干扰，多个并发事务之间数据要相互隔离</p>
+<h3 id="一致性-Consistency"><a href="#一致性-Consistency" class="headerlink" title="一致性(Consistency)"></a><code>一致性(Consistency)</code></h3><p>如果事务执行之前数据库是一个完整性的状态，那么事务结束后，无论事务是否执行成功，数据库仍然是一个完整性状态(数据库的完整性状态:当一个数据库中的所有的数据都符合数据库中所定义的所有的约束，此时可以称数据库是一个完整性状态)</p>
+<h3 id="隔离性-Isolation"><a href="#隔离性-Isolation" class="headerlink" title="隔离性(Isolation)"></a><code>隔离性(Isolation)</code></h3><p>事务的隔离性是指多个用户并发访问数据库时，一个用户的事务不能被其它用户的事务所干扰，多个并发事务之间数据要相互隔离</p>
 <h3 id="持久性-durability"><a href="#持久性-durability" class="headerlink" title="持久性(durability)"></a><code>持久性(durability)</code></h3><p>持久性是指一个事务一旦被提交，它对数据库中数据的改变就是永久性的，接下来即使数据库发生故障也不应该对其有任何影响</p>
 <h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><ul>
 <li><p>CAP定理和BASE理论: 参考:<a href="https://www.jianshu.com/p/bc0b7b9610e4" target="_blank" rel="noopener">CAP和BASE理论</a><br><code>dubbo+zookeeper</code> 主要实现<code>CP</code><br><code>springcloud eureka [hystrix]</code> 主要实现<code>AP</code></p>
@@ -249,24 +250,39 @@
 </tr>
 </tbody></table>
 <h3 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h3><p>某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个RollBack了操作，则后一个事务所读取的数据就会是不正确的</p>
-<h3 id="幻读"><a href="#幻读" class="headerlink" title="幻读:"></a>幻读:</h3><p>在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几行(Row)数据，而另一个事务却在此时插入了新的几行数据，先前的事务在接下来的查询中，就会发现有几行数据是它先前所没有的, InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题</p>
+<h3 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h3><p>在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几行(Row)数据，而另一个事务却在此时插入了新的几行数据，先前的事务在接下来的查询中，就会发现有几行数据是它先前所没有的, InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题</p>
 <h3 id="MySQL的锁算法"><a href="#MySQL的锁算法" class="headerlink" title="MySQL的锁算法"></a>MySQL的锁算法</h3><ul>
 <li><code>Record Lock</code>：单个行记录上的锁。</li>
 <li><code>Gap Lock</code>：间隙锁，锁定一个范围，但不包括记录本身。GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。</li>
 <li><code>Next-Key Lock：Record + Gap</code>，锁定一个范围，并且锁定记录本身。对于行的查询，都是采用该方法，主要目的是解决幻读的问题</li>
+<li><a href="https://mp.weixin.qq.com/s/wGOxro3uShp2q5w97azx5A" target="_blank" rel="noopener">别废话，各种SQL到底加了什么锁？</a></li>
 </ul>
 <h2 id="MySQL的MVCC机制"><a href="#MySQL的MVCC机制" class="headerlink" title="MySQL的MVCC机制"></a>MySQL的<code>MVCC</code>机制</h2><h3 id="MVCC机制是什么？"><a href="#MVCC机制是什么？" class="headerlink" title="MVCC机制是什么？"></a><code>MVCC</code>机制是什么？</h3><p>其实就是在每一行记录的后面增加两个隐藏列，记录创建版本号和删除版本号，而每一个事务在启动的时候，都有一个唯一的递增的版本号。 在<code>InnoDB</code>中，给每行增加两个隐藏字段来实现MVCC，两个列都用来存储事务的版本号，每开启一个新事务，事务的版本号就会递增</p>
-<h3 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h3><p>consistent read （一致性读），InnoDB用多版本来提供查询数据库在某个时间点的快照。如果隔离级别是REPEATABLE READ，那么在同一个事务中的所有一致性读都读的是事务中第一个这样的读读到的快照； 如果是READ COMMITTED，那么一个事务中的每一个一致性读都会读到它自己刷新的快照版本。Consistent read（一致性读）是READ COMMITTED和REPEATABLE READ隔离级别下普通SELECT语句默认的模式。 一致性读不会给它所访问的表加任何形式的锁，因此其它事务可以同时并发的修改它们<br><code>MVCC</code>实现一致性非锁定读，这就有保证在同一个事务中多次读取相同的数据返回的结果是一样的，解决了不可重复读的问题</p>
+<h3 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h3><p><code>consistent read （一致性读）</code>，InnoDB用多版本来提供查询数据库在某个时间点的快照。如果隔离级别是REPEATABLE READ，那么在同一个事务中的所有一致性读都读的是事务中第一个这样的读读到的快照； 如果是READ COMMITTED，那么一个事务中的每一个一致性读都会读到它自己刷新的快照版本。Consistent read（一致性读）是READ COMMITTED和REPEATABLE READ隔离级别下普通SELECT语句默认的模式。 一致性读不会给它所访问的表加任何形式的锁，因此其它事务可以同时并发的修改它们<br><code>MVCC</code>实现一致性非锁定读，这就有保证在同一个事务中多次读取相同的数据返回的结果是一样的，解决了不可重复读的问题</p>
 <h3 id="通过etcd学习MVCC机制-ectd"><a href="#通过etcd学习MVCC机制-ectd" class="headerlink" title="通过etcd学习MVCC机制: ectd"></a>通过<code>etcd</code>学习<code>MVCC</code>机制: <a href="https://github.com/etcd-io/etcd/tree/master/mvcc" target="_blank" rel="noopener">ectd</a></h3><p><a href="https://blog.betacat.io/post/mvcc-implementation-in-etcd/" target="_blank" rel="noopener">MVCC 在 etcd 中的实现</a></p>
-<h2 id="MySQL的存储引擎"><a href="#MySQL的存储引擎" class="headerlink" title="MySQL的存储引擎"></a>MySQL的存储引擎</h2><h3 id="InnoDB-MySQL5-5以后默认使用"><a href="#InnoDB-MySQL5-5以后默认使用" class="headerlink" title="InnoDB(MySQL5.5以后默认使用)"></a><code>InnoDB</code>(MySQL5.5以后默认使用)</h3><h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ol>
+<h2 id="MySQL的存储引擎"><a href="#MySQL的存储引擎" class="headerlink" title="MySQL的存储引擎"></a>MySQL的存储引擎</h2><h3 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a><code>InnoDB</code></h3><h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ol>
 <li>支持ACID的事务，支持事务的四种隔离级别;</li>
 <li>支持行级锁及外键约束：因此可以支持写并发;</li>
 <li>不存储总行数;</li>
 <li>一个InnoDB引擎存储在一个文件空间（共享表空间，表大小不受操作系统控制，一个表可能分布在多个文件里），也有可能为多个（设置为独立表空间，表大小受操作系统文件大小限制，一般为2G），受操作系统文件大小的限制;</li>
 <li>主键索引采用聚集索引（索引的数据域存储数据文件本身），辅索引的数据域存储主键的值；因此从辅索引查找数据，需要先通过辅索引找到主键值，再访问辅索引;</li>
 <li>最好使用自增主键，防止插入数据时，为维持B+树结构，文件的大调整;</li>
-<li>适用OLTP<h4 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h4>插入缓存（insert buffer）、两次写(double write)、自适应哈希(Adaptive Hash index)、异步IO(Async IO)、刷新邻接页(Flush Neighbor Page)<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><a href="https://blog.csdn.net/MySQL_lover/article/details/54617765" target="_blank" rel="noopener">InnoDB关键特性</a></li>
+<li>适用OLTP</li>
 </ol>
+<h4 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h4><p>插入缓存（insert buffer）、两次写(double write)、自适应哈希(Adaptive Hash index)、异步IO(Async IO)、刷新邻接页(Flush Neighbor Page)</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul>
+<li><a href="https://blog.csdn.net/MySQL_lover/article/details/54617765" target="_blank" rel="noopener">InnoDB关键特性</a></li>
+<li><a href="https://mp.weixin.qq.com/s/zKHNaWY5AS0OMmag1mQTKQ" target="_blank" rel="noopener">InnoDB架构，一幅图秒懂！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/vQsilZmyMaaVkYGkn-WXew" target="_blank" rel="noopener">InnoDB到底支不支持哈希索引</a></li>
+<li><a href="https://mp.weixin.qq.com/s/R3yuitWpHHGWxsUcE0qIRQ" target="_blank" rel="noopener">InnoDB并发如此高，原因竟然在这？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/JEJcgD36dpKgbUi7xo6DzA" target="_blank" rel="noopener">InnoDB，5项最佳实践，知其所以然？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/rGleC6aRTD0gu--RJHD6lw" target="_blank" rel="noopener">挖坑，InnoDB的七种锁</a></li>
+<li><a href="https://mp.weixin.qq.com/s/iViStnwUyypwTkQHWDIR_w" target="_blank" rel="noopener">InnoDB并发插入，居然使用意向锁？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/kOMSD_Satu9v9ciZVvNw8Q" target="_blank" rel="noopener">插入InnoDB自增列，居然是表锁</a></li>
+<li><a href="https://mp.weixin.qq.com/s/36Sy0FldFRNvLRpHxfucQ" target="_blank" rel="noopener">超赞，InnoDB调试死锁的方法！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/y_f2qrZvZe_F4_HPnwVjOw" target="_blank" rel="noopener">InnoDB，select为啥会阻塞insert？</a></li>
+<li><a href="https://mp.weixin.qq.com/s/gjt9WdyTQRzx-hr_qIz_mw" target="_blank" rel="noopener">InnoDB，快照读，在RR和RC下有何差异？</a></li>
+</ul>
 <h3 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a><code>MyISAM</code></h3><ol>
 <li>不支持事务，但是每次查询都是原子的；</li>
 <li>支持表级锁，即每次操作是对整个表加锁；</li>
@@ -278,6 +294,7 @@
 <h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><h3 id="ARCHIVE"><a href="#ARCHIVE" class="headerlink" title="ARCHIVE"></a>ARCHIVE</h3><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
 <li><a href="https://juejin.im/post/5c8785baf265da2dd2190707" target="_blank" rel="noopener">MySQL数据库存储引擎简介</a></li>
 <li><a href="https://mp.weixin.qq.com/s/FUXPXKfKyjxAvMUFHZm9UQ" target="_blank" rel="noopener">1分钟了解MyISAM与InnoDB的索引差异</a></li>
+<li><a href="https://mp.weixin.qq.com/s/3_6k9duYkzQfW86FgnUz5A" target="_blank" rel="noopener">频繁插入(insert)的业务，用什么存储引擎更合适</a></li>
 </ul>
 <h2 id="MySQL的索引"><a href="#MySQL的索引" class="headerlink" title="MySQL的索引"></a>MySQL的索引</h2><h3 id="主要有有B-索引和hash索引-区别："><a href="#主要有有B-索引和hash索引-区别：" class="headerlink" title="主要有有B+索引和hash索引, 区别："></a>主要有有B+索引和hash索引, 区别：</h3><ol>
 <li>如果是等值查询，那么哈希索引明显有绝对优势，因为只需要经过一次算法即可找到相应的键值；当然了，这个前提是，键值都是唯一的。如果键值不是唯一的，就需要先找到该键所在位置，然后再根据链表往后扫描，直到找到相应的数据；</li>
@@ -299,6 +316,35 @@
 <li>很适合磁盘存储，能够充分利用局部性原理，磁盘预读<br>(1)内存读写块，磁盘读写慢，而且慢很多；<br>(2)磁盘预读：磁盘读写并不是按需读取，而是按页预读，一次会读一页(一页数据是4K)的数据，每次加载更多的数据，如果未来要读取的数据就在这一页中，可以避免未来的磁盘IO，提高效率；<br>(3)局部性原理：软件设计要尽量遵循“数据读取集中”与“使用到一个数据，大概率会使用其附近的数据”，这样磁盘预读能充分提高磁盘IO</li>
 <li>MyISAM和InnoDB都使用了B+树作为索引存储结构，但是叶子上数据的存储方式不同。前者索引文件和数据文件是分离的，索引文件仅保存记录所在页的指针（物理位置）， 而后者直接存储数据，或者存储主键值（存储主键值并检索辅助索引，此时实际上进行了二次查询，增加IO次数</li>
 </ol>
+<h3 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h3><ul>
+<li>普通索引：最基本的索引，没有任何限制。</li>
+<li>唯一索引：与“普通索引”类似，不同的就是：索引列的值必须唯一，但允许有空值。</li>
+<li>主键索引：它 是一种特殊的唯一索引，不允许有空值。</li>
+<li>全文索引：仅可用于 MyISAM 表，针对较大的数据，生成全文索引很耗时耗空间。（MATCH… AGAINST…）</li>
+<li>组合索引：为了更多的提高MySQL效率可建立组合索引，遵循“最左前缀”原则。</li>
+<li>覆盖索引：包含（覆盖）所有需要查询的字段的值的索引</li>
+</ul>
+<h3 id="聚集索引和非聚集索引区别"><a href="#聚集索引和非聚集索引区别" class="headerlink" title="聚集索引和非聚集索引区别"></a>聚集索引和非聚集索引区别</h3><h4 id="聚集（clustered）索引，也叫聚簇索引"><a href="#聚集（clustered）索引，也叫聚簇索引" class="headerlink" title="聚集（clustered）索引，也叫聚簇索引"></a>聚集（clustered）索引，也叫聚簇索引</h4><p>定义：数据行的物理顺序与列值（一般是主键的那一列）的逻辑顺序相同，一个表中只能拥有一个聚集索引。<br>如果没定义主键，会选择一个唯一的非空索引代替，如果没有这样的索引，则会隐式定义一个主键作为聚簇索引</p>
+<h4 id="非聚集（unclustered）索引"><a href="#非聚集（unclustered）索引" class="headerlink" title="非聚集（unclustered）索引"></a>非聚集（unclustered）索引</h4><p>定义：该索引中索引的逻辑顺序与磁盘上行的物理存储顺序不同，一个表中可以拥有多个非聚集索引</p>
+<h3 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://mp.weixin.qq.com/s/YMbRJwyjutGMD1KpI_fS0A" target="_blank" rel="noopener">数据库索引，到底是什么做的</a></li>
+</ul>
+<h2 id="数据库的主从复制"><a href="#数据库的主从复制" class="headerlink" title="数据库的主从复制"></a>数据库的主从复制</h2><ul>
+<li>就算MySQL拆成了多个，也必须分出主和从，所有的写操作都必须要在主MySQL 上完成;</li>
+<li>所有的从MySQL的数据都来自于(同步于)主MySQL</li>
+<li>在MySQL主从时，如果一个业务(service中的一个方法)中，如果既有R操作，又有W操作，因为W操作一定要在主MySQL上，所以在一个事务中所有的数据来源都只能来自于一个MySQL<h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><a href="https://mp.weixin.qq.com/s/pP2f7CYbT7ftM0tvk9c4mQ" target="_blank" rel="noopener">MySQL主从延时这么长，要怎么优化</a></li>
+</ul>
+<h2 id="范式设计"><a href="#范式设计" class="headerlink" title="范式设计"></a>范式设计</h2><ul>
+<li>第一范式（1NF）是对关系模式的基本要求，不满足第一范式（1NF）的数据库就不是关系数据库，是指数据库表的每一列都是不可分割的基本数据项，同一列中不能有多个值；</li>
+<li>第二范式（2NF）要求数据库表中的每个实例或行必须可以被惟一地区分。 即各字段和主键之间不存在部分依赖</li>
+<li>第三范式（3NF）要求一个数据库表中不包含已在其它表中已包含的非主关键字信息。即在第二范式的基础上，不存在传递依赖 (不允许有冗余数据)</li>
+</ul>
+<h2 id="拓展-1"><a href="#拓展-1" class="headerlink" title="拓展"></a>拓展</h2><ul>
+<li><a href="https://mp.weixin.qq.com/s/gMQIHuXDSdIdknQnWYJ3IA" target="_blank" rel="noopener">58同城mysql实战</a></li>
+<li><a href="https://mp.weixin.qq.com/s/tmkRAmc1M_Y23ynduBeP3Q" target="_blank" rel="noopener">关于MySQL内核，一定要知道的！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/pWHCieOwAdCrz8cauduWlQ" target="_blank" rel="noopener">关于MySQL，你未必知道的！</a></li>
+<li><a href="https://mp.weixin.qq.com/s/thG591wNnKX8_ICQS3l3HQ" target="_blank" rel="noopener">MySQL冗余数据的三种方案</a></li>
+</ul>
 
         </div>
 
