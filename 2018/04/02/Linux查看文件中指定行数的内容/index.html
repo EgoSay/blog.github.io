@@ -7,7 +7,7 @@
 
 
 
-<title>shell脚本基础 | EgoSay</title>
+<title>Linux查看文件中指定行数的内容 | EgoSay</title>
 
 
 
@@ -176,7 +176,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">shell脚本基础</h1>
+            <h1 class="post-title">Linux查看文件中指定行数的内容</h1>
             
                 <div class="post-meta">
                     
@@ -185,7 +185,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 13, 2018&nbsp;&nbsp;21:36:40</a>
+                        Date: <a href="#">April 2, 2018&nbsp;&nbsp;10:20:17</a>
                         </span>
                     
                     
@@ -201,29 +201,17 @@
         </header>
 
         <div class="post-content">
-            <h2 id="shell脚本基础"><a href="#shell脚本基础" class="headerlink" title="shell脚本基础"></a>shell脚本基础</h2><h3 id="shell脚本调试"><a href="#shell脚本调试" class="headerlink" title="shell脚本调试"></a>shell脚本调试</h3><p>-n，读一遍脚本中的命令但不执行，用于检查脚本中的语法错误<br>-v，一边执行脚本，一边将执行过的脚本命令打印到标准错误输出<br>-x，提供跟踪执行信息，将执行的每一条命令和结果依次打印出来</p>
-<h3 id="shell脚本对文本中无序的一列数字排序"><a href="#shell脚本对文本中无序的一列数字排序" class="headerlink" title="shell脚本对文本中无序的一列数字排序"></a>shell脚本对文本中无序的一列数字排序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># sort -n 190307.txt | awk '&#123;a+=$0;print$0&#125; END &#123;print "sum="a&#125;'</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="shell命令查看文件空行行号"><a href="#shell命令查看文件空行行号" class="headerlink" title="shell命令查看文件空行行号"></a>shell命令查看文件空行行号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># grep -n ^$ filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/[a-zA-Z0-9@#$%^&amp;*]!=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/^$/=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># awk '/^$/&#123;print NR&#125;' filename</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="shell文件夹操作"><a href="#shell文件夹操作" class="headerlink" title="shell文件夹操作"></a>shell文件夹操作</h3><ol>
-<li><p>删除一个文件夹下所有文件但是不删除文件夹</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find . -type f | xargs rm -f</span></span><br></pre></td></tr></table></figure>
+            <h2 id="Linux-查看文件中指定行数的内容"><a href="#Linux-查看文件中指定行数的内容" class="headerlink" title="Linux 查看文件中指定行数的内容"></a>Linux 查看文件中指定行数的内容</h2><h3 id="tail-n-数字-文件名"><a href="#tail-n-数字-文件名" class="headerlink" title="tail -n +/-数字 文件名"></a>tail -n +/-数字 文件名</h3><ol>
+<li><p>tail -n -数字 文件名, 表示查看文件的最后几行，比如查看SpecialVariable.sh的最后5行:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -n -5 SpecialVariable.sh</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>只复制目录的结构，而不复制目录的内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find ~ -type d -exec mkdir -p demo/\&#123;\&#125; \;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查找当前文件夹下所有的文本文件内容中包含有字符”math”的文件名称</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># grep -r "math" /home/chenjiawei/test/shell/ | cut -d ":" -f 1</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>遍历目录及其子目录中的所有文件</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/bash</span><br><span class="line">function read_dir()&#123;</span><br><span class="line">    for file in `ls $1`       #注意此处这是两个反引号，表示运行系统命令</span><br><span class="line">    do</span><br><span class="line">        if [ -d $1&quot;/&quot;$file ]  #注意此处之间一定要加上空格，否则会报错</span><br><span class="line">        then</span><br><span class="line">            read_dir $1&quot;/&quot;$file</span><br><span class="line">        else</span><br><span class="line">            echo $1&quot;/&quot;$file   #在此处处理文件即可</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line">#读取第一个参数</span><br><span class="line">read_dir $1</span><br></pre></td></tr></table></figure>
-
-<p> 执行命令</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh traveDir.sh DIR_NAME</span><br></pre></td></tr></table></figure>
+<li><p>tail -n +数字 文件名，表示查看文件的某一行到最后一行，比如查看SpecialVariable.sh的第3行到最后一行:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -n +3 SpecialVariable.sh</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
+<h3 id="head-n-数字-文件名"><a href="#head-n-数字-文件名" class="headerlink" title="head -n 数字 文件名"></a>head -n 数字 文件名</h3><p>head -n 数字 文件名，表示查看文件前几行的内容，比如查看SpecialVariable.sh的前3行内容:<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">head -n 3 SpecialVariable.sh</span><br></pre></td></tr></table></figure></p>
+<h3 id="sed-n-“开始行，结束行p”-文件名"><a href="#sed-n-“开始行，结束行p”-文件名" class="headerlink" title="sed -n “开始行，结束行p” 文件名"></a>sed -n “开始行，结束行p” 文件名</h3><p>sed -n “开始行，结束行p” 文件名，表示查看文件的开始行到结束行的内容，比如查看5到9行的内容<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -n &quot;5,9p&quot; SpecialVariable.sh</span><br></pre></td></tr></table></figure></p>
 
         </div>
 
@@ -238,7 +226,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2018/05/13/shell脚本基础/">http://cjwdream.top/2018/05/13/shell脚本基础/</a></span>
+                        <span><a href="http://cjwdream.top/2018/04/02/Linux查看文件中指定行数的内容/">http://cjwdream.top/2018/04/02/Linux查看文件中指定行数的内容/</a></span>
                     </p>
                 
                 
@@ -270,10 +258,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2018/10/23/MySQL总结/">MySQL总结</a>
+                <a class="prev" rel="prev" href="/2018/05/13/shell脚本基础/">shell脚本基础</a>
             
             
-            <a class="next" rel="next" href="/2018/04/02/Linux查看文件中指定行数的内容/">Linux查看文件中指定行数的内容</a>
+            <a class="next" rel="next" href="/2018/03/17/shell条件判断中if中的-z到-d的意思/">shell条件判断中if中的-z到-d的意思</a>
             
         </section>
 

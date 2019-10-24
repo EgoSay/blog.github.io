@@ -7,7 +7,7 @@
 
 
 
-<title>shell脚本基础 | EgoSay</title>
+<title>shell条件判断中if中的-z到-d的意思 | EgoSay</title>
 
 
 
@@ -176,7 +176,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">shell脚本基础</h1>
+            <h1 class="post-title">shell条件判断中if中的-z到-d的意思</h1>
             
                 <div class="post-meta">
                     
@@ -185,7 +185,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 13, 2018&nbsp;&nbsp;21:36:40</a>
+                        Date: <a href="#">March 17, 2018&nbsp;&nbsp;14:31:38</a>
                         </span>
                     
                     
@@ -201,29 +201,35 @@
         </header>
 
         <div class="post-content">
-            <h2 id="shell脚本基础"><a href="#shell脚本基础" class="headerlink" title="shell脚本基础"></a>shell脚本基础</h2><h3 id="shell脚本调试"><a href="#shell脚本调试" class="headerlink" title="shell脚本调试"></a>shell脚本调试</h3><p>-n，读一遍脚本中的命令但不执行，用于检查脚本中的语法错误<br>-v，一边执行脚本，一边将执行过的脚本命令打印到标准错误输出<br>-x，提供跟踪执行信息，将执行的每一条命令和结果依次打印出来</p>
-<h3 id="shell脚本对文本中无序的一列数字排序"><a href="#shell脚本对文本中无序的一列数字排序" class="headerlink" title="shell脚本对文本中无序的一列数字排序"></a>shell脚本对文本中无序的一列数字排序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># sort -n 190307.txt | awk '&#123;a+=$0;print$0&#125; END &#123;print "sum="a&#125;'</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="shell命令查看文件空行行号"><a href="#shell命令查看文件空行行号" class="headerlink" title="shell命令查看文件空行行号"></a>shell命令查看文件空行行号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># grep -n ^$ filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/[a-zA-Z0-9@#$%^&amp;*]!=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/^$/=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># awk '/^$/&#123;print NR&#125;' filename</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="shell文件夹操作"><a href="#shell文件夹操作" class="headerlink" title="shell文件夹操作"></a>shell文件夹操作</h3><ol>
-<li><p>删除一个文件夹下所有文件但是不删除文件夹</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find . -type f | xargs rm -f</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>只复制目录的结构，而不复制目录的内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find ~ -type d -exec mkdir -p demo/\&#123;\&#125; \;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查找当前文件夹下所有的文本文件内容中包含有字符”math”的文件名称</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># grep -r "math" /home/chenjiawei/test/shell/ | cut -d ":" -f 1</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>遍历目录及其子目录中的所有文件</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/bash</span><br><span class="line">function read_dir()&#123;</span><br><span class="line">    for file in `ls $1`       #注意此处这是两个反引号，表示运行系统命令</span><br><span class="line">    do</span><br><span class="line">        if [ -d $1&quot;/&quot;$file ]  #注意此处之间一定要加上空格，否则会报错</span><br><span class="line">        then</span><br><span class="line">            read_dir $1&quot;/&quot;$file</span><br><span class="line">        else</span><br><span class="line">            echo $1&quot;/&quot;$file   #在此处处理文件即可</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line">#读取第一个参数</span><br><span class="line">read_dir $1</span><br></pre></td></tr></table></figure>
-
-<p> 执行命令</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh traveDir.sh DIR_NAME</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
+            <h2 id="shell条件判断中if中的-z到-d的意思"><a href="#shell条件判断中if中的-z到-d的意思" class="headerlink" title="shell条件判断中if中的-z到-d的意思"></a>shell条件判断中if中的-z到-d的意思</h2><ul>
+<li><code>[ -a FILE ]</code> 如果 FILE 存在则为真。</li>
+<li><code>[ -b FILE ]</code> 如果 FILE 存在且是一个块特殊文件则为真。</li>
+<li><code>[ -c FILE ]</code> 如果 FILE 存在且是一个字特殊文件则为真。</li>
+<li><code>[ -d FILE ]</code> 如果 FILE 存在且是一个目录则为真。</li>
+<li><code>[ -e FILE ]</code> 如果 FILE 存在则为真。</li>
+<li><code>[ -f FILE ]</code> 如果 FILE 存在且是一个普通文件则为真。</li>
+<li><code>[ -g FILE ]</code> 如果 FILE 存在且已经设置了SGID则为真。</li>
+<li><code>[ -h FILE ]</code> 如果 FILE 存在且是一个符号连接则为真。</li>
+<li><code>[ -k FILE ]</code> 如果 FILE 存在且已经设置了粘制位则为真。</li>
+<li><code>[ -p FILE ]</code> 如果 FILE 存在且是一个名字管道(F如果O)则为真。</li>
+<li><code>[ -r FILE ]</code> 如果 FILE 存在且是可读的则为真。</li>
+<li><code>[ -s FILE ]</code> 如果 FILE 存在且大小不为0则为真。</li>
+<li><code>[ -t FD ]</code>  如果文件描述符 FD 打开且指向一个终端则为真。</li>
+<li><code>[ -u FILE ]</code> 如果 FILE 存在且设置了SUID (set user ID)则为真。</li>
+<li><code>[ -w FILE ]</code> 如果 FILE 如果 FILE 存在且是可写的则为真。</li>
+<li><code>[ -x FILE ]</code> 如果 FILE 存在且是可执行的则为真。</li>
+<li><code>[ -O FILE ]</code> 如果 FILE 存在且属有效用户ID则为真。</li>
+<li><code>[ -G FILE ]</code> 如果 FILE 存在且属有效用户组则为真。</li>
+<li><code>[ -L FILE ]</code> 如果 FILE 存在且是一个符号连接则为真。</li>
+<li><code>[ -N FILE ]</code> 如果 FILE 存在 and has been mod如果ied since it was last read则为真。</li>
+<li><code>[ -S FILE ]</code> 如果 FILE 存在且是一个套接字则为真。</li>
+<li><code>[ FILE1 -nt FILE2 ]</code> 如果 FILE1 存在但是 FILE2 不存在则为真。</li>
+<li><code>[ FILE1 -ot FILE2 ]</code> 如果 FILE1 比 FILE2 要老, 或者 FILE2 存在且 FILE1 不存在则为真。</li>
+<li><code>[ FILE1 -ef FILE2 ]</code> 如果 FILE1 和 FILE2 指向相同的设备和节点号则为真。</li>
+<li><code>[ -o OPTIONNAME ]</code> 如果 shell选项 “OPTIONNAME” 开启则为真。</li>
+<li><code>[ -z STRING ]</code> “STRING” 的长度为零则为真。</li>
+<li><code>[ -n STRING ] or [ STRING ]</code> “STRING” 的长度为非零 non-zero则为真</li>
+</ul>
 
         </div>
 
@@ -238,7 +244,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2018/05/13/shell脚本基础/">http://cjwdream.top/2018/05/13/shell脚本基础/</a></span>
+                        <span><a href="http://cjwdream.top/2018/03/17/shell条件判断中if中的-z到-d的意思/">http://cjwdream.top/2018/03/17/shell条件判断中if中的-z到-d的意思/</a></span>
                     </p>
                 
                 
@@ -257,7 +263,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Linux/"># Linux</a>
+                        <a href="/tags/shell/"># shell</a>
                     
                         
                 </span>
@@ -270,10 +276,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2018/10/23/MySQL总结/">MySQL总结</a>
+                <a class="prev" rel="prev" href="/2018/04/02/Linux查看文件中指定行数的内容/">Linux查看文件中指定行数的内容</a>
             
             
-            <a class="next" rel="next" href="/2018/04/02/Linux查看文件中指定行数的内容/">Linux查看文件中指定行数的内容</a>
+            <a class="next" rel="next" href="/2018/02/22/shell变量/">shell变量</a>
             
         </section>
 
