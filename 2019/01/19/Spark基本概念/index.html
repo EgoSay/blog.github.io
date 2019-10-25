@@ -211,9 +211,9 @@
 <h3 id="Stage"><a href="#Stage" class="headerlink" title="Stage"></a>Stage</h3><p>Job拆分的执行阶段, 一个 <code>Job</code>可能被划分为一到多个 <code>Stage</code>, <code>Stage</code>的划分是根据<code>shuffle</code>依赖进行的</p>
 <h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><p>具体执行任务, Spark中最细的执行单位, <code>Stage</code>继续往下分解就是<code>Task</code><br>分为<code>ShuffleMapTask</code> 和 <code>ResultTask</code>两种, 类比于 <code>Hadoop</code>中的<code>Map</code> 和 <code>Reduce</code></p><p><br><code>RDD</code>在计算的时候，每个分区都会起一个task，所以rdd的分区数目决定了总的的task数目。每个Task执行的结果就是生成了目标RDD的一个partiton。在Map阶段partition数目保持不变。在Reduce阶段，RDD的聚合会触发shuffle操作，聚合后的RDD的partition数目跟具体操作有关，例如repartition操作会聚合成指定分区数。coalesce算子同样可以改变partition的数目，不过只能减少不能增加。repartition和coalesce算子的区别在于前者会引发shuffle，后者则不会</p>
 <h3 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h3><p>数据分区, 即一个<code>RDD</code>的数据可以划分为多少个分区</p>
-<h3 id="NarrowDependcy"><a href="#NarrowDependcy" class="headerlink" title="NarrowDependcy"></a>NarrowDependcy</h3><p>窄依赖, 即<code>子RDD</code>依赖于<code>父RDD</code>中固定的<code>Partion</code>分区, 分为 <code>OneToOneDependency</code> 和 <code>RangeDependency</code>, 比如map、union等操作</p>
-<h3 id="ShuffleDependcy"><a href="#ShuffleDependcy" class="headerlink" title="ShuffleDependcy"></a>ShuffleDependcy</h3><p><code>shuffle</code>依赖, 也称为宽依赖, 即<code>子RDD</code>对<code>父RDD</code>的所有<code>Partition</code>都有依赖, 比如<code>groupByKey</code>等操作</p>
-<h3 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h3><p> 有向无环图, 反映<code>RDD</code>之间的依赖关系</p>
+<h3 id="NarrowDependcy"><a href="#NarrowDependcy" class="headerlink" title="NarrowDependcy"></a>NarrowDependcy</h3><p>窄依赖, 分为 <code>OneToOneDependency</code> 和 <code>RangeDependency</code>, 比如map、union等操作</p>
+<h3 id="ShuffleDependcy"><a href="#ShuffleDependcy" class="headerlink" title="ShuffleDependcy"></a>ShuffleDependcy</h3><p><code>shuffle</code>依赖, 也称为宽依赖, 比如<code>groupByKey</code>等操作</p>
+<h3 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h3><p>有向无环图, 反映<code>RDD</code>之间的依赖关系</p>
 
         </div>
 
