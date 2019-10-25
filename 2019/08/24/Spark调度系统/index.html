@@ -206,12 +206,6 @@
 <h3 id="split-graph-into-stage-of-tasks"><a href="#split-graph-into-stage-of-tasks" class="headerlink" title="split graph into stage of tasks"></a><code>split graph into stage of tasks</code></h3><p><code>DAGScheduler</code>负责接收由RDD构成的DAG，将一系列RDD划分到不同的<code>Stage</code>。根据 Stage的不同类型(<code>ResultStage和 ShuffleMapStage</code>)， 给 Stage 中未完成的 <code>Partition</code> 创建不同类型的Task(<code>ResultStage和 ShuffleMapTask</code>)。 每个Stage将因为未完成Partition的多少, 创建零到多个Task。DAGScheduler最后将每个Stage中的Task以任务集合(<code>TaskSet</code>)的形式提交给<code>TaskSchduler</code>继续处理</p>
 <h3 id="launch-tasks-via-cluster-manager"><a href="#launch-tasks-via-cluster-manager" class="headerlink" title="launch tasks via cluster manager"></a><code>launch tasks via cluster manager</code></h3><p>使用集群管理器(<code>cluster manager</code>)分配资源与任务调度, 对于失败的任务还会有一定的重试与容错机制。<code>TaskScheduler</code>负责从<code>DAGScheduler</code>接收<code>TaskSet</code>, 创建<code>TaskSetManager</code>对TaskSet进行管理，并将此TaskSetManager添加到<code>调度池</code>中, 最后将对Task的调度交给后端接口(<code>SchedulerBackend</code>)处理。SchedulerBackend首先申请TaskSheduler，安装Task调度算法(<code>FIFO和FAIR</code>)，对调度池中所有TaskSetManager进行排序，然后对TaskSet按照最大本地性原则分配资源，最后在各个分配的节点上运行TaskSet中的Task</p>
 <h3 id="execute-tasks"><a href="#execute-tasks" class="headerlink" title="execute tasks"></a><code>execute tasks</code></h3><p>执行任务，并将任务中间结果和最终结果存入存储体系</p>
-<h2 id="RDD"><a href="#RDD" class="headerlink" title="RDD"></a>RDD</h2><p>调度系统操作的主要对象, 基本的数据结构</p>
-<h3 id="为什么需要RDD"><a href="#为什么需要RDD" class="headerlink" title="为什么需要RDD"></a>为什么需要RDD</h3><p>从以下四个点解释</p>
-<h4 id="数据处理模型"><a href="#数据处理模型" class="headerlink" title="数据处理模型"></a>数据处理模型</h4><p>通常数据处理的模型包括迭代计算、关系查询、MapReduce、流式处理等。Hadoop采用MapReduce模型，Storm采用流式处理模型，而Spark借助RDD实现了以上所有模型</p>
-<h4 id="依赖划分原则"><a href="#依赖划分原则" class="headerlink" title="依赖划分原则"></a>依赖划分原则</h4><p>一个RDD包含一个或多个分区, 每个分区实际上是一个数据集合的片段, RDD之间通过依赖关系串联起来构建成DAG.</p><p><br>(:依赖划分为<code>NarrowDependcy和ShuffleDependcy</code>两种，参考：<a href="https://www.jianshu.com/p/5c2301dfa360" target="_blank" rel="noopener">Spark宽依赖与窄依赖</a></p>
-<h4 id="数据处理效率"><a href="#数据处理效率" class="headerlink" title="数据处理效率"></a>数据处理效率</h4><p><code>ShuffleDependcy</code>所依赖的上游RDD的计算过程允许在多个节点并发执行, 数据量大的时候可以通过适当调整分区数量，能有效提高Spark的数据处理效率</p>
-<h4 id="容错处理"><a href="#容错处理" class="headerlink" title="容错处理"></a>容错处理</h4><p>传统关系型数据库往往采用日志记录的方式来容灾，Hadoop通过将数据备份到其他机器容灾。Spark则通过RDD依赖组成的DAG直接重新调度计算失败的Task，成功的Task可以从<code>CheckPoint</code>中读取。<br>(:在流式计算中，Spark需要通过记录日志和CheckPoint进行数据恢复</p>
 
         </div>
 
