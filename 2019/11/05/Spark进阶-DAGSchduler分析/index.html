@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Spark进阶-DAGSchduler分析 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Spark进阶-DAGSchduler分析</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 5, 2019&nbsp;&nbsp;17:24:49</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="DAGScheduler分析"><a href="#DAGScheduler分析" class="headerlink" title="DAGScheduler分析"></a>DAGScheduler分析</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><code>DAGScheduler</code>通过计算将DAG中一系列RDD划分到不同的Stage，然后构建这些Stage之间的关系，最后将每个Stage按照<code>Partition</code>切分为多个Task，并以Task集合(即<code>TaskSet</code>)的形式提交给底层的<code>TaskScheduler</code><br>DAGScheduler依赖的一些组件: <code>DAGSchedulerEventProcessLoop</code>, <code>JobListener</code>及<code>ActiveJob</code></p>
+<h3 id="JobListener与JobWaiter"><a href="#JobListener与JobWaiter" class="headerlink" title="JobListener与JobWaiter"></a><code>JobListener与JobWaiter</code></h3><p><code>JobListener</code>用于监听作业中每个Task执行成功或失败，<code>JobWaiter</code>继承实现了JobListener, 用于等待整个Job执行完毕，然后调用给定的处理函数对返回结果进行处理并最终确定作业的成功或失败</p>
+<p>源码实现的一些思考：</p>
+<ul>
+<li>通过Scala的异步编程 <code>Future/Promise</code> 实现了任务状态的检测监听, 这块还不太理解，等后面系统学习一下Scala再回顾一下</li>
+<li>JobWaiter中的定义了一个<code>cancel()</code>方法取消Job执行实际上调用了 DAGScheduler 的<code>cancelJob()</code>方法</li>
+<li>JobWaiter 中继承 JobListener 实现的taskSucceeded()方法中为了保证线程安全用到了<code>synchronized</code>给对象加锁, 联想到RDD中的<code>stateLock</code>，也用到了synchronized加锁</li>
+</ul>
+<h3 id="ActiveJob"><a href="#ActiveJob" class="headerlink" title="ActiveJob"></a><code>ActiveJob</code></h3><p><code>ActiveJob</code>表示已经激活的Job， 即DAGScheduler接收处理的Job</p>
+<h3 id="DAGSchedulerEventProcessLoop"><a href="#DAGSchedulerEventProcessLoop" class="headerlink" title="DAGSchedulerEventProcessLoop"></a><code>DAGSchedulerEventProcessLoop</code></h3><p>  <code>DAGSchedulerEventProcessLoop</code>是<code>DAGScheduler</code>内部的事件循环处理器, 实现原理类似于LiveListenerBus</p>
+<h3 id="DAGScheduler与Job的提交"><a href="#DAGScheduler与Job的提交" class="headerlink" title="DAGScheduler与Job的提交"></a>DAGScheduler与Job的提交</h3><p>简要流程概括, 这里以执行count算子为例:</p>
+<ul>
+<li><p>首先执行count算子会创建调用SparkContext的runJob()方法</p>
+  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>(): <span class="type">Long</span> = sc.runJob(<span class="keyword">this</span>, <span class="type">Utils</span>.getIteratorSize _).sum</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后接着传递调用DAGScheduler的runJob()方法</p>
+  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">runJob</span></span>[<span class="type">T</span>, <span class="type">U</span>: <span class="type">ClassTag</span>](...): <span class="type">Unit</span> = &#123;</span><br><span class="line">    ....</span><br><span class="line">    dagScheduler.runJob(rdd, cleanedFunc, partitions, callSite, resultHandler, localProperties.get)</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DAGScheduler通过执行submitJob()方法提交Job</p>
+  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">runJob</span></span>[<span class="type">T</span>, <span class="type">U</span>](...): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> start = <span class="type">System</span>.nanoTime</span><br><span class="line">    <span class="comment">// 执行submitJob()方法</span></span><br><span class="line">    <span class="keyword">val</span> waiter = submitJob(rdd, func, partitions, callSite, resultHandler, properties)</span><br><span class="line">    <span class="type">ThreadUtils</span>.awaitReady(waiter.completionFuture, <span class="type">Duration</span>.<span class="type">Inf</span>)</span><br><span class="line">    waiter.completionFuture.value.get <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> scala.util.<span class="type">Success</span>(_) =&gt;</span><br><span class="line">        logInfo(<span class="string">"Job %d finished: %s, took %f s"</span>.format(...))</span><br><span class="line">      <span class="keyword">case</span> scala.util.<span class="type">Failure</span>(exception) =&gt;</span><br><span class="line">        logInfo(<span class="string">"Job %d failed: %s, took %f s"</span>.format(...))</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>submitJob()生成一个JobWaiter的实例监听Job的执行情况, 向DAGSchedulerEventProcessLoop发送JobSubmitted事件</p>
+  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> waiter = <span class="keyword">new</span> <span class="type">JobWaiter</span>(<span class="keyword">this</span>, jobId, partitions.size, resultHandler)</span><br><span class="line">eventProcessLoop.post(<span class="type">JobSubmitted</span>(....))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当eventProcessLoop对象投递了JobSubmitted事件之后，对象内的<code>eventThread</code>线程实例对事件进行处理，不断从事件队列中取出事件，调用<code>onReceive</code>函数处理事件，当匹配到JobSubmitted事件后，调用DAGScheduler的<code>handleJobSubmitted</code>函数并传入jobid、rdd等参数来处理Job</p>
+</li>
+<li><p>handleJobSubmitted执行过程</p>
+  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>[scheduler] <span class="function"><span class="keyword">def</span> <span class="title">handleJobSubmitted</span></span>(...) &#123;</span><br><span class="line">    <span class="keyword">var</span> finalStage: <span class="type">ResultStage</span> = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      finalStage = createResultStage(finalRDD, func, partitions, jobId, callSite)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        ....</span><br><span class="line">    &#125;</span><br><span class="line">    .....</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> job = <span class="keyword">new</span> <span class="type">ActiveJob</span>(jobId, finalStage, callSite, listener, properties)</span><br><span class="line"></span><br><span class="line">    .....</span><br><span class="line"></span><br><span class="line">    jobIdToActiveJob(jobId) = job</span><br><span class="line">    activeJobs += job</span><br><span class="line">    finalStage.setActiveJob(job)</span><br><span class="line">    <span class="keyword">val</span> stageIds = jobIdToStageIds(jobId).toArray</span><br><span class="line">    <span class="keyword">val</span> stageInfos = stageIds.flatMap(id =&gt; stageIdToStage.get(id).map(_.latestInfo))</span><br><span class="line">    listenerBus.post(</span><br><span class="line">      <span class="type">SparkListenerJobStart</span>(job.jobId, jobSubmissionTime, stageInfos, properties))</span><br><span class="line">    submitStage(finalStage)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>  由源码分析可以概括执行过程如下</p>
+<ol>
+<li><p>首先调用createResultStage方法创建ResultStage, <strong>这里就开始了Stage的构建过程</strong>， 详见下节Stage的构建过程</p>
+</li>
+<li><p>创建ActiveJob</p>
+</li>
+<li><p>将JobId与刚创建的ActiveJob的对应关系放入jobIdToActiveJob中</p>
+</li>
+<li><p>将刚创建的ActiveJob放入activeJobs集合中</p>
+</li>
+<li><p>使ResultStage的_activeJob属性持有刚创建的ActiveJob</p>
+</li>
+<li><p>获取当前Job的所有Stage对应的StageInfo(即数组stageInfos)</p>
+</li>
+<li><p>向listenerBus(LiveListenerBus)投递SparkListenerJobStart事件，进而引发所有关注此事件的监听器执行相应的操作</p>
+</li>
+<li><p>调用submitStage方法提交Stage,所有parent Stage都计算完成，才能提交<br>submitStage三种调用逻辑：<br> <code>submitMissingTasks(stage,jobId.get)</code>：如果所有parent stage已经完成，则提交stage所包含的task</p>
+<p> <code>submitStage(parent)</code>：有parent stage未完成，则递归提交</p>
+<p> <code>abortStage</code>：无效stage，直接停止</p>
+</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li>DAGScheduler完成任务提交后，在判断哪些Partition需要计算，就会为Partition生成Task，然后封装成TaskSet，提交至TaskScheduler。等待TaskScheduler最终向集群提交这些Task，监听这些Task的状态</li>
+</ul>
+<h3 id="构建Stage"><a href="#构建Stage" class="headerlink" title="构建Stage"></a>构建Stage</h3><p>前面我们看到handleJobSubmitted执行过程中调用createResultStage方法创建ResultStage</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">createResultStage</span></span>(....): <span class="type">ResultStage</span> = &#123;</span><br><span class="line">    checkBarrierStageWithDynamicAllocation(rdd)</span><br><span class="line">    checkBarrierStageWithNumSlots(rdd)</span><br><span class="line">    checkBarrierStageWithRDDChainPattern(rdd, partitions.toSet.size)</span><br><span class="line">    <span class="keyword">val</span> parents = getOrCreateParentStages(rdd, jobId)</span><br><span class="line">    <span class="keyword">val</span> id = nextStageId.getAndIncrement()</span><br><span class="line">    <span class="keyword">val</span> stage = <span class="keyword">new</span> <span class="type">ResultStage</span>(id, rdd, func, partitions, parents, jobId, callSite)</span><br><span class="line">    stageIdToStage(id) = stage</span><br><span class="line">    updateJobIdStageIdMaps(jobId, stage)</span><br><span class="line">    stage</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据源码分析，详细的处理步骤如下:</p>
+<ul>
+<li><p>调用<code>getOrCreateParentStages</code>方法获取所有父Stage的列表，父Stage主要是宽依赖对应的Stage</p>
+</li>
+<li><p>getOrCreateParentStages处理步骤：</p>
+  <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">getOrCreateParentStages</span></span>(rdd: <span class="type">RDD</span>[_], firstJobId: <span class="type">Int</span>): <span class="type">List</span>[<span class="type">Stage</span>] = &#123;</span><br><span class="line">    getShuffleDependencies(rdd).map &#123; shuffleDep =&gt;</span><br><span class="line">      getOrCreateShuffleMapStage(shuffleDep, firstJobId)</span><br><span class="line">    &#125;.toList</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>调用DAGScheduler的<code>getShuffleDependencies</code>方法获取当前给到的RDD的所有ShuffleDependency的序列, 逐个访问其依赖的非Shuffle的RDD，获取所有非Shuffle的RDD的ShuffleDependency依赖</li>
+<li>调用DAGScheduler的<code>getOrCreateShuffleMapStage</code>方法为每一个ShuffleDependency获取或者创建对应的ShuffleMapStage， 并返回得到的ShuffleMapStage列表</li>
+</ol>
+</li>
+<li><p>getOrCreateShuffleMapStage方法处理步骤：</p>
+</li>
+</ul>
+<ul>
+<li>生成Stage的身份标识id， 并创建ResultStage</li>
+<li>将ResultStage注册到stageIdToStage中</li>
+<li>调用updateJobIdStageIdMaps方法更新Job的身份标识与ResultStage及其所有祖先的映射关系</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://www.jianshu.com/p/ad9610bcb4d0" target="_blank" rel="noopener">Spark Scheduler模块详解-DAGScheduler实现</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/11/05/Spark进阶-DAGSchduler分析/">http://cjwdream.top/2019/11/05/Spark进阶-DAGSchduler分析/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2019/10/13/读书笔记-《自卑与超越》/">读书笔记-《自卑与超越》</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
