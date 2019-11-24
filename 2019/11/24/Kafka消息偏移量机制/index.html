@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Kafka消息偏移量机制 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Kafka消息偏移量机制</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 24, 2019&nbsp;&nbsp;19:54:26</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Kafka消息偏移量机制"><a href="#Kafka消息偏移量机制" class="headerlink" title="Kafka消息偏移量机制"></a>Kafka消息偏移量机制</h1><h2 id="消费者提交偏移量"><a href="#消费者提交偏移量" class="headerlink" title="消费者提交偏移量"></a>消费者提交偏移量</h2><p>消费者往一个叫做_consumer_offset的特殊主题发送消息，消息里包含每个分区的偏移量。<br>如果消费者一直处于运行状态，那么偏移量就没有什么用处。不过，如果消费者发生崩溃或者有新 的消费者加入群组，就会触发<code>再均衡</code>，完成<code>再均衡</code>之后，每个消费者可能分配到新的分区，而不是之前处理的那个。为了能够继续之前的工作，消费者需要读取每个分区最后一次提交的偏移量，然后从偏移量指定的地方继续处理, 这个时候就可能会因为提交的偏移量与客户端处理的偏移量之间不一致产生的重复消费和消息丢失情况</p>
+<h3 id="重复消费"><a href="#重复消费" class="headerlink" title="重复消费"></a>重复消费</h3><p>如果提交的偏移量小于客户端处理的最后一个消息的偏移量，那么处于两个偏移量之间的消息就会被重复处理<br><img src="media/15737892388535/15737996978191.jpg" alt="-w686"></p>
+<h3 id="消息丢失"><a href="#消息丢失" class="headerlink" title="消息丢失"></a>消息丢失</h3><p>如果提交的偏移量大于客户端处理的最后一个消息的偏移量，那么处于两者之间的消息就会丢失<br><img src="media/15737892388535/15737997166819.jpg" alt="-w691"></p>
+<h3 id="提交偏移量的方式"><a href="#提交偏移量的方式" class="headerlink" title="提交偏移量的方式"></a>提交偏移量的方式</h3><h4 id="自动提交-at-most-once"><a href="#自动提交-at-most-once" class="headerlink" title="自动提交(at most once)"></a>自动提交(at most once)</h4><p>enable.auto.commit被设为true, 消费者会自动提交偏移量，提交时间间隔由auto.commit.interval.ms控制, 默认为5s<br>最简单的提交方式，但是不能清楚的知道消息处理的情况，容易产生消息重复消费和消息丢失的情况</p>
+<h4 id="主动提交当前偏移量-at-least-once"><a href="#主动提交当前偏移量-at-least-once" class="headerlink" title="主动提交当前偏移量(at least once)"></a>主动提交当前偏移量(at least once)</h4><p>利用KafkaConsumer API可以在必要的时候主动提交当前偏移量，而不是基于时间间隔</p>
+<ul>
+<li><p>commitSync()<br>同步提交, 将会提交由 poll() 返回的最新偏移量, 可以保证可靠性，但因为提交时程序会处于阻塞状态，限制吞吐量</p>
+</li>
+<li><p>commitAsync()<br>异步提交, 不保证消息可靠，支持自定义回调处理，用于记录提交错误或生成度量指标</p>
+</li>
+</ul>
+<h4 id="提交特定的偏移量"><a href="#提交特定的偏移量" class="headerlink" title="提交特定的偏移量"></a>提交特定的偏移量</h4><p>提交偏移量的频率与处理消息批次的频率是一样的，就是说通常是处理完一批次消息提交一次偏移量，但有时候比如 poll() 方法返回一大批数据，为了避免因为再均衡(详见下节说明)引起的重复处理整批消息，我们想要在批次中间提交偏移量，这时可以通过调用commitSync()/commitAsync()方法时传入一个存有希望提交的分区和偏移量的map实现，但是因为消费者可能不只读取一个分区，你需要跟踪所有分区的偏移量，所以在这个层面上控制偏移量的提交会让代码变复杂</p>
+<h4 id="从特定偏移量处开始处理记录"><a href="#从特定偏移量处开始处理记录" class="headerlink" title="从特定偏移量处开始处理记录"></a>从特定偏移量处开始处理记录</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获得主题 topic 所有可用分区 partition 的信息</span></span><br><span class="line">partitionInfos = kafkaConsumer.partitionsFor(topic);</span><br><span class="line">Collection&lt;TopicPartition&gt; partitions = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (partitionInfos != <span class="keyword">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费者为自己分配分区, 这里示例是遍历相当于消费全部分区, 实际情况可以添加逻辑分配特定分区</span></span><br><span class="line">    partitionInfos.forEach( partitionInfo -&gt; &#123;</span><br><span class="line">        partitions.add(<span class="keyword">new</span> TopicPartition(partitionInfo.topic(), partitionInfo.partition()));``</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    kafkaConsumer.assign(partitions);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ConsumerCommitOffset.commitOffset(kafkaConsumer);</span><br></pre></td></tr></table></figure>
+
+<h2 id="再均衡"><a href="#再均衡" class="headerlink" title="再均衡"></a>再均衡</h2><h3 id="Kafka消费模式"><a href="#Kafka消费模式" class="headerlink" title="Kafka消费模式"></a>Kafka消费模式</h3><p>从kafka消费消息，kafka客户端提供两种模式: 分区消费，分组消费</p>
+<h3 id="消费者数目跟分区数目的关系"><a href="#消费者数目跟分区数目的关系" class="headerlink" title="消费者数目跟分区数目的关系"></a>消费者数目跟分区数目的关系</h3><ul>
+<li>一个消费者可以消费一个到全部分区数据</li>
+<li>分组消费，同一个group内所有消费者消费一份完整的数据，此时一个分区数据只能被一个消费者消费，而一个消费者可以消费多个分区数据</li>
+<li>同一个消费组内，消费者数目大于分区数目后，消费者会有空余=分区数-消费者数，这个时候可以选择新增group</li>
+</ul>
+<h3 id="分组消费的再平衡策略"><a href="#分组消费的再平衡策略" class="headerlink" title="分组消费的再平衡策略"></a>分组消费的再平衡策略</h3><p>我们知道一个group下的消费者共同消费主题的分区数据，一个新的消费者加入群组时，它读取的是原本由其他消费者读取的消息。当一个消费者被关闭或发生崩溃时，它就离开群组，原本由它读取的分区将由群组里的其他消费者来读取。还有就是可能主题发送了变化，添加了新分区，也会发生分区重分配。</p>
+<p>以上几种情况，分区的所有权从一个消费者转移到了另一个消费者, 就是<code>分区再均衡</code>，它为消费者群组带来了高可用性和伸缩性，缺陷在于在再均衡期间，消费者无法读取消息，造成整个群组一小段时间的不可用</p>
+<p>通过设置参数 <code>partition.assignment.strategy</code>, 选择分配策略，有两种分配策略：</p>
+<h4 id="RangeAssignor"><a href="#RangeAssignor" class="headerlink" title="RangeAssignor"></a>RangeAssignor</h4><p>把主题的若干个连续的分区分配给消费者, 默认是这种<br>假设消费者 C1 和消费者 C2 同时订阅了主题 T1 和主题 T2，并且每个主题有 3 个分区。那么消费者 C1 有可能分配到这两个主题的分区 0 和分区 1，而消费者 C2 分配到这两个主题的分区 2</p>
+<h4 id="RoundRobinAssignor"><a href="#RoundRobinAssignor" class="headerlink" title="RoundRobinAssignor"></a>RoundRobinAssignor</h4><p>把主题的所有分区逐个分配给消费者<br>如果使用 RoundRobin 策略来给消费者 C1和消费者 C2 分配分区，那么消费者 C1 将分到主题 T1 的分区 0 和分区 2 以及主题 T2的分区 1，消费者 C2 将分配到主题 T1 的分区 1 以及主题 T2 的分区 0 和分区 2。一般来说， 如果所有消费者都订阅相同的主题（这种情况很常见）， RoundRobin 策略会给所有消费者分配相同数量的分区（或最多就差一个分区）</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul>
+<li><a href="https://cloud.tencent.com/developer/article/1032490" target="_blank" rel="noopener">Kafka源码系列之分组消费的再平衡策略</a></li>
+</ul>
+<h3 id="分区心跳机制"><a href="#分区心跳机制" class="headerlink" title="分区心跳机制"></a>分区心跳机制</h3><p>消费者依赖于心跳机制向 GroupCoordinator 报活，发送心跳来维持它们和群组的从属关系以及它们对分区的所有权关系<br>具体参考：<a href="https://www.zhenchao.org/2019/06/25/kafka/kafka-group-coordinator/" target="_blank" rel="noopener">Kafka 源码解析：Group 协调管理机制</a></p>
+<h3 id="再均衡监听器"><a href="#再均衡监听器" class="headerlink" title="再均衡监听器"></a>再均衡监听器</h3><p>在提交偏移量, 消费者在退出和进行分区再均衡之前，会做一些清理工作， 我们可以通过定义监听器的方法做一些特殊的逻辑处理, 比如处理缓冲区记录, 进行数据库连接操作保存信息(比如利用<code>Mysql</code>存储offset进行手动维护)等</p>
+<p>实现很简单，在订阅消费主题时传入一个再均衡监听器实例就行(可以自己实现接口)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">consumer.subscribe(Collections.singletonList(topic), <span class="keyword">new</span> ConsumerRebalanceListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPartitionsRevoked</span><span class="params">(Collection&lt;TopicPartition&gt; collection)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 在再均衡开始之前和消费者停止读取消息之后被调用</span></span><br><span class="line">      <span class="comment">// ... 自己实现处理逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPartitionsAssigned</span><span class="params">(Collection&lt;TopicPartition&gt; collection)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 在重新分配分区之后和消费者开始读取消息之前被调用</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/11/24/Kafka消息偏移量机制/">http://cjwdream.top/2019/11/24/Kafka消息偏移量机制/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Kafka/"># Kafka</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2019/11/18/Kafka基本概念/">Kafka基础</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
