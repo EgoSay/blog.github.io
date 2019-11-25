@@ -203,8 +203,8 @@
 
         <div class="post-content">
             <h1 id="Kafka消息偏移量机制"><a href="#Kafka消息偏移量机制" class="headerlink" title="Kafka消息偏移量机制"></a>Kafka消息偏移量机制</h1><h2 id="消费者提交偏移量"><a href="#消费者提交偏移量" class="headerlink" title="消费者提交偏移量"></a>消费者提交偏移量</h2><p>消费者往一个叫做_consumer_offset的特殊主题发送消息，消息里包含每个分区的偏移量。<br>如果消费者一直处于运行状态，那么偏移量就没有什么用处。不过，如果消费者发生崩溃或者有新 的消费者加入群组，就会触发<code>再均衡</code>，完成<code>再均衡</code>之后，每个消费者可能分配到新的分区，而不是之前处理的那个。为了能够继续之前的工作，消费者需要读取每个分区最后一次提交的偏移量，然后从偏移量指定的地方继续处理, 这个时候就可能会因为提交的偏移量与客户端处理的偏移量之间不一致产生的重复消费和消息丢失情况</p>
-<h3 id="重复消费"><a href="#重复消费" class="headerlink" title="重复消费"></a>重复消费</h3><p>如果提交的偏移量小于客户端处理的最后一个消息的偏移量，那么处于两个偏移量之间的消息就会被重复处理<br><img src="media/15737892388535/15737996978191.jpg" alt="-w686"></p>
-<h3 id="消息丢失"><a href="#消息丢失" class="headerlink" title="消息丢失"></a>消息丢失</h3><p>如果提交的偏移量大于客户端处理的最后一个消息的偏移量，那么处于两者之间的消息就会丢失<br><img src="media/15737892388535/15737997166819.jpg" alt="-w691"></p>
+<h3 id="重复消费"><a href="#重复消费" class="headerlink" title="重复消费"></a>重复消费</h3><p>如果提交的偏移量小于客户端处理的最后一个消息的偏移量，那么处于两个偏移量之间的消息就会被重复处理<br><img src="https://cjwdream.top/image/kafka1.jpg" alt="-w686"></p>
+<h3 id="消息丢失"><a href="#消息丢失" class="headerlink" title="消息丢失"></a>消息丢失</h3><p>如果提交的偏移量大于客户端处理的最后一个消息的偏移量，那么处于两者之间的消息就会丢失<br><img src="https://cjwdream.top/image/kafka2.jpg" alt="-w691"></p>
 <h3 id="提交偏移量的方式"><a href="#提交偏移量的方式" class="headerlink" title="提交偏移量的方式"></a>提交偏移量的方式</h3><h4 id="自动提交-at-most-once"><a href="#自动提交-at-most-once" class="headerlink" title="自动提交(at most once)"></a>自动提交(at most once)</h4><p>enable.auto.commit被设为true, 消费者会自动提交偏移量，提交时间间隔由auto.commit.interval.ms控制, 默认为5s<br>最简单的提交方式，但是不能清楚的知道消息处理的情况，容易产生消息重复消费和消息丢失的情况</p>
 <h4 id="主动提交当前偏移量-at-least-once"><a href="#主动提交当前偏移量-at-least-once" class="headerlink" title="主动提交当前偏移量(at least once)"></a>主动提交当前偏移量(at least once)</h4><p>利用KafkaConsumer API可以在必要的时候主动提交当前偏移量，而不是基于时间间隔</p>
 <ul>
