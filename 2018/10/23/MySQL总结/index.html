@@ -287,8 +287,40 @@
 <li><p><code>表共享读锁</code> （Table Read Lock）：不会阻塞其他用户对同一表的读请求，但会阻塞对同一表的写请求；</p>
 </li>
 <li><p><code>表独占写锁</code> （Table Write Lock）：会阻塞其他用户对同一表的读和写操作</p>
-<p>  MyISAM 表的读操作与写操作之间，以及写操作之间是串行的。当一个线程获得对一个表的写锁后， 只有持有锁的线程可以对表进行更新操作。 其他线程的读、 写操作都会等待，直到锁被释放为止</p>
+<p>  MyISAM 表的读操作与写操作之间，以及写操作之间是串行的。当一个线程获得对一个表的写锁后，只有持有锁的线程可以对表进行更新操作。其他线程的读、写操作都会等待，直到锁被释放为止</p>
 <p>  默认情况下，写锁比读锁具有更高的优先级,当一个锁释放时，这个锁会优先给写锁队列中等候的获取锁请求，然后再给读锁队列中等候的获取锁请求</p>
+<p>  <strong>这也正是 MyISAM 表不太适合于有大量更新操作和查询操作应用的原因</strong>，因为，大量的更新操作会造成查询操作很难获得读锁，从而可能永远阻塞</p>
+</li>
+</ul>
+<h4 id="MyISAM加表锁方法"><a href="#MyISAM加表锁方法" class="headerlink" title="MyISAM加表锁方法"></a>MyISAM加表锁方法</h4><p><strong>在自动加锁的情况下，MyISAM 总是一次获得 SQL 语句所需要的全部锁，这也正是 MyISAM 表不会出现死锁（Deadlock Free）的原因</strong></p>
+<p>MyISAM存储引擎支持并发插入，以减少给定表的读和写操作之间的争用：</p>
+<blockquote>
+<p>如果MyISAM表在数据文件中间没有空闲块，则行始终插入数据文件的末尾。 在这种情况下，你可以自由混合并发使用MyISAM表的INSERT和SELECT语句而不需要加锁——你可以在其他线程进行读操作的时候，同时将行插入到MyISAM表中。 文件中间的空闲块可能是从表格中间删除或更新的行而产生的。 如果文件中间有空闲快，则并发插入会被禁用，但是当所有空闲块都填充有新数据时，它又会自动重新启用。 要控制此行为，可以使用MySQL的concurrent_insert系统变量：</p>
+<ul>
+<li>当concurrent_insert设置为0时，不允许并发插入。</li>
+<li>当concurrent_insert设置为1时，如果MyISAM表中没有空洞（即表的中间没有被删除的行），MyISAM允许在一个线程读表的同时，另一个线程从表尾插入记录。这也是MySQL的默认设置。</li>
+<li>当concurrent_insert设置为2时，无论MyISAM表中有没有空洞，都允许在表尾并发插入记录</li>
+</ul>
+</blockquote>
+<h4 id="查询表级锁争用情况"><a href="#查询表级锁争用情况" class="headerlink" title="查询表级锁争用情况"></a>查询表级锁争用情况</h4><p>可以通过检查 table_locks_waited 和 table_locks_immediate 状态变量来分析系统上的表锁的争夺，如果 Table_locks_waited 的值比较高，则说明存在着较严重的表级锁争用情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW STATUS LIKE &apos;Table%&apos;;</span><br><span class="line">+-----------------------+---------+</span><br><span class="line">| Variable_name | Value |</span><br><span class="line">+-----------------------+---------+</span><br><span class="line">| Table_locks_immediate | 1151552 |</span><br><span class="line">| Table_locks_waited | 15324 |</span><br><span class="line">+-----------------------+---------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="InnoDB行级锁和表级锁"><a href="#InnoDB行级锁和表级锁" class="headerlink" title="InnoDB行级锁和表级锁"></a>InnoDB行级锁和表级锁</h3><h4 id="InnoDB锁模式"><a href="#InnoDB锁模式" class="headerlink" title="InnoDB锁模式"></a>InnoDB锁模式</h4><p>InnoDB 实现了以下两种类型的行锁：</p>
+<ul>
+<li><code>共享锁（S）</code>：允许一个事务去读一行，阻止其他事务获得相同数据集的排他锁。</li>
+<li><code>排他锁（X）</code>：允许获得排他锁的事务更新数据，阻止其他事务取得相同数据集的共享读锁和排他写锁</li>
+</ul>
+<p>为了允许行锁和表锁共存，实现多粒度锁机制，InnoDB 还有两种内部使用的意向锁（Intention Locks），这两种意向锁都是表锁：</p>
+<ul>
+<li><code>意向共享锁（IS）</code>：事务打算给数据行加行共享锁，事务在给一个数据行加共享锁前必须先取得该表的 IS 锁</li>
+<li><code>意向排他锁（IX）</code>：事务打算给数据行加行排他锁，事务在给一个数据行加排他锁前必须先取得该表的 IX 锁</li>
+</ul>
+<h4 id="InnoDB加锁方法"><a href="#InnoDB加锁方法" class="headerlink" title="InnoDB加锁方法"></a>InnoDB加锁方法</h4><ul>
+<li>意向锁是 InnoDB 自动加的， 不需用户干预。</li>
+<li>对于 UPDATE、 DELETE 和 INSERT 语句， InnoDB会自动给涉及数据集加排他锁（X)；</li>
+<li>对于普通 SELECT 语句，InnoDB 不会加任何锁；</li>
+<li>事务可以通过以下语句显式给记录集加共享锁或排他锁：  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(1) 共享锁（S）：SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE。 其他 session 仍然可以查询记录，并也可以对该记录加 share mode 的共享锁。但是如果当前事务需要对该记录进行更新操作，则很有可能造成死锁。</span><br><span class="line">(2) 排他锁（X)：SELECT * FROM table_name WHERE ... FOR UPDATE。其他 session 可以查询该记录，但是不能对该记录加共享锁或排他锁，而是等待获得锁</span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
 <h3 id="MySQL的锁算法"><a href="#MySQL的锁算法" class="headerlink" title="MySQL的锁算法"></a>MySQL的锁算法</h3><ul>
@@ -307,7 +339,7 @@
 <li>一个InnoDB引擎存储在一个文件空间（共享表空间，表大小不受操作系统控制，一个表可能分布在多个文件里），也有可能为多个（设置为独立表空间，表大小受操作系统文件大小限制，一般为2G），受操作系统文件大小的限制;</li>
 <li>主键索引采用聚集索引（索引的数据域存储数据文件本身），辅索引的数据域存储主键的值；因此从辅索引查找数据，需要先通过辅索引找到主键值，再访问辅索引;</li>
 <li>最好使用自增主键，防止插入数据时，为维持B+树结构，文件的大调整;</li>
-<li>适用OLTP</li>
+<li>适用OLTP(联机事务处理)，实时性要求高</li>
 </ol>
 <h4 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h4><p>插入缓存（insert buffer）、两次写(double write)、自适应哈希(Adaptive Hash index)、异步IO(Async IO)、刷新邻接页(Flush Neighbor Page)</p>
 <h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul>
@@ -329,7 +361,7 @@
 <li>存储表的总行数；</li>
 <li>一个MyISAM表有三个文件：索引文件、表结构文件、数据文件；</li>
 <li>采用非聚集索引，索引文件的数据域存储指向数据文件的指针。辅索引与主索引基本一致，但是辅索引不用保证唯一性。</li>
-<li>适用OLAP</li>
+<li>适用OLAP(联机分析处理),实时性要求不高但一般数据量大</li>
 </ol>
 <h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><h3 id="ARCHIVE"><a href="#ARCHIVE" class="headerlink" title="ARCHIVE"></a>ARCHIVE</h3><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
 <li><a href="https://juejin.im/post/5c8785baf265da2dd2190707" target="_blank" rel="noopener">MySQL数据库存储引擎简介</a></li>
