@@ -319,11 +319,43 @@
 <li>意向锁是 InnoDB 自动加的， 不需用户干预。</li>
 <li>对于 UPDATE、 DELETE 和 INSERT 语句， InnoDB会自动给涉及数据集加排他锁（X)；</li>
 <li>对于普通 SELECT 语句，InnoDB 不会加任何锁；</li>
-<li>事务可以通过以下语句显式给记录集加共享锁或排他锁：  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(1) 共享锁（S）：SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE。 其他 session 仍然可以查询记录，并也可以对该记录加 share mode 的共享锁。但是如果当前事务需要对该记录进行更新操作，则很有可能造成死锁。</span><br><span class="line">(2) 排他锁（X)：SELECT * FROM table_name WHERE ... FOR UPDATE。其他 session 可以查询该记录，但是不能对该记录加共享锁或排他锁，而是等待获得锁</span><br></pre></td></tr></table></figure>
+<li>事务可以通过以下语句显式给记录集加共享锁或排他锁：  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(1) 共享锁（S）：SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE</span><br><span class="line">(2) 排他锁（X)：SELECT * FROM table_name WHERE ... FOR UPDATE。</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
-<h3 id="MySQL的锁算法"><a href="#MySQL的锁算法" class="headerlink" title="MySQL的锁算法"></a>MySQL的锁算法</h3><ul>
+<h5 id="隐式锁定"><a href="#隐式锁定" class="headerlink" title="隐式锁定"></a>隐式锁定</h5><p>InnoDB在事务执行过程中，使用<strong>两阶段锁协议(联想记忆到 2pc 协议)</strong>：</p>
+<ul>
+<li>随时都可以执行锁定，InnoDB会根据隔离级别在需要的时候自动加锁；</li>
+<li>锁只有在执行commit或者rollback的时候才会释放，并且所有的锁都是在同一时刻被释放</li>
+</ul>
+<h5 id="显式锁定"><a href="#显式锁定" class="headerlink" title="显式锁定"></a>显式锁定</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select ... lock in share mode //共享锁</span><br><span class="line">select ... for update //排他锁</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>select for update</code></p>
+<ol>
+<li>在执行这个 select 查询语句的时候，会将对应的索引访问条目进行上排他锁（X 锁），也就是说这个语句对应的锁就相当于update带来的效果</li>
+<li>select *** for update 的使用场景：为了让自己查到的数据确保是最新数据，并且查到后的数据只允许自己来修改的时候，需要用到 for update 子句</li>
+<li>其他 session 可以查询该记录，但是不能对该记录加共享锁或排他锁，而是等待获得锁</li>
+</ol>
+</li>
+<li><p><code>select lock in share mode</code></p>
+<ol>
+<li>in share mode 子句的作用就是将查找到的数据加上一个 share 锁，这个就是表示其他的事务只能对这些数据进行简单的select 操作，并不能够进行 DML 操作</li>
+<li>为了确保自己查到的数据没有被其他的事务正在修改，也就是说确保查到的数据是最新的数据，并且不允许其他人来修改数据。但是自己不一定能够修改数据，因为有可能其他的事务也对这些数据 使用了 in share mode 的方式上了 S 锁</li>
+<li>其他 session 仍然可以查询记录，并也可以对该记录加 share mode 的共享锁。但是如果当前事务需要对该记录进行更新操作，则很有可能造成死锁</li>
+</ol>
+<ul>
+<li>两者区别：for update 是排他锁（X 锁），一旦一个事务获取了这个锁，其他的事务是没法在这些数据上执行 ；lock in share mode 是共享锁，多个事务可以同时的对相同数据执行</li>
+</ul>
+</li>
+</ul>
+<h4 id="InnoDB-行锁实现方式"><a href="#InnoDB-行锁实现方式" class="headerlink" title="InnoDB 行锁实现方式"></a>InnoDB 行锁实现方式</h4><ul>
+<li>InnoDB 行锁是<code>通过给索引上的索引项加锁</code>来实现的，这一点 MySQL 与 Oracle 不同，后者是通过在数据块中对相应数据行加锁来实现的。<strong>InnoDB 这种行锁实现特点意味着：只有通过索引条件检索数据，InnoDB 才使用行级锁，否则，InnoDB 将使用表锁！</strong></li>
+<li>不论是使用主键索引、唯一索引或普通索引，InnoDB 都会使用行锁来对数据加锁。</li>
+<li>只有执行计划真正使用了索引，才能使用行锁：即便在条件中使用了索引字段，但是否使用索引来检索数据是由 MySQL 通过判断不同执行计划的代价来决定的，如果 MySQL 认为全表扫描效率更高，比如对一些很小的表，它就不会使用索引，这种情况下 InnoDB 将使用表锁，而不是行锁。因此，在分析锁冲突时，</li>
+<li>由于 MySQL 的行锁是针对索引加的锁，不是针对记录加的锁，所以<code>虽然多个session是访问不同行的记录， 但是如果是使用相同的索引键， 是会出现锁冲突的</code>（后使用这些索引的session需要等待先使用索引的session释放锁后，才能获取锁）</li>
+</ul>
+<h4 id="MySQL的锁算法"><a href="#MySQL的锁算法" class="headerlink" title="MySQL的锁算法"></a>MySQL的锁算法</h4><ul>
 <li><code>Record Lock</code>：单个行记录上的锁。</li>
 <li><code>Gap Lock</code>：间隙锁，锁定一个范围，但不包括记录本身。GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。</li>
 <li><code>Next-Key Lock：Record + Gap</code>，锁定一个范围，并且锁定记录本身。对于行的查询，都是采用该方法，主要目的是解决幻读的问题</li>
@@ -461,6 +493,7 @@
 </ul>
 <h4 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h4><ul>
 <li><a href="https://blog.csdn.net/wuseyukui/article/details/71512793" target="_blank" rel="noopener">MySQL高级 之 explain执行计划详解</a></li>
+<li><a href="https://mp.weixin.qq.com/s/h4B84UmzAUJ81iBY_FXNOg?" target="_blank" rel="noopener">MySQL索引详解</a></li>
 </ul>
 <h3 id="聚集索引和非聚集索引区别"><a href="#聚集索引和非聚集索引区别" class="headerlink" title="聚集索引和非聚集索引区别"></a>聚集索引和非聚集索引区别</h3><h4 id="聚集（clustered）索引，也叫聚簇索引"><a href="#聚集（clustered）索引，也叫聚簇索引" class="headerlink" title="聚集（clustered）索引，也叫聚簇索引"></a>聚集（clustered）索引，也叫聚簇索引</h4><p>定义：数据行的物理顺序与列值（一般是主键的那一列）的逻辑顺序相同，一个表中只能拥有一个聚集索引。<br>如果没定义主键，会选择一个唯一的非空索引代替，如果没有这样的索引，则会隐式定义一个主键作为聚簇索引</p>
 <h4 id="非聚集（unclustered）索引"><a href="#非聚集（unclustered）索引" class="headerlink" title="非聚集（unclustered）索引"></a>非聚集（unclustered）索引</h4><p>定义：该索引中索引的逻辑顺序与磁盘上行的物理存储顺序不同，一个表中可以拥有多个非聚集索引</p>
