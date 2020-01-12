@@ -8,7 +8,7 @@
 
 
 
-<title>synchronized原理 | EgoSay</title>
+<title>volatile关键字 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">synchronized原理</h1>
+            <h1 class="post-title">volatile关键字</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">January 11, 2020&nbsp;&nbsp;20:49:11</a>
+                        Date: <a href="#">January 12, 2020&nbsp;&nbsp;16:51:21</a>
                         </span>
                     
                     
@@ -202,40 +202,23 @@
         </header>
 
         <div class="post-content">
-            <h1 id="synchronized的实现原理"><a href="#synchronized的实现原理" class="headerlink" title="synchronized的实现原理"></a>synchronized的实现原理</h1><blockquote>
-<p>synchronized可以保证方法或者代码块在运行时，同一时刻只有一个方法可以进入到临界区，同时它还可以保证共享变量的内存可见性</p>
-</blockquote>
-<h2 id="Java对象头和monitor"><a href="#Java对象头和monitor" class="headerlink" title="Java对象头和monitor"></a>Java对象头和monitor</h2><blockquote>
-<p>Java对象头和monitor是实现synchronized的基础</p>
-</blockquote>
-<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Hotspot虚拟机的对象头主要包括两部分数据：<code>Mark Word（标记字段）、Klass Pointer（类型指针）</code>。其中<code>Klass Point</code>是是对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，<code>Mark Word</code>用于存储对象自身的运行时数据，如<code>哈希码（HashCode）</code>、<code>GC分代年龄</code>、<code>锁状态标志</code>、<code>线程持有的锁</code>、<code>偏向线程 ID</code>、<code>偏向时间戳</code>等等，它是实现轻量级锁和偏向锁的关键<br><img src="media/15783931855846/15783945646503.jpg" alt="32位JVM中 Mark Word 组成"></p>
-<p>参考链接：</p>
+            <h1 id="volatile关键字"><a href="#volatile关键字" class="headerlink" title="volatile关键字"></a>volatile关键字</h1><h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>volatile通常被比喻成”轻量级的synchronized“，也是Java并发编程中比较重要的一个关键字。和synchronized不同，volatile是一个<code>变量修饰符</code>，<strong>只能用来修饰变量,无法修饰方法及代码块等</strong></p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile修饰之后，那么就具备了两层语义：</p>
 <ul>
-<li><a href="https://www.jianshu.com/p/3d38cba67f8b" target="_blank" rel="noopener">Java对象头详解</a></li>
+<li>保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的</li>
+<li>禁止进行指令重排序</li>
 </ul>
-<h3 id="monitor"><a href="#monitor" class="headerlink" title="monitor"></a>monitor</h3><p>联想记忆操作系统中的锁</p>
-<h2 id="作用范围"><a href="#作用范围" class="headerlink" title="作用范围"></a>作用范围</h2><p>Java中每一个对象都可以作为锁，这是synchronized实现同步的基础：</p>
+<p>对于volatile修饰的变量，当对变量进行写操作的时候，<strong>JVM会向处理器发送一条lock前缀的指令，将这个缓存中的变量回写到系统主存中</strong><br>所以一个变量被volatile所修饰的话，在每次数据变化之后，其值都会被强制刷入主存。而其他处理器的缓存由于遵守了缓存一致性协议，也会把这个变量的值从主存加载到自己的缓存中。这就保证了一个volatile在并发编程中，其值在多个缓存中是可见的</p>
+<h2 id="volatile在Java中的并发保障"><a href="#volatile在Java中的并发保障" class="headerlink" title="volatile在Java中的并发保障"></a>volatile在Java中的并发保障</h2><h3 id="volatile与可见性"><a href="#volatile与可见性" class="headerlink" title="volatile与可见性"></a>volatile与可见性</h3><p>Java中的volatile关键字提供了一个功能，那就是被其修饰的变量在被修改后可以立即同步到主内存，被其修饰的变量在每次是用之前都从主内存刷新。因此，可以使用volatile来保证多线程操作时变量的可见性</p>
+<h3 id="volatile与有序性"><a href="#volatile与有序性" class="headerlink" title="volatile与有序性"></a>volatile与有序性</h3><p>volatile可以禁止指令重排，这就保证了代码的程序会严格按照代码的先后顺序执行。这就保证了有序性。被volatile修饰的变量的操作，会严格按照<code>load-&gt;add-&gt;save</code> 的顺序执行</p>
+<h3 id="volatile与原子性"><a href="#volatile与原子性" class="headerlink" title="volatile与原子性"></a>volatile与原子性</h3><p>volatile无法保证原子性，在以下两个场景中可以使用volatile来代替synchronized：</p>
 <ul>
-<li>普通同步方法，锁是当前实例对象</li>
-<li>静态同步方法，锁是当前类的class对象</li>
-<li>同步代码块，锁是括号里面的对象</li>
+<li>运算结果并不依赖变量的当前值，或者能够确保只有单一的线程会修改变量的值。</li>
+<li>变量不需要与其他状态变量共同参与不变约束</li>
 </ul>
-<p>同步代码块是使用<code>monitorenter和monitorexit</code>指令实现的，同步方法依靠的是方法修饰符上的<code>ACC_SYNCHRONIZED</code>实现</p>
-<h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><blockquote>
-<p>jdk1.6对锁的实现引入了大量的优化，如自旋锁、适应性自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等技术来减少锁操作的开销。 锁主要存在四中状态，依次是：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态，他们会随着竞争的激烈而逐渐升级。注意锁可以升级不可降级，这种策略是为了提高获得锁和释放锁的效率</p>
-</blockquote>
-<h3 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h3><p>为了保证数据的完整性，我们在进行操作时需要对这部分操作进行同步控制，但是在有些情况下，JVM检测到不可能存在共享数据竞争，这是JVM会对这些同步锁进行锁消除，其依据是逃逸分析的数据支持</p>
-<h3 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h3><p>一系列的连续加锁解锁操作，可能会导致不必要的性能损耗，所以引入锁粗化的概念，就是将多个连续的加锁、解锁操作连接在一起，扩展成一个范围更大的锁</p>
-<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>线程的阻塞和唤醒需要CPU从用户态转为核心态，频繁的阻塞和唤醒对CPU来说是一件负担很重的工作，势必会给系统的并发性能带来很大的压力(联想记忆 <code>零拷贝</code>,也是减少不必要的切换)</p>
-<p>何谓自旋锁？ 所谓自旋锁，就是让该线程等待一段时间，不会被立即挂起，看持有锁的线程是否会很快释放锁。怎么等待呢？执行一段无意义的循环即可（自旋）</p>
-<p>自旋等待不能替代阻塞，先不说对处理器数量的要求（多核，貌似现在没有单核的处理器了），虽然它可以避免线程切换带来的开销，但是它占用了处理器的时间。如果持有锁的线程很快就释放了锁，那么自旋的效率就非常好，反之，自旋的线程就会白白消耗掉处理的资源，它不会做任何有意义的工作，典型的占着茅坑不拉屎，这样反而会带来性能上的浪费</p>
-<h4 id="适应自旋锁"><a href="#适应自旋锁" class="headerlink" title="适应自旋锁"></a>适应自旋锁</h4><p>JDK 1.6引入了更加聪明的自旋锁，即自适应自旋锁。所谓自适应就意味着自旋的次数不再是固定的，它是由前一次在同一个锁上的自旋时间及锁的拥有者的状态来决定。线程如果自旋成功了，那么下次自旋的次数会更加多。反之，如果对于某个锁，很少有自旋能够成功的，那么在以后要或者这个锁的时候自旋的次数会减少甚至省略掉自旋过程，以免浪费处理器资源</p>
-<h3 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h3><p>对于轻量级锁，其性能提升的依据是“对于绝大部分的锁，在整个生命周期内都是不会存在竞争的”，如果打破这个依据则除了互斥的开销外，还有额外的CAS操作，因此在有多线程竞争的情况下，轻量级锁比重量级锁更慢</p>
-<h3 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h3><p>轻量级锁的加锁解锁操作是需要依赖多次CAS原子指令的,偏向锁通过检测Mark Word是否为可偏向状态，是的话跳过CAS操作直接执行同步代码块来提升性能</p>
-<h3 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h3><p>重量级锁通过对象内部的监视器（monitor）实现，其中monitor的本质是依赖于底层操作系统的Mutex Lock实现，操作系统实现线程之间的切换需要从用户态到内核态的切换，切换成本非常高</p>
-<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
-<li><a href="https://www.zhihu.com/question/66733477" target="_blank" rel="noopener">如何理解互斥锁、条件锁、读写锁以及自旋锁</a></li>
-<li><a href="https://blog.csdn.net/u012465296/article/details/53022317" target="_blank" rel="noopener">Java中synchronized的实现原理与应用</a></li>
+<p>除以上场景外，都需要使用其他方式来保证原子性，如synchronized或者concurrent包</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://www.hollischuang.com/archives/2648" target="_blank" rel="noopener">深入理解Java中的volatile关键字</a></li>
 </ul>
 
         </div>
@@ -251,7 +234,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2020/01/11/synchronized/">http://cjwdream.top/2020/01/11/synchronized/</a></span>
+                        <span><a href="http://cjwdream.top/2020/01/12/volatile/">http://cjwdream.top/2020/01/12/volatile/</a></span>
                     </p>
                 
                 
@@ -283,10 +266,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/01/12/volatile/">volatile关键字</a>
             
-            
-            <a class="next" rel="next" href="/2020/01/10/lock-collection/">常见锁的分类</a>
+            <a class="next" rel="next" href="/2020/01/11/synchronized/">synchronized原理</a>
             
         </section>
 
