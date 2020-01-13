@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>ArrayList和LinkedList | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">ArrayList和LinkedList</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">January 20, 2017&nbsp;&nbsp;23:01:21</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="ArrayList-amp-amp-LinkedList"><a href="#ArrayList-amp-amp-LinkedList" class="headerlink" title="ArrayList &amp;&amp; LinkedList"></a>ArrayList &amp;&amp; LinkedList</h1><h2 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h2><h3 id="一、概述："><a href="#一、概述：" class="headerlink" title="一、概述："></a>一、概述：</h3><ul>
+<li>继承了AbstractList，实现了List接口，它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能</li>
+<li>除了列表接口外，该类提供了一种方法来操作该数组的大小来存储该列表中的数组的大小</li>
+<li>实现<code>Serializable</code> 接口，这意味着ArrayList支持序列化，能通过序列化去传输</li>
+</ul>
+<h4 id="1-时间复杂度："><a href="#1-时间复杂度：" class="headerlink" title="1. 时间复杂度："></a>1. 时间复杂度：</h4><ul>
+<li>ArrayList 实现了<code>RandomAccess</code> 接口，即提供了随机访问功能</li>
+<li>方法<code>size、isEmpty、get、set、iterator和listIterator</code>的调用是常数时间的。</li>
+<li>添加删除的时间复杂度为O(N)。其他所有操作也都是线性时间复杂度。</li>
+</ul>
+<h4 id="2-容量："><a href="#2-容量：" class="headerlink" title="2. 容量："></a>2. 容量：</h4><ul>
+<li>每个ArrayList都有容量，容量大小至少为List元素的长度，默认初始化为10, 容量可以自动增长.</li>
+<li>如果提前知道数组元素较多，可以在添加元素前通过调用<code>ensureCapacity()</code>方法提前增加容量以减小后期容量自动增长的开销。</li>
+<li>也可以通过带初始容量的构造器初始化这个容量。</li>
+</ul>
+<h3 id="3-线程不安全："><a href="#3-线程不安全：" class="headerlink" title="3. 线程不安全："></a>3. 线程不安全：</h3><ul>
+<li>ArrayList不是线程安全的，在多线程中可以选择 <code>Vector</code>或者 <code>CopyOnWriteArrayList</code>，用<code>Collections.synchronizedList</code>把一个普通ArrayList包装成一个线程安全版本的数组容器也可以</li>
+</ul>
+<h2 id="二、LinkedList"><a href="#二、LinkedList" class="headerlink" title="二、LinkedList"></a>二、LinkedList</h2><p>底层使用双向链表实现、保留了头尾两个指针、LinkedList的其他操作</p>
+<h3 id="ArrayList和LinkedList的区别"><a href="#ArrayList和LinkedList的区别" class="headerlink" title="ArrayList和LinkedList的区别"></a>ArrayList和LinkedList的区别</h3><ul>
+<li>LinkedList 实现了 List 和 Deque 接口，一般称为双向链表；ArrayList 实现了 List 接口，动态数组；</li>
+<li>LinkedList 在插入和删除数据时效率更高，ArrayList 在查找某个 index 的数据时效率更高；</li>
+<li>LinkedList 比 ArrayList 需要更多的内存, 因为需要维护前后两个指针</li>
+</ul>
+<h2 id="三、思考"><a href="#三、思考" class="headerlink" title="三、思考"></a>三、思考</h2><h3 id="1-ArrayList插入删除一定慢么？"><a href="#1-ArrayList插入删除一定慢么？" class="headerlink" title="1. ArrayList插入删除一定慢么？"></a>1. ArrayList插入删除一定慢么？</h3><p>不一定，取决于插入删除的位置离数组末端有多远，比如刚好插入到尾部，那时间复杂度就是 O(1)</p>
+<h3 id="2-ArrayList的遍历和LinkedList遍历性能比较如何"><a href="#2-ArrayList的遍历和LinkedList遍历性能比较如何" class="headerlink" title="2. ArrayList的遍历和LinkedList遍历性能比较如何?"></a>2. ArrayList的遍历和LinkedList遍历性能比较如何?</h3><p>论遍历的话<code>ArrayList</code>要比<code>LinkedList</code>快得多，<code>ArrayList</code>遍历最大的优势在于<strong>内存的连续性</strong>，CPU的内部缓存结构会缓存连续的内存片段，可以大幅降低读取内存的性能开销</p>
+<h3 id="3-ArrayList是如何扩容的"><a href="#3-ArrayList是如何扩容的" class="headerlink" title="3. ArrayList是如何扩容的?"></a>3. ArrayList是如何扩容的?</h3><p>拿添加元素来说，首先<code>calculateCapacity()</code>方法计算所需容量，<code>ensureExplicitCapacity</code>方法内部调用 <code>grow</code> 方法进行扩容，grow方法具体实现:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line">    <span class="comment">// 扩容到原来容量的1.5倍</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">    <span class="comment">// 判断扩容后是否足够，不够的话就直接使用 minCapacity 作为容量大小</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = minCapacity;</span><br><span class="line">    <span class="comment">// 若预设值大于默认最大值检查是否溢出</span></span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">    <span class="comment">// 将数组指向 newCapacity 新的连续内存空间并拷贝数据</span></span><br><span class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-ArrayList的默认最大数组大小为什么是Integer-MAX-VALUE-8"><a href="#4-ArrayList的默认最大数组大小为什么是Integer-MAX-VALUE-8" class="headerlink" title="4. ArrayList的默认最大数组大小为什么是Integer.MAX_VALUE - 8?"></a>4. ArrayList的默认最大数组大小为什么是<code>Integer.MAX_VALUE - 8</code>?</h3><p>数组对象有一个额外的元数据，用于表示数组的大小, 需要额外的 8 bytes存储这部分元数据</p>
+<h3 id="5-ArrayList是线程安全的么？"><a href="#5-ArrayList是线程安全的么？" class="headerlink" title="5. ArrayList是线程安全的么？"></a>5. ArrayList是线程安全的么？</h3><p>ArrayList不是线程安全的，在多线程中可以选择 <code>Vector</code>或者 用<code>Collections.synchronizedList</code>把一个普通ArrayList包装成一个线程安全版本的数组容器,原理类似，都是直接用<code>synchronized</code>加锁. <code>CopyOnWriteArrayList</code>是线程安全的，是一种读写分离的机制实现，适用于读多写少的场景，原理参考: <a href="https://www.cnblogs.com/chengxiao/p/6881974.html" target="_blank" rel="noopener">CopyOnWriteArrayList实现原理及源码分析</a></p>
+<h3 id="6-数组用来做队列合适么？"><a href="#6-数组用来做队列合适么？" class="headerlink" title="6. 数组用来做队列合适么？"></a>6. 数组用来做队列合适么？</h3><p>队列一般是FIFO的，如果用ArrayList做队列，就需要在数组尾部追加数据，数组头部删除数组，反过来也可以。但是无论如何总会有一个操作会涉及到数组的数据搬迁，这个是比较耗费性能的。<br>但是定长数组却是很合适的，比如<code>ArrayBlockingQueue</code>内部实现就是一个环形队列，它是一个定长队列，内部是用一个定长数组来实现的。另外著名的Disruptor开源Library也是用环形数组来实现的超高性能队列</p>
+<h3 id="7-Array-和-ArrayList-有什么区别？什么时候该应-Array-而不是-ArrayList-呢？"><a href="#7-Array-和-ArrayList-有什么区别？什么时候该应-Array-而不是-ArrayList-呢？" class="headerlink" title="7. Array 和 ArrayList 有什么区别？什么时候该应 Array 而不是 ArrayList 呢？"></a>7. Array 和 ArrayList 有什么区别？什么时候该应 Array 而不是 ArrayList 呢？</h3><ul>
+<li>Array 可以包含基本类型和对象类型，ArrayList 只能包含对象类型。</li>
+<li>Array 大小是固定的，ArrayList 的大小是动态变化的。</li>
+<li>ArrayList 提供了更多的方法和特性，比如：addAll()，removeAll()，iterator() 等等</li>
+</ul>
+<h2 id="四、参考链接"><a href="#四、参考链接" class="headerlink" title="四、参考链接"></a>四、参考链接</h2><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/34301705" target="_blank" rel="noopener">坑人无数的Java面试题之ArrayList</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2017/01/20/ArrayListAndLinkedList/">http://cjwdream.top/2017/01/20/ArrayListAndLinkedList/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Java基础/"># Java基础</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2018/02/22/shell变量/">shell变量</a>
+            
+            
+            <a class="next" rel="next" href="/2017/01/13/basic-java-collection/">Java集合类基本概念</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
