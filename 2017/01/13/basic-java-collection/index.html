@@ -8,7 +8,7 @@
 
 
 
-<title>shell变量 | EgoSay</title>
+<title>Java集合类基本概念 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">shell变量</h1>
+            <h1 class="post-title">Java集合类基本概念</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">February 22, 2018&nbsp;&nbsp;17:22:47</a>
+                        Date: <a href="#">January 13, 2017&nbsp;&nbsp;20:56:34</a>
                         </span>
                     
                     
@@ -202,17 +202,71 @@
         </header>
 
         <div class="post-content">
-            <h1 id="shell变量"><a href="#shell变量" class="headerlink" title="shell变量"></a>shell变量</h1><h2 id="linux中shell变量的含义解释"><a href="#linux中shell变量的含义解释" class="headerlink" title="linux中shell变量的含义解释:"></a>linux中shell变量的含义解释:</h2><ol>
-<li><code>$$</code>: Shell本身的PID（ProcessID）</li>
-<li><code>$!</code>: Shell最后运行的后台Process的PID</li>
-<li><code>$?</code>:  最后运行的命令的结束代码（返回值）</li>
-<li><code>$-</code>: 使用Set命令设定的Flag一览</li>
-<li><code>$*</code> : 所有参数列表</li>
-<li><code>$@</code>: 所有参数列表”$n` 的形式输出所有参数。</li>
-<li><code>$#</code> : 添加到Shell的参数个数</li>
-<li><code>$0</code>: Shell本身的文件名</li>
-<li><code>$1～$n</code>: 添加到Shell的各参数值。$1是第1参数、$2是第2参数…</li>
-</ol>
+            <h1 id="Java集合类基本概念"><a href="#Java集合类基本概念" class="headerlink" title="Java集合类基本概念"></a>Java集合类基本概念</h1><p>Java中的集合框架大类可分为<code>Collection</code>和<code>Map</code>；两者的区别：</p>
+<ul>
+<li>Collection是单列集合；Map是双列集合</li>
+<li>Collection中只有Set系列要求元素唯一；Map中键需要唯一，值可以重复</li>
+<li>Collection的数据结构是针对元素的；Map的数据结构是针对键的。</li>
+</ul>
+<h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><p>Collection包括两大体系：</p>
+<ul>
+<li><code>List</code>: 存取有序，有索引，可以根据索引来进行取值，元素可以重复</li>
+<li><code>Set</code>: 存取无序，元素不可以重复</li>
+</ul>
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>包含有</p>
+<ul>
+<li><code>ArrayList</code>：底层是数组实现，查询速度快，增删速度慢</li>
+<li><code>LinkedList</code>： 基于链表结构实现的，查询速度慢，增删速度快，提供了特殊的方法，对头尾的元素操作（进行增删查）,线程不安全</li>
+<li><code>Vector</code>：数组结构,查询快,增删慢,线程安全,因此效率低(已过时)</li>
+</ul>
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>Set集合的特点：元素不重复，存取无序，无下标 Set集合下面有：</p>
+<ul>
+<li><code>HashSet</code>: 存储无序,元素无索引,元素不可以重复.底层是哈希表.</li>
+<li><code>LinkedHashSet</code>: 基于链表和哈希表共同实现的，所以具有存取有序，元素唯一的特点</li>
+<li><code>TreeSet</code>：基于二叉树的数据结构，元素唯一，存取无序(可以在添加元素的时候进行排序)</li>
+</ul>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>Map是一个双列集合，其中保存的是键值对，键要求保持唯一性，值可以重复，包含：</p>
+<ul>
+<li><code>HashMap</code></li>
+<li><code>LinkedHashMap</code></li>
+<li><code>TreeMap</code></li>
+</ul>
+<h2 id="工具类Collections"><a href="#工具类Collections" class="headerlink" title="工具类Collections"></a>工具类Collections</h2><blockquote>
+<p>Collections工具类提供了大量针对Collection/Map的操作</p>
+</blockquote>
+<h3 id="排序操作（主要针对List接口相关）"><a href="#排序操作（主要针对List接口相关）" class="headerlink" title="排序操作（主要针对List接口相关）"></a>排序操作（主要针对List接口相关）</h3><ul>
+<li><code>reverse(List list)</code>：反转指定List集合中元素的顺序</li>
+<li><code>shuffle(List list)</code>：对List中的元素进行随机排序（洗牌）</li>
+<li><code>sort(List list)</code>：对List里的元素根据自然升序排序</li>
+<li><code>sort(List list, Comparator c)</code>：自定义比较器进行排序</li>
+<li><code>swap(List list, int i, int j)</code>：将指定List集合中i处元素和j出元素进行交换</li>
+<li><code>rotate(List list, int distance)</code>：将所有元素向右移位指定长度，如果distance等于size那么结果不变</li>
+</ul>
+<h3 id="查找和替换（主要针对Collection接口相关）"><a href="#查找和替换（主要针对Collection接口相关）" class="headerlink" title="查找和替换（主要针对Collection接口相关）"></a>查找和替换（主要针对Collection接口相关）</h3><ul>
+<li><code>binarySearch(List list, Object key)</code>：使用二分搜索法，以获得指定对象在List中的索引，前提是集合已经排序</li>
+<li><code>max(Collection col)</code>：返回最大元素</li>
+<li><code>max(Collection col, Comparator comp)</code>：根据自定义比较器，返回最大元素</li>
+<li><code>min(Collection col)</code>：返回最小元素</li>
+<li><code>min(Collection col, Comparator comp)</code>：根据自定义比较器，返回最小元素</li>
+<li><code>fill(List list, Object obj)</code>：使用指定对象填充</li>
+<li><code>frequency(Collection Object o)</code>：返回指定集合中指定对象出现的次数</li>
+<li><code>replaceAll(List list, Object old, Object new)</code>：替换</li>
+</ul>
+<h3 id="设置不可变集合"><a href="#设置不可变集合" class="headerlink" title="设置不可变集合"></a>设置不可变集合</h3><p>Collections有三类方法可返回一个不可变集合：</p>
+<ul>
+<li><code>emptyXxx()</code>：返回一个空的不可变的集合对象</li>
+<li><code>singletonXxx()</code>：返回一个只包含指定对象的，不可变的集合对象。</li>
+<li><code>unmodifiableXxx()</code>：返回指定集合对象的不可变视图</li>
+</ul>
+<h3 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h3><ul>
+<li><code>disjoint(Collection&lt;?&gt; c1, Collection&lt;?&gt; c2)</code>: 如果两个指定 collection 中没有相同的元素，则返回 true。</li>
+<li><code>addAll(Collection&lt;? super T&gt; c, T... a)</code>: 一种方便的方式，将所有指定元素添加到指定 collection 中</li>
+<li><code>Comparator&lt;T&gt; reverseOrder(Comparator&lt;T&gt; cmp)</code>: 返回一个比较器，它强行反转指定比较器的顺序。如果指定比较器为 null，则此方法等同于 reverseOrder()（换句话说，它返回一个比较器，该比较器将强行反转实现 Comparable 接口那些对象 collection 上的自然顺序）</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://juejin.im/post/5ad82dbef265da503825b240#heading-45" target="_blank" rel="noopener">java集合入门和深入学习，看这篇就差不多了</a></li>
+<li><a href="https://www.cnblogs.com/nayitian/p/3269585.html" target="_blank" rel="noopener">Java：集合，Collections工具类用法</a></li>
+</ul>
 
         </div>
 
@@ -227,7 +281,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2018/02/22/shell变量/">http://cjwdream.top/2018/02/22/shell变量/</a></span>
+                        <span><a href="http://cjwdream.top/2017/01/13/basic-java-collection/">http://cjwdream.top/2017/01/13/basic-java-collection/</a></span>
                     </p>
                 
                 
@@ -246,7 +300,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/shell/"># shell</a>
+                        <a href="/tags/Java基础/"># Java基础</a>
                     
                         
                 </span>
@@ -259,10 +313,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2018/03/17/shell条件判断中if中的-z到-d的意思/">shell条件判断中if中的-z到-d的意思</a>
+                <a class="prev" rel="prev" href="/2018/02/22/shell变量/">shell变量</a>
             
-            
-            <a class="next" rel="next" href="/2017/01/13/basic-java-collection/">Java集合类基本概念</a>
             
         </section>
 
