@@ -205,6 +205,8 @@
             <h1 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h1><h2 id="一、基础概念"><a href="#一、基础概念" class="headerlink" title="一、基础概念"></a>一、基础概念</h2><blockquote>
 <p>在JDK8及以后的版本中，HashMap引入了红黑树结构，其底层的数据结构变成了由<code>数组+链表</code>变成<code>数组+链表和数组+红黑树</code><br>添加元素时，若桶中链表个数超过8，链表会转换成红黑树</p>
 </blockquote>
+<p>HashMap整体结构:<br><img src="https://i.loli.net/2020/01/20/36jlxHXwgoBQhAm.png" alt="image.png"></p>
+<p>JDK1.8 后 HashMap的红黑树结构<br><img src="https://i.loli.net/2020/01/20/b7V1YQHnhytMaox.png" alt="image.png"></p>
 <h2 id="二、HashMap的默认参数理解"><a href="#二、HashMap的默认参数理解" class="headerlink" title="二、HashMap的默认参数理解"></a>二、HashMap的默认参数理解</h2><h3 id="为什么HashMap的Entry数组长度默认为16呢-为什么数组长度一定要是2的n次幂呢？"><a href="#为什么HashMap的Entry数组长度默认为16呢-为什么数组长度一定要是2的n次幂呢？" class="headerlink" title="为什么HashMap的Entry数组长度默认为16呢?为什么数组长度一定要是2的n次幂呢？"></a>为什么HashMap的Entry数组长度默认为16呢?为什么数组长度一定要是2的n次幂呢？</h3><p>首先看HashMap计算hashcode的方法获取存储的位置方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">indexFor</span><span class="params">(<span class="keyword">int</span> h, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> h &amp; (length-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
