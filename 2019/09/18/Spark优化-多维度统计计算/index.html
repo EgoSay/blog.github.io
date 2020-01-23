@@ -204,8 +204,10 @@
         <div class="post-content">
             <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>需要对数据进行加工处理, 返回计算指标数据给前端绘制成折线图展示<br>目标字段和对比字段类型都没有限制，所以存在几种情况</p>
 <ol>
-<li>当对比字段是连续型时:<br>  横轴是目标字段，纵轴为“对比字段的均值、最大值、最小值、中位数”，共4条折线, 如下图：<br><img src="http://pzr8xq5pe.bkt.clouddn.com/%E5%A4%9A%E7%BB%B4%E5%BA%A6%E8%AE%A1%E7%AE%97-1.jpg" alt></li>
-<li>当对比字段是离散型时：<br> 横轴是目标字段，纵轴为对比字段对于不同目标字段的Count统计值, 对不同的对比字段生成不同的折线<br><img src="http://pzr8xq5pe.bkt.clouddn.com/%E5%A4%9A%E7%BB%B4%E5%BA%A6%E8%AE%A1%E7%AE%97-2.jpg" alt></li>
+<li><p>当对比字段是连续型时:<br>  横轴是目标字段，纵轴为“对比字段的均值、最大值、最小值、中位数”，共4条折线, 如下图：<br><img src="https://i.loli.net/2020/01/23/rDupU5XfN86qGhj.png" alt="image.png"></p>
+</li>
+<li><p>当对比字段是离散型时：<br> 横轴是目标字段，纵轴为对比字段对于不同目标字段的Count统计值, 对不同的对比字段生成不同的折线<br><img src="https://i.loli.net/2020/01/23/uQISFblYO92coWR.png" alt="image.png"></p>
+</li>
 </ol>
 <h2 id="最初的想法"><a href="#最初的想法" class="headerlink" title="最初的想法"></a>最初的想法</h2><ol>
 <li>针对第1种情况: 先按目标字段的值分组进行统计, 然后统计对比字段在不同组别中的最大最小值等统计信息, 实现方法就是先 <code>groupby</code>, 然后利用<code>max()</code>, <code>min()</code>等算子统计</li>
