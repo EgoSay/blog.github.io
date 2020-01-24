@@ -8,7 +8,7 @@
 
 
 
-<title>volatile关键字 | EgoSay</title>
+<title>分布式互斥 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">volatile关键字</h1>
+            <h1 class="post-title">分布式互斥</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">January 12, 2020&nbsp;&nbsp;16:51:21</a>
+                        Date: <a href="#">January 24, 2020&nbsp;&nbsp;21:17:46</a>
                         </span>
                     
                     
@@ -202,24 +202,38 @@
         </header>
 
         <div class="post-content">
-            <h1 id="volatile关键字"><a href="#volatile关键字" class="headerlink" title="volatile关键字"></a>volatile关键字</h1><h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>volatile通常被比喻成”轻量级的synchronized“，也是Java并发编程中比较重要的一个关键字。和synchronized不同，volatile是一个<code>变量修饰符</code>，<strong>只能用来修饰变量,无法修饰方法及代码块等</strong></p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile修饰之后，那么就具备了两层语义：</p>
+            <h1 id="分布式互斥"><a href="#分布式互斥" class="headerlink" title="分布式互斥"></a>分布式互斥</h1><blockquote>
+<p>内容来自极客时间专栏: <a href="https://time.geekbang.org/column/intro/233" target="_blank" rel="noopener">《分布式技术原理与算法解析》</a></p>
+</blockquote>
+<p>互斥指的是对于一个条件资源，在同一时间只能被一个单位占用，在分布式系统里，这种排他性的资源访问方式，叫作<code>分布式互斥（Distributed Mutual Exclusion）</code>，而这种被互斥访问的共享资源就叫作<code>临界资源（Critical Resource）</code></p>
+<p>分布式互斥的几种实现方式:</p>
+<h2 id="集中式算法"><a href="#集中式算法" class="headerlink" title="集中式算法"></a>集中式算法</h2><blockquote>
+<p>联想到<code>Yarn的资源调度机制</code></p>
+</blockquote>
+<p>系统引入一个协调者的角色，每个程序在请求资源的时候先向协调者发送一个请求，然后协调者判断资源是否空闲，空闲的话就直接分配给这个程序，如果被占用的话，就给这个请求排号，相当于一个请求队列排队获取资源. 但同时也会存在以下两个问题:</p>
 <ul>
-<li>保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的</li>
-<li>禁止进行指令重排序</li>
+<li>单点问题，协调者故障，会导致所有的程序均无法访问临界资源，导致整个系统不可用, 因此需要额外的机制保障协调者的正常运行状态(其实感觉 zookeeper 也是类似这种)</li>
+<li>协调者通常会成为系统的性能瓶颈，协调者处理的消息数量会随着需要访问临界资源的程序数量线性增加<br>集中式算法示意图如下所示:<br><img src="https://i.loli.net/2020/01/23/yJ8eGmMcwx5tkoR.png" alt="image.png"></li>
 </ul>
-<p>对于volatile修饰的变量，当对变量进行写操作的时候，<strong>JVM会向处理器发送一条lock前缀的指令，将这个缓存中的变量回写到系统主存中</strong><br>所以一个变量被volatile所修饰的话，在每次数据变化之后，其值都会被强制刷入主存。而其他处理器的缓存由于遵守了缓存一致性协议，也会把这个变量的值从主存加载到自己的缓存中。这就保证了一个volatile在并发编程中，其值在多个缓存中是可见的</p>
-<h2 id="volatile在Java中的并发保障"><a href="#volatile在Java中的并发保障" class="headerlink" title="volatile在Java中的并发保障"></a>volatile在Java中的并发保障</h2><h3 id="volatile与可见性"><a href="#volatile与可见性" class="headerlink" title="volatile与可见性"></a>volatile与可见性</h3><p>Java中的volatile关键字提供了一个功能，那就是被其修饰的变量在被修改后可以立即同步到主内存，被其修饰的变量在每次是用之前都从主内存刷新。因此，可以使用volatile来保证多线程操作时变量的可见性</p>
-<h3 id="volatile与有序性"><a href="#volatile与有序性" class="headerlink" title="volatile与有序性"></a>volatile与有序性</h3><p>volatile可以禁止指令重排，这就保证了代码的程序会严格按照代码的先后顺序执行。这就保证了有序性。被volatile修饰的变量的操作，会严格按照<code>load-&gt;add-&gt;save</code> 的顺序执行</p>
-<h3 id="volatile与原子性"><a href="#volatile与原子性" class="headerlink" title="volatile与原子性"></a>volatile与原子性</h3><p>volatile无法保证原子性，在以下两个场景中可以使用volatile来代替synchronized：</p>
+<h2 id="分布式算法"><a href="#分布式算法" class="headerlink" title="分布式算法"></a>分布式算法</h2><blockquote>
+<p>HDFS中文件修改机制采用了这种算法</p>
+</blockquote>
+<p>不同于集中式算法，分布式算法实现的原理是当某个程序请求资源时，先向系统内所有其他程序发送请求，其他程序如果没有占用这个资源那么返回同意的结果，在接收到所有其他程序返回的同意消息后，才可以访问临界资源。<br>这个算法可用性很低，主要包括两个方面的原因：</p>
 <ul>
-<li>运算结果并不依赖变量的当前值，或者能够确保只有单一的线程会修改变量的值。</li>
-<li>变量不需要与其他状态变量共同参与不变约束</li>
+<li>随着系统内程序数增多，消息数量会随着需要访问临界资源的程序数量呈指数级增加(<code>2n * (n-1)</code>)，容易产生<code>“信令风暴”</code>，也就是程序收到的请求完全超过了自己的处理能力，而导致自己正常的业务无法开展</li>
+<li>我们知道在计算机网络中消息的可靠性保证也是很难的，会出现比如消息丢失，消息延时到达等情况，在分布式算法中也同样， 比如某个程序发生故障，导致无法发送同意请求资源的响应消息或者延时响应，那么其他程序往往就会因此而陷入等待使系统阻塞，导致系统不可用</li>
 </ul>
-<p>除以上场景外，都需要使用其他方式来保证原子性，如synchronized或者concurrent包</p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li><a href="https://www.hollischuang.com/archives/2648" target="_blank" rel="noopener">深入理解Java中的volatile关键字</a></li>
-</ul>
+<p>分布式算法根据“先到先得”以及“投票全票通过”的机制，让每个程序按时间顺序公平地访问资源，简单粗暴、易于实现，适用于临界资源使用频度较低，且系统规模较小的场景</p>
+<h2 id="令牌环算法"><a href="#令牌环算法" class="headerlink" title="令牌环算法"></a>令牌环算法</h2><p>算法示意图如下：<br><img src="https://i.loli.net/2020/01/23/qCe9tIJKcW5xFGw.png" alt="image.png"><br>如同所示，程序排成环形结构，令牌循环传递，收到令牌的程序有权访问临界资源，访问完成后将令牌传送到下一个程序；若该程序不需要访问临界资源，则直接把令牌传送给下一个程序；</p>
+<p>ps: 我一开始想到了限流机制的<code>令牌桶算法</code>，但其实不一样</p>
+<h2 id="总结-amp-思考"><a href="#总结-amp-思考" class="headerlink" title="总结 &amp; 思考"></a>总结 &amp; 思考</h2><p><img src="https://i.loli.net/2020/01/23/Q4tENIZ6VFXPGr3.png" alt="image.png"></p>
+<h3 id="思考："><a href="#思考：" class="headerlink" title="思考："></a>思考：</h3><blockquote>
+<p>以下思考内容可能存在问题，欢迎指正</p>
+</blockquote>
+<h4 id="集中式算法-1"><a href="#集中式算法-1" class="headerlink" title="集中式算法"></a>集中式算法</h4><p>改进思路: 可参照redis集群通信模式，通过hash key将大量的请求分散到不同的master,以处理大量请求,每个master由小集群主从节点来保障单点故障</p>
+<h4 id="分布式算法-1"><a href="#分布式算法-1" class="headerlink" title="分布式算法"></a>分布式算法</h4><p>设置超时，如果某个节点发生故障迟迟没有响应达到超时时间限制，将其从系统中剔除出去，或者直接忽略</p>
+<h4 id="令牌环算法-1"><a href="#令牌环算法-1" class="headerlink" title="令牌环算法"></a>令牌环算法</h4><p>改进思路: 可根据参与者使用频率列出权重，结合平滑加权轮询算法选出下一个参与者<br>同时需要注意若环中某个节点发生故障需要及时剔除出去，保证令牌在正常节点之间传递</p>
+<h4 id="传统单机上的互斥方法，为什么不能用于分布式环境呢"><a href="#传统单机上的互斥方法，为什么不能用于分布式环境呢" class="headerlink" title="传统单机上的互斥方法，为什么不能用于分布式环境呢"></a>传统单机上的互斥方法，为什么不能用于分布式环境呢</h4><p>单机上互斥可以用信号量、锁机制、线程同步等方法，可以在jvm层级或单机硬件层面做到互斥。分布式环境，彼此都是运行在不同的服务器彼此不可感知，需要用额外的手段保证各节点访问互斥</p>
 
         </div>
 
@@ -234,7 +248,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2020/01/12/volatile/">http://cjwdream.top/2020/01/12/volatile/</a></span>
+                        <span><a href="http://cjwdream.top/2020/01/24/Distributed-mutex/">http://cjwdream.top/2020/01/24/Distributed-mutex/</a></span>
                     </p>
                 
                 
@@ -253,7 +267,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Java基础/"># Java基础</a>
+                        <a href="/tags/分布式/"># 分布式</a>
                     
                         
                 </span>
@@ -266,10 +280,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/01/24/Distributed-mutex/">分布式互斥</a>
             
-            
-            <a class="next" rel="next" href="/2020/01/11/synchronized/">synchronized原理</a>
+            <a class="next" rel="next" href="/2020/01/12/volatile/">volatile关键字</a>
             
         </section>
 
