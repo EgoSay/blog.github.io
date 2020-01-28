@@ -205,11 +205,11 @@
             <h1 id="分布式选举算法"><a href="#分布式选举算法" class="headerlink" title="分布式选举算法"></a>分布式选举算法</h1><blockquote>
 <p>内容来自</p>
 <ol>
-<li>极客时间专栏: <a href="https://time.geekbang.org/column/intro/233" target="_blank" rel="noopener">《分布式技术原理与算法解析》</a></li>
+<li>极客时间专栏:<a href="https://time.geekbang.org/column/intro/233" target="_blank" rel="noopener">《分布式技术原理与算法解析》</a></li>
 <li><a href="https://www.cnblogs.com/bangerlee/p/5767845.html" target="_blank" rel="noopener">分布式系统理论基础 - 选举、多数派和租约</a></li>
 </ol>
 </blockquote>
-<p><code>选举(election)</code>是分布式系统实践中常见的问题，通过打破节点间的对等关系，选得的leader(或叫master、coordinator)有助于实现事务原子性、提升决议效率。<br><code>多数派(quorum)</code>的思路帮助我们在网络分化的情况下达成决议一致性，在leader选举的场景下帮助我们选出唯一leader。<br><code>租约(lease)</code>在一定期限内给予节点特定权利，也可以用于实现leader选举</p>
+<p><code>选举(election)</code>是分布式系统实践中常见的问题，通过打破节点间的对等关系，选得的leader(或叫master、coordinator)有助于实现事务原子性、提升决议效率。<br><code>多数派(quorum)</code>的思路帮助我们在网络分化的情况下达成决议一致性，在leader选举的场景下帮助我们选出唯一leader。<br><code>租约(lease)</code>中心思想是每次租约时长内只有一个节点获得租约成为leader、到期后必须重新颁发租约，确保了一个时刻最多只有一个leader，避免只使用心跳机制时因为网络拥塞或瞬断而产生<code>双主</code>的问题</p>
 <h2 id="Bully算法-选举"><a href="#Bully算法-选举" class="headerlink" title="Bully算法(选举)"></a>Bully算法(选举)</h2><blockquote>
 <p>Bully算法是最常见的<strong>选举算法</strong>,要求每个节点对应一个序号，序号最高的节点为leader。leader宕机后次高序号的节点被重选为leader</p>
 </blockquote>
@@ -219,13 +219,12 @@
 <li>Alive 消息，对 Election 消息的应答；</li>
 <li>Victory 消息，竞选成功的主节点向其他节点发送的宣誓主权的消息</li>
 </ul>
-<p><strong>其具体的选举过程是：</strong></p>
-<ul>
+<h3 id="选举流程"><a href="#选举流程" class="headerlink" title="选举流程"></a>选举流程</h3><ol>
 <li>集群中每个节点判断自己的 ID 是否为当前活着的节点中 ID 最大的，如果是，则直接向其他节点发送 Victory 消息，宣誓自己的主权；</li>
 <li>如果自己不是当前活着的节点中 ID 最大的，则向比自己 ID 大的所有节点发送 Election 消息，并等待其他节点的回复；</li>
 <li>若在给定的时间范围内，本节点没有收到其他节点回复的 Alive 消息，则认为自己成为主节点，并向其他节点发送 Victory 消息，宣誓自己成为主节点；</li>
 <li>若接收到来自比自己 ID 大的节点的 Alive 消息，则等待其他节点发送 Victory 消息；若本节点收到比自己 ID 小的节点发送的 Election 消息，则回复一个 Alive 消息，告知其他节点，我比你大，重新选举</li>
-</ul>
+</ol>
 <h3 id="优缺点以及应用场景"><a href="#优缺点以及应用场景" class="headerlink" title="优缺点以及应用场景"></a>优缺点以及应用场景</h3><p><strong>优点：</strong><br>Bully 算法的选择特别霸道和简单，谁活着且谁的 ID 最大谁就是主节点，其他节点必须无条件服从。这种算法的优点是，选举速度快、算法复杂度低、简单易实现</p>
 <p><strong>缺点：</strong></p>
 <ul>
@@ -244,7 +243,7 @@
 <li><code>Candidate</code>，即候选者，每一个节点都可以成为 Candidate，节点在该角色下才可以被选为新的 Leader；</li>
 <li><code>Follower</code>，Leader 的跟随者，不可以发起选举</li>
 </ul>
-<h3 id="选举流程"><a href="#选举流程" class="headerlink" title="选举流程"></a>选举流程</h3><ol>
+<h3 id="选举流程-1"><a href="#选举流程-1" class="headerlink" title="选举流程"></a>选举流程</h3><ol>
 <li>初始化时，所有节点均为 Follower 状态。</li>
 <li>开始选主时，所有节点的状态由 Follower 转化为 Candidate，并向其他节点发送选举请求。</li>
 <li>其他节点根据接收到的选举请求的先后顺序，回复是否同意成为主。这里需要注意的是，<strong>在每一轮选举中，一个节点只能投出一张票</strong>。</li>
@@ -275,7 +274,7 @@
 <li><code>Following 状态</code>，即跟随者状态，集群中已经选出主后，其他非主节点状态更新为 Following，表示对 Leader 的追随。</li>
 <li><code>Observing 状态</code>，即观察者状态，表示当前节点为 Observer，持观望态度，没有投票权和选举权</li>
 </ul>
-<h3 id="选举流程-1"><a href="#选举流程-1" class="headerlink" title="选举流程"></a>选举流程</h3><ol>
+<h3 id="选举流程-2"><a href="#选举流程-2" class="headerlink" title="选举流程"></a>选举流程</h3><ol>
 <li>当系统刚启动时，3 个服务器当前投票均为第一轮投票，即 epoch=1，且 zxID 均为 0。此时每个服务器都推选自己，并将选票信息 广播出去</li>
 <li>根据判断规则，由于 3 个 Server 的 epoch、zxID 都相同，因此比较 server_id，较大者即为推选对象，因此 Server 1 和 Server 2 将 vote_id 改为 3，更新自己的投票箱并重新广播自己的投票</li>
 <li>此时系统内所有服务器都推选了 Server 3，因此 Server 3 当选 Leader，处于 Leading 状态，向其他服务器发送心跳包并维护连接；Server1 和 Server2 处于 Following 状态</li>
@@ -298,8 +297,8 @@
 <h3 id="思维导图总结"><a href="#思维导图总结" class="headerlink" title="思维导图总结"></a>思维导图总结</h3><p><img src="https://i.loli.net/2020/01/27/N837Ff6e9P5xoWy.png" alt="image.png"></p>
 <h2 id="思考拓展"><a href="#思考拓展" class="headerlink" title="思考拓展"></a>思考拓展</h2><h3 id="1-为什么“多数派”选主算法通常采用奇数节点，而不是偶数节点呢"><a href="#1-为什么“多数派”选主算法通常采用奇数节点，而不是偶数节点呢" class="headerlink" title="1. 为什么“多数派”选主算法通常采用奇数节点，而不是偶数节点呢"></a>1. 为什么“多数派”选主算法通常采用奇数节点，而不是偶数节点呢</h3><p>可能会出现两个节点均获得一半投票的情况，采用偶数节点时无法选出主，必须重新投票选举。但即使重新投票选举，两个节点拥有相同投票数的概率也会很大</p>
 <h3 id="2-分布式选举和一致性的关系是什么"><a href="#2-分布式选举和一致性的关系是什么" class="headerlink" title="2. 分布式选举和一致性的关系是什么"></a>2. 分布式选举和一致性的关系是什么</h3><p>一致性是指多个副本之间，在同一时刻能否有同样的值。分布式选举通常是实现一致性的基础，通过选举出主节点协调和管理其他节点，从而保证其他节点的有序运行以及各个节点之间的一致性</p>
-<h3 id="3-是否存在一个集群中有双主的场景？"><a href="#3-是否存在一个集群中有双主的场景？" class="headerlink" title="3. 是否存在一个集群中有双主的场景？"></a>3. 是否存在一个集群中有双主的场景？</h3><p>双主的情况，一般是因为网络故障，比如网络分区等导致的。出现双主的期间，如果双主均提供服务，可能会导致集群中数据不一致。所以，需要根据业务对数据不一致的容忍度来决定是否允许双主情况下提供服务</p>
-<p>租约(lease)：中心思想是每次租约时长内只有一个节点获得租约成为leader、到期后必须重新颁发租约，确保了一个时刻最多只有一个leader，避免只使用心跳机制时因为网络拥塞或瞬断而产生双主的问题<br><strong>联想记忆: 集群的脑裂现象</strong>，参考:</p>
+<h3 id="3-是否存在一个集群中有双主的场景？"><a href="#3-是否存在一个集群中有双主的场景？" class="headerlink" title="3. 是否存在一个集群中有双主的场景？"></a>3. 是否存在一个集群中有双主的场景？</h3><p>双主的情况，一般是因为网络故障，比如网络分区(某一时刻集群因为网络不通形成两个网络集群)等导致的。出现双主的期间，如果双主均提供服务，可能会导致集群中数据不一致。所以，需要根据业务对数据不一致的容忍度来决定是否允许双主情况下提供服务</p>
+<p><strong>联想记忆: 集群的脑裂现象</strong>，参考:</p>
 <ul>
 <li><a href="https://blog.csdn.net/xinquanv1/article/details/103126372" target="_blank" rel="noopener">分布式脑裂问题分析</a></li>
 <li><a href="https://juejin.im/post/5d36c2f25188257f6a209d37" target="_blank" rel="noopener">脑裂是什么?Zookeeper是如何解决的?</a></li>
