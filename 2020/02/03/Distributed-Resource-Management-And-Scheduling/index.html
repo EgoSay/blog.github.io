@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>分布式资源管理与调度 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">分布式资源管理与调度</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 3, 2020&nbsp;&nbsp;21:02:46</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="分布式资源管理与调度"><a href="#分布式资源管理与调度" class="headerlink" title="分布式资源管理与调度"></a>分布式资源管理与调度</h1><blockquote>
+<p>内容来自</p>
+<ol>
+<li>极客时间专栏:<a href="https://time.geekbang.org/column/intro/233" target="_blank" rel="noopener">《分布式技术原理与算法解析》</a></li>
+<li><a href="http://dongxicheng.org/mapreduce-nextgen/google-omega/" target="_blank" rel="noopener">Google集群管理系统Omega解析</a></li>
+</ol>
+</blockquote>
+<h2 id="分布式体系结构"><a href="#分布式体系结构" class="headerlink" title="分布式体系结构"></a>分布式体系结构</h2><h3 id="集中式结构"><a href="#集中式结构" class="headerlink" title="集中式结构"></a>集中式结构</h3><p>由一台或多台服务器组成中央服务器，系统内的所有数据都存储在中央服务器中，系统内所有的业务也均先由中央服务器处理,由中央服务器统一进行资源和任务调度</p>
+<ul>
+<li>Google Borg</li>
+<li>Kubernetes</li>
+<li>Mesos</li>
+</ul>
+<h3 id="非集中式结构"><a href="#非集中式结构" class="headerlink" title="非集中式结构"></a>非集中式结构</h3><p>服务的执行和数据的存储被分散到不同的服务器集群，服务器集群间通过消息传递进行通信和协调。相比于集中式结构，非集中式结构就降低了某一个或者某一簇计算机集群的压力，在解决了单点瓶颈和单点故障问题的同时，还提升了系统的并发度，比较适合大规模集群的管理</p>
+<ul>
+<li>Akka 集群</li>
+<li>Redis 集群</li>
+<li>Cassandra 集群</li>
+</ul>
+<h2 id="调度架构之中央式调度器"><a href="#调度架构之中央式调度器" class="headerlink" title="调度架构之中央式调度器"></a>调度架构之中央式调度器</h2><p>中央式调度器的特点是，资源的调度和作业的管理功能全部放到一个进程中完成，开源界典型的代表是<code>Hadoop JobTracker</code>的实现</p>
+<p><strong>缺点</strong><br>扩展性差：首先，集群规模受限，其次，新的调度策略难以融入现有代码中，比如之前仅支持MapReduce作业，现在要支持流式作业，而将流式作业的调度策略嵌入到中央式调度器中是一项很难的工作</p>
+<p><strong>优化方案</strong><br>将每种调度策略放到单独一个路径（模块）中，不同的作业由不同的调度策略进行调度。这种方案在作业量和集群规模比较小时，能大大缩短作业相应时间，但由于所有调度策略仍在一个集中式的组件中，整个系统扩展性没有变得更好</p>
+<h2 id="调度架构之双层调度器"><a href="#调度架构之双层调度器" class="headerlink" title="调度架构之双层调度器"></a>调度架构之双层调度器</h2><p>双层调度器仍保留一个经简化的中央式调度器，但调度策略下放到各个应用程序调度器完成。这种调度器的典型代表是Mesos和YARN</p>
+<p>双层层调度器的职责分别是：第一层调度器负责管理资源并向框架分配资源，第二层调度器接收分布式集群管理系统中第一层调度器分配的资源，然后根据任务和接收到的资源进行匹配</p>
+<p><strong>缺点</strong></p>
+<ul>
+<li><p>各个框架无法知道整个集群的实时资源使用情况</p>
+</li>
+<li><p>采用悲观锁，并发粒度小<br>拿Mesos来看，Mesos的资源调度器只会将所有资源推送给任意一个框架，等到该框架返回资源使用情况后，才能够将资源推动给其他框架，因此，Mesos资源调度器中实际上有一个全局锁，这大大限制了系统并发性</p>
+</li>
+</ul>
+<h2 id="调度架构之共享状态调度器"><a href="#调度架构之共享状态调度器" class="headerlink" title="调度架构之共享状态调度器"></a>调度架构之共享状态调度器</h2><p>该调度器将双层调度器中的集中式资源调度模块简化成了一些持久化的共享数据（状态）和针对这些数据的验证代码，而这里的“共享数据”实际上就是整个集群的实时资源使用信息， 案例代表为 Google的下一代资源管理系统 Omega</p>
+<p>引入共享数据后，共享数据的并发访问方式就成为该系统设计的核心，而Omega则采用了<code>传统数据库中基于多版本的并发访问控制方式</code>（“乐观锁”），这大大提升了Omega的并发性</p>
+<h2 id="资源分配方式"><a href="#资源分配方式" class="headerlink" title="资源分配方式"></a>资源分配方式</h2><p>两种资源分配方式</p>
+<ul>
+<li><code>incremental placement</code></li>
+<li><code>all-or-nothing</code></li>
+</ul>
+<p>举例说明：一个任务需要2GB内存，而一个节点剩余1GB，若将这1GB内存分配给该任务，则需等待将节点释放另外1GB内存才可运行该任务，这种方式称为<code>“incremental placement”</code>， Hadoop YARN采用了这种增量资源分配的方式。<br>而如果只为该任务选择剩余节点超过2GB内存的节点，其他不考虑，则称为<code>“all-or-nothing”</code>，Mesos和Omega均采用了这种方式。</p>
+<p>两种方式各有优缺点，“all-or-nothing”可能会造成作业饿死（大资源需求的任务永远得到不需要的资源），而“incremental placement”会造成资源长时间闲置，同时可也能导致作业饿死，比如一个服务需要10GB内存，当前一个节点上剩余8GB，调度器将这些资源分配给它并等待其他任务释放2GB，然而，由于其他任务运行时间非常长，可能短时间内不会释放，这样，该服务将长时间得不到运行。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2020/02/03/Distributed-Resource-Management-And-Scheduling/">http://cjwdream.top/2020/02/03/Distributed-Resource-Management-And-Scheduling/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/分布式/"># 分布式</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/02/01/Distributed-Lock/">分布式锁</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <!--<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
