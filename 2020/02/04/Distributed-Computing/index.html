@@ -111,6 +111,68 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
 
     
     <article class="post-wrap">
@@ -136,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">0</font>
+						<font color="#2d96bd">2.3k</font>
 					</span>
                     
                 </div>
@@ -144,7 +206,64 @@
         </header>
 
         <div class="post-content">
-            
+            <h1 id="分布式计算"><a href="#分布式计算" class="headerlink" title="分布式计算"></a>分布式计算</h1><blockquote>
+<p>内容来自</p>
+<ol>
+<li>极客时间专栏:<a href="https://time.geekbang.org/column/intro/233" target="_blank" rel="noopener">《分布式技术原理与算法解析》</a></li>
+</ol>
+</blockquote>
+<h2 id="MapReduce计算模式-分冶法"><a href="#MapReduce计算模式-分冶法" class="headerlink" title="MapReduce计算模式(分冶法)"></a>MapReduce计算模式(分冶法)</h2><h3 id="分而冶之思想"><a href="#分而冶之思想" class="headerlink" title="分而冶之思想"></a>分而冶之思想</h3><p>简称分冶法，就是将一个复杂的、难以直接解决的大问题，分割成一些规模较小的、可以比较简单的或直接求解的子问题，这些子问题之间相互独立且与原问题形式相同，递归地求解这些子问题，然后将子问题的解合并得到原问题的解</p>
+<h3 id="计算流程"><a href="#计算流程" class="headerlink" title="计算流程"></a>计算流程</h3><p><img src="https://i.loli.net/2020/02/04/XHFYBsauZbPLvzq.png" alt="image.png"><br>整个 MapReduce 的工作流程主要可以概括为 5 个阶段，即：Input（输入）、Splitting（拆分）、Mapping（映射）、Reducing（化简）以及 Final Result（输出）</p>
+<h3 id="Fork-Join-计算模式"><a href="#Fork-Join-计算模式" class="headerlink" title="Fork-Join 计算模式"></a>Fork-Join 计算模式</h3><p>Fork-Join 是 Java 等语言或库提供的原生多线程并行处理框架，采用线程级的分而治之计算模式。它充分利用多核 CPU 的优势，以递归的方式把一个任务拆分成多个“小任务”，把多个“小任务”放到多个处理器上并行执行，即 Fork 操作。当多个“小任务”执行完成之后，再将这些执行结果合并起来即可得到原始任务的结果，即 Join 操作</p>
+<p>Fork-Join 不能大规模扩展，只适用于在单个 Java 虚拟机上运行，多个小任务虽然运行在不同的处理器上，但可以相互通信，甚至一个线程可以“窃取”其他线程上的子任务</p>
+<h2 id="Stream计算模式"><a href="#Stream计算模式" class="headerlink" title="Stream计算模式"></a>Stream计算模式</h2><p>MapReduce 模式下任务运行完成之后，整个任务进程就结束了，属于短任务模式。但任务进程的启动和停止是一件很耗时的事儿，因此针对流数据的处理，对处理延时要求很高的实时性任务，往往利用的就是 Stream流计算模型</p>
+<h3 id="Stream-工作原理"><a href="#Stream-工作原理" class="headerlink" title="Stream 工作原理"></a>Stream 工作原理</h3><p>流计算强调的是实时性，数据一旦产生就会被立即处理，当一条数据被处理完成后，会序列化存储到缓存中，然后立刻通过网络传输到下一个节点，由下一个节点继续处理，而不是像 MapReduce 那样，等到缓存写满才开始处理、传输。为了保证数据的实时性，在流计算中，不会存储任何数据，就像水流一样滚滚向前</p>
+<h3 id="计算步骤"><a href="#计算步骤" class="headerlink" title="计算步骤"></a>计算步骤</h3><p><img src="https://i.loli.net/2020/02/04/gf9JMaHwzvxejsq.png" alt="image.png"></p>
+<ol>
+<li><strong>提交流式计算作业</strong>：对于流式计算作业，必须预先定义计算逻辑，且提交后在运行期间不可更改逻辑，只能重新提交运行</li>
+<li><strong>加载流式数据进行流计算</strong>：流式计算作业一旦启动将一直处于等待事件触发的状态，一旦有小批量数据进入，系统会立刻执行计算逻辑并迅速得到结果</li>
+<li><strong>持续输出计算结果</strong>：在得到小批量数据的计算结果后，可以立刻将结果数据写入在线 / 批量系统，无需等待整体数据的计算结果，以进一步做到实时计算结果的实时展现</li>
+</ol>
+<h2 id="Actor计算模式"><a href="#Actor计算模式" class="headerlink" title="Actor计算模式"></a>Actor计算模式</h2><p>Actor 模型，代表一种分布式并行计算模型。这种模型有自己的一套规则，规定了 Actor 的内部计算逻辑，以及多个 Actor 之间的通信规则。在 Actor 模型里，每个 Actor 相当于系统中的一个组件，都是基本的计算单元</p>
+<p><strong>Actor 模型的三要素是状态、行为和消息</strong>，有一个很流行的等式：Actor 模型 =（状态 + 行为）+ 消息</p>
+<h3 id="Actor-工作流程"><a href="#Actor-工作流程" class="headerlink" title="Actor 工作流程"></a>Actor 工作流程</h3><p><img src="https://i.loli.net/2020/02/04/e5RMKldI14jhmpD.png" alt="image.png"><br>当 Actor A 和 Actor B 需要执行 Actor C 中的 Function 逻辑时，Actor A 和 Actor B 会将消息发送给 Actor C， Actor C 的消息队列存储着 Actor A 和 Actor B 的消息，然后根据消息的先后顺序，执行 Function 即可</p>
+<h3 id="Actor-优缺点分析"><a href="#Actor-优缺点分析" class="headerlink" title="Actor 优缺点分析"></a>Actor 优缺点分析</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li><strong>实现了更高级的抽象</strong>。Actor 与 OOP 对象类似，封装了状态和行为。但是，Actor 之间是异步通信的，多个 Actor 可以独立运行且不会被干扰，解决了 OOP 存在的竞争问题。</li>
+<li><strong>非阻塞性</strong>。在 Actor 模型中，Actor 之间是异步通信的，所以当一个 Actor 发送信息给另外一个 Actor 之后，无需等待响应，发送完信息之后可以在本地继续运行其他任务。也就是说，Actor 模型通过引入消息传递机制，从而避免了阻塞。</li>
+<li><strong>无需使用锁</strong>。Actor 从 MailBox 中一次只能读取一个消息，也就是说，Actor 内部只能同时处理一个消息，是一个天然的互斥锁，所以无需额外对代码加锁。</li>
+<li><strong>并发度高</strong>。每个 Actor 只需处理本地 MailBox 的消息，因此多个 Actor 可以并行地工作，从而提高整个分布式系统的并行处理能力。</li>
+<li><strong>易扩展</strong>。每个 Actor 都可以创建多个 Actor，从而减轻单个 Actor 的工作负载。当本地 Actor 处理不过来的时候，可以在远程节点上启动 Actor 然后转发消息过去</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>Actor 提供了模块和封装，但缺少继承和分层，这使得即使多个 Actor 之间有公共逻辑或代码部分，都必须在每个 Actor 中重写这部分代码，也就是说重用性小，业务逻辑的改变会导致整体代码的重写</li>
+<li>Actor 可以动态创建多个 Actor，使得整个 Actor 模型的行为不断变化，因此在工程中不易实现 Actor 模型。此外，增加 Actor 的同时，也会增加系统开销。</li>
+<li>Actor 模型不适用于对消息处理顺序有严格要求的系统。因为在 Actor 模型中，消息均为异步消息，无法确定每个消息的执行顺序。虽然可以通过阻塞 Actor 去解决顺序问题，但显然，会严重影响 Actor 模型的任务处理效率</li>
+</ul>
+<h3 id="Actor-模型的应用"><a href="#Actor-模型的应用" class="headerlink" title="Actor 模型的应用"></a>Actor 模型的应用</h3><ul>
+<li>Akka</li>
+<li>Quasar (Java)</li>
+<li>Erlang/OTP</li>
+</ul>
+<p><strong>Actor模型总结</strong>：<br><img src="https://i.loli.net/2020/02/04/BRsKoWNCJjA6V24.png" alt="image.png"></p>
+<h2 id="Pipeline流水线计算模式"><a href="#Pipeline流水线计算模式" class="headerlink" title="Pipeline流水线计算模式"></a>Pipeline流水线计算模式</h2><p>计算机中的流水线（Pipeline）技术是一种将每条指令拆分为多个步骤，多条指令的不同步骤重叠操作，从而实现几条指令并行处理的技术。现代 CPU 指令采用了流水线设计，将一条 CPU 指令分为取指（IF）、译码（ID）、执行（EX）、访存（MEM）、回写（WB）五级流水线来执行。在分布式领域中，流水线计算模式也类似，它是将一个大任务拆分为多个步骤执行，不同的步骤可以采用不同的进程执行</p>
+<h3 id="计算流程-1"><a href="#计算流程-1" class="headerlink" title="计算流程"></a>计算流程</h3><p>以机器学习中的数据预处理为例，假设现在有 5 个样本数据，每个样本数据进行数据预处理的流程，包括数据去重、数据缺失值处理、数据归一化 3 个步骤，且需要按照顺序执行。也就是说，数据预处理这个任务可拆分为数据去重—&gt; 数据缺失值处理—&gt; 数据归一化 3 个子任务。如果现在有 3 个节点，节点 1 执行数据去重，节点 2 执行数据缺失值处理，节点 3 执行数据归一化。那么，节点 1 处理完样本 1 的数据，将处理后的数据发送节点 2 后，则节点 1 可以继续处理样本 2 的数据，同时节点 2 处理样本 1 的数据，以此类推，就实现了多任务的并行执行</p>
+<h3 id="流水线计算模式应用"><a href="#流水线计算模式应用" class="headerlink" title="流水线计算模式应用"></a>流水线计算模式应用</h3><ul>
+<li>机器学习流水线任务，比如TensorFlow</li>
+<li>Apache Beam(没具体研究过，看介绍是基于流水线处理思想)</li>
+</ul>
+<h2 id="总结拓展"><a href="#总结拓展" class="headerlink" title="总结拓展"></a>总结拓展</h2><h3 id="流计算和批量计算的区别"><a href="#流计算和批量计算的区别" class="headerlink" title="流计算和批量计算的区别"></a>流计算和批量计算的区别</h3><p><img src="media/15808105231250/15808198839899.jpg" alt></p>
+<h3 id="流水线模式和-MapReduce-模式中，都有将大任务拆分为多个子任务，两者的区别是什么？"><a href="#流水线模式和-MapReduce-模式中，都有将大任务拆分为多个子任务，两者的区别是什么？" class="headerlink" title="流水线模式和 MapReduce 模式中，都有将大任务拆分为多个子任务，两者的区别是什么？"></a>流水线模式和 MapReduce 模式中，都有将大任务拆分为多个子任务，两者的区别是什么？</h3><ul>
+<li>MapReduce 以任务为粒度，将大的任务划分成多个小任务，每个任务都需要执行完整的、相同的步骤，同一任务能被并行执行，可以说是任务并行的一种计算模式；</li>
+<li>而流水线计算模式以步骤为粒度，一个任务拆分为多个步骤，每个步骤执行的是不同的逻辑，多个同类型任务通过步骤重叠以实现不同任务的并行计算，可说是数据并行的一种模式</li>
+</ul>
+<p>此外，它们的子任务（步骤）间的关系不同：</p>
+<ul>
+<li>在 MapReduce 中，各个子任务可以独立执行，互不干扰，多个子任务执行完后，进行结果合并得到整个任务的结果，因此要求子任务之间是没有依赖关系的；</li>
+<li>在流水线模式中，多个子任务之间是具有依赖关系的，前一个子任务的输出是后一个子任务的输入。</li>
+</ul>
+<p>综合来讲，<strong>MapReduce 计算模式适合任务并行的场景，而流水线计算模式适合同类型任务数据并行处理的场景</strong></p>
+<h3 id="离线计算和批量计算、实时计算和流式计算之间的关系"><a href="#离线计算和批量计算、实时计算和流式计算之间的关系" class="headerlink" title="离线计算和批量计算、实时计算和流式计算之间的关系"></a>离线计算和批量计算、实时计算和流式计算之间的关系</h3><p><img src="https://i.loli.net/2020/02/04/7EDLd3KQvM1XOeb.png" alt="image.png"></p>
+
         </div>
 
         
@@ -205,7 +324,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">58.8k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">61.1k</font></span>
 		<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次
 </span>
     </div>
