@@ -212,7 +212,7 @@
 <h2 id="Java对象头和monitor"><a href="#Java对象头和monitor" class="headerlink" title="Java对象头和monitor"></a>Java对象头和monitor</h2><blockquote>
 <p>Java对象头和monitor是实现synchronized的基础</p>
 </blockquote>
-<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Hotspot虚拟机的对象头主要包括两部分数据：<code>Mark Word（标记字段）、Klass Pointer（类型指针）</code>。其中<code>Klass Point</code>是是对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，<code>Mark Word</code>用于存储对象自身的运行时数据，如<code>哈希码（HashCode）</code>、<code>GC分代年龄</code>、<code>锁状态标志</code>、<code>线程持有的锁</code>、<code>偏向线程 ID</code>、<code>偏向时间戳</code>等等，它是实现轻量级锁和偏向锁的关键<br><img src="media/15783931855846/15783945646503.jpg" alt="32位JVM中 Mark Word 组成"></p>
+<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Hotspot虚拟机的对象头主要包括两部分数据：<code>Mark Word（标记字段）、Klass Pointer（类型指针）</code>。其中<code>Klass Point</code>是是对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，<code>Mark Word</code>用于存储对象自身的运行时数据，如<code>哈希码（HashCode）</code>、<code>GC分代年龄</code>、<code>锁状态标志</code>、<code>线程持有的锁</code>、<code>偏向线程 ID</code>、<code>偏向时间戳</code>等等，它是实现轻量级锁和偏向锁的关键<br><img src="https://i.loli.net/2020/02/10/4I2GzVlWdSYrteg.png" alt="32位JVM中 Mark Word组成"></p>
 <p>参考链接：</p>
 <ul>
 <li><a href="https://www.jianshu.com/p/3d38cba67f8b" target="_blank" rel="noopener">Java对象头详解</a></li>
