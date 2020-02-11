@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">2k</font>
+						<font color="#2d96bd">3.6k</font>
 					</span>
                     
                 </div>
@@ -206,23 +206,27 @@
         </header>
 
         <div class="post-content">
-            <h1 id="垃圾收集策略与算法"><a href="#垃圾收集策略与算法" class="headerlink" title="垃圾收集策略与算法"></a>垃圾收集策略与算法</h1><blockquote>
-<p>内容来自: <a href="https://github.com/wangzhiwubigdata/God-Of-BigData/blob/master/JVM/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AD%96%E7%95%A5%E4%B8%8E%E7%AE%97%E6%B3%95.md" target="_blank" rel="noopener">垃圾收集策略与算法</a></p>
+            <h1 id="JVM之垃圾收集"><a href="#JVM之垃圾收集" class="headerlink" title="JVM之垃圾收集"></a>JVM之垃圾收集</h1><blockquote>
+<p>内容来自:</p>
+<ol>
+<li><a href="https://github.com/wangzhiwubigdata/God-Of-BigData/blob/master/JVM/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AD%96%E7%95%A5%E4%B8%8E%E7%AE%97%E6%B3%95.md" target="_blank" rel="noopener">垃圾收集策略与算法</a></li>
+<li><a href="https://github.com/wangzhiwubigdata/God-Of-BigData/blob/master/JVM/HotSpot%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.md" target="_blank" rel="noopener">HotSpot垃圾收集器</a></li>
+</ol>
 </blockquote>
-<h2 id="引用的种类"><a href="#引用的种类" class="headerlink" title="引用的种类"></a>引用的种类</h2><ul>
-<li><p>强引用（Strong Reference）: 只要强引用存在，垃圾收集器永远不会回收被引用的对象</p>
+<h2 id="一、垃圾回收判定"><a href="#一、垃圾回收判定" class="headerlink" title="一、垃圾回收判定"></a>一、垃圾回收判定</h2><h3 id="引用的种类"><a href="#引用的种类" class="headerlink" title="引用的种类"></a>引用的种类</h3><ul>
+<li><p><strong>强引用（Strong Reference）</strong>: 只要强引用存在，垃圾收集器永远不会回收被引用的对象</p>
 </li>
-<li><p>软引用（Soft Reference）: 当 JVM 认为内存不足时，在抛出OutOfMemoryError 之前会去回收软引用指向的对象</p>
+<li><p><strong>软引用（Soft Reference）</strong>: 当 JVM 认为内存不足时，在抛出OutOfMemoryError 之前会去回收软引用指向的对象</p>
 </li>
-<li><p>弱引用（Weak Reference）: 只要当 JVM 进行垃圾回收时，<strong>无论内存是否充足，都会回收</strong>被软引用关联的对象</p>
+<li><p><strong>弱引用（Weak Reference）</strong>: 只要当 JVM 进行垃圾回收时，<strong>无论内存是否充足，都会回收</strong>被软引用关联的对象</p>
 </li>
-<li><p>虚引用（Phantom Reference）: 也称幽灵引用或者幻影引用，它是<strong>最弱</strong>的一种引用关系。一个对象是否有虚引用的存在，完全不会对其生存时间构成影响。它仅仅是提供了一种确保对象被 finalize 以后，做某些事情的机制，比如，通常用来做所谓的 Post-Mortem 清理机制。</p>
+<li><p><strong>虚引用（Phantom Reference）</strong>: 也称幽灵引用或者幻影引用，它是<strong>最弱</strong>的一种引用关系。一个对象是否有虚引用的存在，完全不会对其生存时间构成影响。它仅仅是提供了一种确保对象被 finalize 以后，做某些事情的机制，比如，通常用来做所谓的 Post-Mortem 清理机制。</p>
 </li>
 </ul>
-<h2 id="判定对象是否存活"><a href="#判定对象是否存活" class="headerlink" title="判定对象是否存活"></a>判定对象是否存活</h2><p>若一个对象不被任何对象或变量引用，那么它就是无效对象，需要被回收。</p>
-<h3 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h3><p>在对象头维护着一个 counter 计数器，对象被引用一次则计数器 +1；若引用失效则计数器 -1。当计数器为 0 时，就认为该对象无效了。</p>
+<h3 id="判定对象是否存活"><a href="#判定对象是否存活" class="headerlink" title="判定对象是否存活"></a>判定对象是否存活</h3><p>若一个对象不被任何对象或变量引用，那么它就是无效对象，需要被回收。</p>
+<h4 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h4><p>在对象头维护着一个 counter 计数器，对象被引用一次则计数器 +1；若引用失效则计数器 -1。当计数器为 0 时，就认为该对象无效了。</p>
 <p>引用计数算法的实现简单，判定效率也很高，在大部分情况下它都是一个不错的算法。但是主流的 Java 虚拟机里没有选用引用计数算法来管理内存，主要是因为它很难解决对象之间<code>循环引用</code>的问题：<br>比如对象 objA 和 objB 都有字段 instance，令 objA.instance = objB 并且 objB.instance = objA，由于它们互相引用着对方，导致它们的引用计数都不为 0，于是引用计数算法无法通知 GC 收集器回收它们。</p>
-<h3 id="可达性分析法"><a href="#可达性分析法" class="headerlink" title="可达性分析法"></a>可达性分析法</h3><p>所有和 GC Roots 直接或间接关联的对象都是有效对象，和 GC Roots 没有关联的对象就是无效对象。</p>
+<h4 id="可达性分析法"><a href="#可达性分析法" class="headerlink" title="可达性分析法"></a>可达性分析法</h4><p>所有和 GC Roots 直接或间接关联的对象都是有效对象，和 GC Roots 没有关联的对象就是无效对象。</p>
 <p><strong>GC Roots</strong> 是指：</p>
 <ul>
 <li>Java 虚拟机栈（栈帧中的本地变量表）中引用的对象</li>
@@ -231,25 +235,25 @@
 <li>方法区中类静态属性引用的对象</li>
 </ul>
 <p>GC Roots 并不包括堆中对象所引用的对象，这样就不会有循环引用的问题。</p>
-<h2 id="回收堆中无效对象"><a href="#回收堆中无效对象" class="headerlink" title="回收堆中无效对象"></a>回收堆中无效对象</h2><p>对于可达性分析中不可达的对象，也并不是没有存活的可能。</p>
-<h3 id="判定-finalize-是否有必要执行"><a href="#判定-finalize-是否有必要执行" class="headerlink" title="判定 finalize() 是否有必要执行"></a>判定 finalize() 是否有必要执行</h3><p>JVM 会判断此对象是否有必要执行 finalize() 方法，如果对象没有覆盖 finalize() 方法，或者 finalize() 方法已经被虚拟机调用过，那么视为<strong>“没有必要执行”</strong>。那么对象基本上就真的被回收了。</p>
+<h3 id="回收堆中无效对象"><a href="#回收堆中无效对象" class="headerlink" title="回收堆中无效对象"></a>回收堆中无效对象</h3><p>对于可达性分析中不可达的对象，也并不是没有存活的可能。</p>
+<h4 id="判定-finalize-是否有必要执行"><a href="#判定-finalize-是否有必要执行" class="headerlink" title="判定 finalize() 是否有必要执行"></a>判定 finalize() 是否有必要执行</h4><p>JVM 会判断此对象是否有必要执行 finalize() 方法，如果对象没有覆盖 finalize() 方法，或者 finalize() 方法已经被虚拟机调用过，那么视为<strong>“没有必要执行”</strong>。那么对象基本上就真的被回收了。</p>
 <p>如果对象被判定为有必要执行 finalize() 方法，那么对象会被放入一个 F-Queue 队列中，虚拟机会以较低的优先级执行这些 finalize()方法，但不会确保所有的 finalize() 方法都会执行结束。如果 finalize() 方法出现耗时操作，虚拟机就直接停止指向该方法，将对象清除。</p>
-<h3 id="对象重生或死亡"><a href="#对象重生或死亡" class="headerlink" title="对象重生或死亡"></a>对象重生或死亡</h3><p>如果在执行 finalize() 方法时，将 this 赋给了某一个引用，那么该对象就重生了。如果没有，那么就会被垃圾收集器清除。</p>
+<h4 id="对象重生或死亡"><a href="#对象重生或死亡" class="headerlink" title="对象重生或死亡"></a>对象重生或死亡</h4><p>如果在执行 finalize() 方法时，将 this 赋给了某一个引用，那么该对象就重生了。如果没有，那么就会被垃圾收集器清除。</p>
 <p><strong>注意：</strong><br><strong>任何一个对象的 finalize() 方法只会被系统自动调用一次</strong>，如果对象面临下一次回收，它的 finalize() 方法不会被再次执行，想继续在 finalize() 中自救就失效了。</p>
-<h2 id="回收方法区内存"><a href="#回收方法区内存" class="headerlink" title="回收方法区内存"></a>回收方法区内存</h2><p>方法区中存放生命周期较长的类信息、常量、静态变量，每次垃圾收集只有少量的垃圾被清除。方法区中主要清除两种垃圾：</p>
+<h3 id="回收方法区内存"><a href="#回收方法区内存" class="headerlink" title="回收方法区内存"></a>回收方法区内存</h3><p>方法区中存放生命周期较长的类信息、常量、静态变量，每次垃圾收集只有少量的垃圾被清除。方法区中主要清除两种垃圾：</p>
 <ul>
 <li>废弃常量</li>
 <li>无用的类</li>
 </ul>
-<h3 id="判定废弃常量"><a href="#判定废弃常量" class="headerlink" title="判定废弃常量"></a>判定废弃常量</h3><p>只要常量池中的常量不被任何变量或对象引用，那么这些常量就会被清除掉。比如，一个字符串 “bingo” 进入了常量池，但是当前系统没有任何一个 String 对象引用常量池中的 “bingo” 常量，也没有其它地方引用这个字面量，必要的话，”bingo”常量会被清理出常量池。</p>
-<h3 id="判定无用的类"><a href="#判定无用的类" class="headerlink" title="判定无用的类"></a>判定无用的类</h3><p>判定一个类是否是“<strong>无用的类</strong>”，条件较为苛刻。</p>
+<h4 id="判定废弃常量"><a href="#判定废弃常量" class="headerlink" title="判定废弃常量"></a>判定废弃常量</h4><p>只要常量池中的常量不被任何变量或对象引用，那么这些常量就会被清除掉。比如，一个字符串 “bingo” 进入了常量池，但是当前系统没有任何一个 String 对象引用常量池中的 “bingo” 常量，也没有其它地方引用这个字面量，必要的话，”bingo”常量会被清理出常量池。</p>
+<h4 id="判定无用的类"><a href="#判定无用的类" class="headerlink" title="判定无用的类"></a>判定无用的类</h4><p>判定一个类是否是“<strong>无用的类</strong>”，条件较为苛刻。</p>
 <ul>
 <li>该类的所有对象都已经被清除</li>
 <li>加载该类的 ClassLoader 已经被回收</li>
 <li>该类的 java.lang.Class 对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
 </ul>
 <p>一个类被虚拟机加载进方法区，那么在堆中就会有一个代表该类的对象。这个对象在类被加载进方法区时创建，在方法区该类被删除时清除。</p>
-<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><p>学会了如何判定无效对象、无用类、废弃常量之后，剩余工作就是回收这些垃圾。常见的垃圾收集算法有以下几个：</p>
+<h2 id="二、垃圾收集算法"><a href="#二、垃圾收集算法" class="headerlink" title="二、垃圾收集算法"></a>二、垃圾收集算法</h2><p>学会了如何判定无效对象、无用类、废弃常量之后，剩余工作就是回收这些垃圾。常见的垃圾收集算法有以下几个：</p>
 <h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>判断哪些数据需要清除，并对它们进行标记，然后清除被标记的数据。</p>
 <p>这种方法有两个<strong>不足</strong>：</p>
 <ul>
@@ -270,6 +274,49 @@
 <ul>
 <li>新生代：复制算法</li>
 <li>老年代：标记-清除算法、标记-整理算法</li>
+</ul>
+<h2 id="三、垃圾收集器"><a href="#三、垃圾收集器" class="headerlink" title="三、垃圾收集器"></a>三、垃圾收集器</h2><h3 id="新生代垃圾收集器"><a href="#新生代垃圾收集器" class="headerlink" title="新生代垃圾收集器"></a>新生代垃圾收集器</h3><h4 id="Serial-垃圾收集器（单线程）"><a href="#Serial-垃圾收集器（单线程）" class="headerlink" title="Serial 垃圾收集器（单线程）"></a>Serial 垃圾收集器（单线程）</h4><p>只开启一条 GC 线程进行垃圾回收，并且在垃圾收集过程中停止一切用户线程(Stop The World)。</p>
+<p>一般客户端应用所需内存较小，不会创建太多对象，而且堆内存不大，因此垃圾收集器回收时间短，即使在这段时间停止一切用户线程，也不会感觉明显卡顿。因此 Serial 垃圾收集器<strong>适合客户端使用</strong>。</p>
+<p>由于 Serial 收集器只使用一条 GC 线程，避免了线程切换的开销，从而简单高效</p>
+<h4 id="ParNew-垃圾收集器（多线程）"><a href="#ParNew-垃圾收集器（多线程）" class="headerlink" title="ParNew 垃圾收集器（多线程）"></a>ParNew 垃圾收集器（多线程）</h4><p>ParNew 是 Serial 的多线程版本。由多条 GC 线程并行地进行垃圾清理。但清理过程依然需要 Stop The World。</p>
+<p>ParNew 追求<strong>“低停顿时间”</strong>,与 Serial 唯一区别就是使用了多线程进行垃圾收集，在多 CPU 环境下性能比 Serial 会有一定程度的提升；但线程切换需要额外的开销，因此在单 CPU 环境中表现不如 Serial</p>
+<h4 id="Parallel-Scavenge-垃圾收集器（多线程）"><a href="#Parallel-Scavenge-垃圾收集器（多线程）" class="headerlink" title="Parallel Scavenge 垃圾收集器（多线程）"></a>Parallel Scavenge 垃圾收集器（多线程）</h4><p>Parallel Scavenge 和 ParNew 一样，都是多线程、新生代垃圾收集器。但是两者有巨大的不同点：</p>
+<ul>
+<li>Parallel Scavenge：追求 CPU 吞吐量，能够在较短时间内完成指定任务，因此适合没有交互的后台计算。</li>
+<li>ParNew：追求降低用户停顿时间，适合交互式应用。</li>
+</ul>
+<p>追求高吞吐量，可以通过减少 GC 执行实际工作的时间，然而，仅仅偶尔运行 GC 意味着每当 GC 运行时将有许多工作要做，因为在此期间积累在堆中的对象数量很高。单个 GC 需要花更多的时间来完成，从而导致更高的暂停时间。而考虑到低暂停时间，最好频繁运行 GC 以便更快速完成，反过来又导致吞吐量下降。</p>
+<ul>
+<li>通过参数 <strong>-XX:GCTimeRadio 设置垃圾回收时间占总 CPU 时间的百分比</strong>。</li>
+<li>通过参数 <strong>-XX:MaxGCPauseMillis 设置垃圾处理过程最久停顿时间</strong>。</li>
+<li>通过命令 <strong>-XX:+UseAdaptiveSizePolicy 开启自适应策略</strong>。我们只要设置好堆的大小和 MaxGCPauseMillis 或 GCTimeRadio，收集器会自动调整新生代的大小、Eden 和 Survivor 的比例、对象进入老年代的年龄，以最大程度上接近我们设置的 MaxGCPauseMillis 或 GCTimeRadio</li>
+</ul>
+<h3 id="老年代垃圾收集器"><a href="#老年代垃圾收集器" class="headerlink" title="老年代垃圾收集器"></a>老年代垃圾收集器</h3><h4 id="Serial-Old-垃圾收集器（单线程）"><a href="#Serial-Old-垃圾收集器（单线程）" class="headerlink" title="Serial Old 垃圾收集器（单线程）"></a>Serial Old 垃圾收集器（单线程）</h4><p>Serial Old 收集器是 Serial 的老年代版本，都是单线程收集器，只启用一条 GC 线程，都适合客户端应用。它们唯一的区别就是：Serial Old 工作在老年代，<strong>使用“标记-整理”算法</strong>；Serial 工作在新生代，<strong>使用“复制”算法</strong></p>
+<h4 id="Parallel-Old-垃圾收集器（多线程）"><a href="#Parallel-Old-垃圾收集器（多线程）" class="headerlink" title="Parallel Old 垃圾收集器（多线程）"></a>Parallel Old 垃圾收集器（多线程）</h4><p>Parallel Old 收集器是 Parallel Scavenge 的老年代版本，追求 CPU 吞吐量</p>
+<h4 id="CMS-垃圾收集器"><a href="#CMS-垃圾收集器" class="headerlink" title="CMS 垃圾收集器"></a>CMS 垃圾收集器</h4><p>CMS(Concurrent Mark Sweep，并发标记清除)收集器是以<strong>获取最短回收停顿时间为目标的收集器（追求低停顿）</strong>，它在垃圾收集时使得用户线程和 GC 线程并发执行，因此在垃圾收集过程中用户也不会感到明显的卡顿。</p>
+<p>CMS收集器是一种 <strong>“标记-清除”算法</strong>实现的，整个过程分为四个步骤：</p>
+<ul>
+<li><strong>初始标记</strong>：Stop The World，仅使用一条初始标记线程对所有与 GC Roots 直接关联的对象进行标记。</li>
+<li><strong>并发标记</strong>：使用多条标记线程，与用户线程并发执行。此过程进行可达性分析，标记出所有废弃对象。速度很慢。</li>
+<li><strong>重新标记</strong>：Stop The World，使用多条标记线程并发执行，将刚才并发标记过程中新出现的废弃对象标记出来。</li>
+<li><strong>并发清除</strong>：只使用一条 GC 线程，与用户线程并发执行，清除刚才标记的对象。这个过程非常耗时。</li>
+</ul>
+<p>并发标记与并发清除过程耗时最长，且可以与用户线程一起工作，因此，总体上说，CMS 收集器的内存回收过程是与用户线程一起并发执行的</p>
+<p><strong>缺点</strong></p>
+<ul>
+<li>对CPU资源敏感，吞吐量低；</li>
+<li>无法处理浮动垃圾，导致频繁 Full GC；</li>
+<li>它使用的回收算法-“标记-清除”算法会导致收集结束时会有大量空间碎片产生</li>
+</ul>
+<h3 id="G1-通用垃圾收集器"><a href="#G1-通用垃圾收集器" class="headerlink" title="G1 通用垃圾收集器"></a>G1 通用垃圾收集器</h3><p>G1(Garbage-First) 是一款面向服务端应用的垃圾收集器，它<strong>没有新生代和老年代的概念，而是将堆划分为一块块独立的 Region</strong>。G1收集器在后台维护了一个优先列表，进行垃圾回收时，首先估计每个 Region 中垃圾的数量，然后根据允许的收集时间，优先选择回收价值最大的Region当要进行垃圾收集。这种使用Region划分内存空间以及有优先级的区域回收方式，保证了G1收集器在有限时间内可以尽可能高的收集效率（把内存化整为零）</p>
+<p>从整体上看， G1 是基于“标记-整理”算法实现的收集器，从局部（两个 Region 之间）上看是基于“复制”算法实现的，这意味着运行期间不会产生内存空间碎片。</p>
+<p>每个 Region 都有一个 Remembered Set，用于记录本区域中所有对象引用的对象所在的区域，进行可达性分析时，只要在 GC Roots 中再加上 Remembered Set 即可防止对整个堆内存进行遍历。因此即使一个对象和它内部所引用的对象可能不在同一个 Region 中，那么当垃圾回收时，也不需要扫描整个堆内存才能完整地进行一次可达性分析</p>
+<p>如果不计算维护 Remembered Set 的操作，G1 收集器的工作过程分为以下几个步骤：</p>
+<ul>
+<li><strong>初始标记</strong>：Stop The World，仅使用一条初始标记线程对所有与 GC Roots 直接关联的对象进行标记。</li>
+<li><strong>并发标记</strong>：使用一条标记线程与用户线程并发执行。此过程进行可达性分析，速度很慢。</li>
+<li><strong>最终标记</strong>：Stop The World，使用多条标记线程并发执行。</li>
+<li><strong>筛选回收</strong>：回收废弃对象，此时也要 Stop The World，并使用多条筛选回收线程并发执行</li>
 </ul>
 
         </div>
@@ -334,7 +381,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">68.3k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">69.9k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
