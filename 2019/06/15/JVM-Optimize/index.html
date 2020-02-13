@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.9k</font>
+						<font color="#2d96bd">2.6k</font>
 					</span>
                     
                 </div>
@@ -209,8 +209,8 @@
             <h1 id="JVM调优"><a href="#JVM调优" class="headerlink" title="JVM调优"></a>JVM调优</h1><blockquote>
 <p>内容整理自:</p>
 <ol>
-<li><a href="https://www.cnblogs.com/xifengxiaoma/p/9415357.html" target="_blank" rel="noopener">Java虚拟机（五）：JVM调优命令</a></li>
-<li><a href="https://tech.meituan.com/2017/12/29/jvm-optimize.html" target="_blank" rel="noopener">从实际案例聊聊Java应用的GC优化</a></li>
+<li><a href="http://www.ityouknow.com/jvm/2017/09/03/jvm-command.html" target="_blank" rel="noopener">Jvm 系列(四):Jvm 调优-命令篇</a></li>
+<li><a href="https://www.jianshu.com/p/5be9c56171dd" target="_blank" rel="noopener">JVM调优常用参数配置</a></li>
 </ol>
 </blockquote>
 <h2 id="JVM调优命令"><a href="#JVM调优命令" class="headerlink" title="JVM调优命令"></a>JVM调优命令</h2><h3 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h3><p><strong>命令格式:</strong><br><code>jps [options] [hostid]</code><br>option参数</p>
@@ -372,7 +372,51 @@
 <li><code>-version</code> 启动后只显示版本信息就退出&gt;</li>
 <li><code>-J&lt; flag &gt;</code> 因为 jhat 命令实际上会启动一个JVM来执行, 通过 -J 可以在启动JVM时传入一些启动参数. 例如, -J-Xmx512m 则指定运行 jhat 的Java虚拟机使用的最大堆内存为 512 MB. 如果需要使用多个JVM启动参数,则传入多个 -Jxxxxxx</li>
 </ul>
-<h2 id="JVM常用参数"><a href="#JVM常用参数" class="headerlink" title="JVM常用参数"></a>JVM常用参数</h2><h2 id="JVM调优案例"><a href="#JVM调优案例" class="headerlink" title="JVM调优案例"></a>JVM调优案例</h2>
+<h3 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h3><p>jstack用于生成java虚拟机当前时刻的线程快照。线程快照是当前java虚拟机内每一条线程正在执行的方法堆栈的集合，生成线程快照的主要目的是定位线程出现长时间停顿的原因，如线程间死锁、死循环、请求外部资源导致的长时间等待等。</p>
+<p><strong>命令格式</strong><br><code>jstack [option] LVMID</code></p>
+<p><strong>option参数</strong></p>
+<ul>
+<li>-F : 当正常输出请求不被响应时，强制输出线程堆栈</li>
+<li>-l : 除堆栈外，显示关于锁的附加信息</li>
+<li>-m : 如果调用到本地方法的话，可以显示C/C++的堆栈</li>
+</ul>
+<h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><p>jinfo(JVM Configuration info)这个命令作用是实时查看和调整虚拟机运行参数。 之前的jps -v口令只能查看到显示指定的参数，如果想要查看未被显示指定的参数的值就要使用jinfo口令</p>
+<p><strong>命令格式</strong><br><code>jinfo [option] [args] LVMID</code></p>
+<p><strong>option参数</strong></p>
+<ul>
+<li>-flag : 输出指定args参数的值</li>
+<li>-flags : 不需要args参数，输出所有JVM参数的值</li>
+<li>-sysprops : 输出系统属性，等同于System.getProperties()</li>
+</ul>
+<h2 id="JVM调优配置参数"><a href="#JVM调优配置参数" class="headerlink" title="JVM调优配置参数"></a>JVM调优配置参数</h2><h3 id="堆配置"><a href="#堆配置" class="headerlink" title="堆配置"></a>堆配置</h3><ul>
+<li><code>-Xms</code>: 设置堆的最小空间大小</li>
+<li><code>-Xmx</code>: 设置堆的最大空间大小</li>
+<li><code>-XX:NewSize=n</code>:设置年轻代大小</li>
+<li><code>-XX:NewRatio=n</code>:设置年轻代和年老代的比值。如：为3表示年轻代和年老代比值为1：3，年轻代占整个年轻代年老代和的1/4</li>
+<li><code>-XX:SurvivorRatio=n</code>:年轻代中Eden区与两个Survivor区的比值。注意Survivor区有两个。如3表示Eden： 3 Survivor：2，一个Survivor区占整个年轻代的1/5</li>
+<li><code>-XX:MaxPermSize=n</code>:设置持久代大小</li>
+</ul>
+<h3 id="收集器设置"><a href="#收集器设置" class="headerlink" title="收集器设置"></a>收集器设置</h3><ul>
+<li><code>-XX:+UseSerialGC</code>:设置串行收集器</li>
+<li><code>-XX:+UseParallelGC</code>:设置并行收集器</li>
+<li><code>-XX:+UseParalledlOldGC</code>:设置并行年老代收集器</li>
+<li><code>-XX:+UseConcMarkSweepGC</code>:设置并发收集器</li>
+</ul>
+<h4 id="并行收集器设置"><a href="#并行收集器设置" class="headerlink" title="并行收集器设置"></a>并行收集器设置</h4><ul>
+<li><code>-XX:ParallelGCThreads=n</code>:设置并行收集器收集时使用的CPU数。并行收集线程数</li>
+<li><code>-XX:MaxGCPauseMillis=n</code>:设置并行收集最大的暂停时间（如果到这个时间了，垃圾回收器依然没有回收完，也会停止回收）</li>
+<li><code>-XX:GCTimeRatio=n</code>:设置垃圾回收时间占程序运行时间的百分比。公式为：1/(1+n)</li>
+<li><code>-XX:+CMSIncrementalMode</code>:设置为增量模式。适用于单CPU情况</li>
+<li><code>-XX:ParallelGCThreads=n</code>:设置并发收集器年轻代手机方式为并行收集时，使用的CPU数。并行收集线程数</li>
+</ul>
+<h3 id="垃圾回收统计信息配置"><a href="#垃圾回收统计信息配置" class="headerlink" title="垃圾回收统计信息配置"></a>垃圾回收统计信息配置</h3><ul>
+<li><code>-XX:+PrintGC</code></li>
+<li><code>-XX:+PrintGCDetails</code></li>
+<li><code>-XX:+PrintGCTimeStamps</code></li>
+<li><code>-Xloggc:filename</code></li>
+</ul>
+<h2 id="JVM调优案例"><a href="#JVM调优案例" class="headerlink" title="JVM调优案例"></a>JVM调优案例</h2><p><strong>参考链接:</strong><br>美团技术团队- <a href="https://tech.meituan.com/2017/12/29/jvm-optimize.html" target="_blank" rel="noopener">从实际案例聊聊Java应用的GC优化</a></p>
+
         </div>
 
         
@@ -435,7 +479,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">71.8k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">72.5k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
