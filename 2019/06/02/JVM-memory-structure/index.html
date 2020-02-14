@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.6k</font>
+						<font color="#2d96bd">1.7k</font>
 					</span>
                     
                 </div>
@@ -206,7 +206,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="JVM内存结构"><a href="#JVM内存结构" class="headerlink" title="JVM内存结构"></a>JVM内存结构</h1><blockquote>
+            <h1 id="JVM系列-JVM内存结构"><a href="#JVM系列-JVM内存结构" class="headerlink" title="JVM系列-JVM内存结构"></a>JVM系列-JVM内存结构</h1><blockquote>
 <p>内容来自:</p>
 <ol>
 <li><a href="https://github.com/wangzhiwubigdata/God-Of-BigData/blob/master/JVM/JVM%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84.md" target="_blank" rel="noopener">JVM内存结构</a></li>
@@ -246,12 +246,11 @@
 <p>如Java使用c或者c++编写的接口服务时，代码在此区运行</p>
 </blockquote>
 <p>本地方法栈是为 JVM 运行 Native 方法准备的空间，由于很多 Native 方法都是用 C 语言实现的，所以它通常又叫 C 栈。它与 Java 虚拟机栈实现的功能类似，只不过本地方法栈是描述本地方法运行过程的内存模型</p>
-<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><h3 id="堆的定义"><a href="#堆的定义" class="headerlink" title="堆的定义"></a>堆的定义</h3><p>堆是用来存放对象的内存空间，几乎所有的对象都存储在堆中。</p>
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><h3 id="堆的定义"><a href="#堆的定义" class="headerlink" title="堆的定义"></a>堆的定义</h3><p>堆是用来存放对象的内存空间，几乎所有的对象都存储在堆中。堆内存的分为<strong>新生代、老年代和永久代</strong>。新生代又被进一步分为：<strong>Eden 区＋Survior1 区＋Survior2 区</strong>。在 <strong>JDK 1.8中移除整个永久代</strong>，取而代之的是一个叫<strong>元空间（Metaspace）</strong>的区域（<strong>永久代使用的是JVM的堆内存空间，而元空间使用的是物理内存，直接受到本机的物理内存限制</strong>）</p>
 <h3 id="堆的特点"><a href="#堆的特点" class="headerlink" title="堆的特点"></a>堆的特点</h3><ul>
 <li><strong>线程共享，整个 Java 虚拟机只有一个堆</strong>，所有的线程都访问同一个堆。而程序计数器、Java 虚拟机栈、本地方法栈都是一个线程对应一个。</li>
 <li>在虚拟机启动时创建。</li>
 <li>是垃圾回收的主要场所。</li>
-<li>进一步可分为：<strong>新生代(Eden区 From Survivor、To Survivor)、老年代</strong>。</li>
 </ul>
 <p>不同的区域存放不同生命周期的对象，这样可以根据不同的区域使用不同的垃圾回收算法，更具有针对性。</p>
 <p>堆的大小既可以固定也可以扩展，但对于主流的虚拟机，堆的大小是可扩展的，因此当线程请求分配内存，但堆已满，且内存已无法再扩展时，就会抛出 OutOfMemoryError 异常。</p>
@@ -352,7 +351,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">72.5k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">72.6k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
