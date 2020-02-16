@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://cjwdream.top/2019/06/05/The-Object-In-HotSpot/</loc>
+    
+    <lastmod>2020-02-16T02:06:55.421Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://cjwdream.top/2019/06/21/JVM-Class-Loading-Mechanism/</loc>
     
     <lastmod>2020-02-15T09:20:50.551Z</lastmod>
@@ -19,13 +26,6 @@
     <loc>http://cjwdream.top/2019/06/11/The-Garbage-Collection-In-JVM/</loc>
     
     <lastmod>2020-02-13T13:39:27.051Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://cjwdream.top/2019/06/05/The-Object-In-HotSpot/</loc>
-    
-    <lastmod>2020-02-13T13:38:49.403Z</lastmod>
     
   </url>
   
