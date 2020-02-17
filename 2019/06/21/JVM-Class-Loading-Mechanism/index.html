@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.5k</font>
+						<font color="#2d96bd">3k</font>
 					</span>
                     
                 </div>
@@ -213,8 +213,8 @@
 <li><a href="https://juejin.im/post/5a1d5f286fb9a045132a7100" target="_blank" rel="noopener">深入理解JVM类加载机制</a></li>
 </ol>
 </blockquote>
-<h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制</p>
-<h2 id="类的加载过程以及生命周期"><a href="#类的加载过程以及生命周期" class="headerlink" title="类的加载过程以及生命周期"></a>类的加载过程以及生命周期</h2><p><img src="https://i.loli.net/2020/02/15/KJ83AsmVSOkCgL6.png" alt="image.png"></p>
+<h2 id="一、简述"><a href="#一、简述" class="headerlink" title="一、简述"></a>一、简述</h2><p>虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制</p>
+<h2 id="二、类的加载过程以及生命周期"><a href="#二、类的加载过程以及生命周期" class="headerlink" title="二、类的加载过程以及生命周期"></a>二、类的加载过程以及生命周期</h2><p><img src="https://i.loli.net/2020/02/15/KJ83AsmVSOkCgL6.png" alt="image.png"></p>
 <p>类加载的过程分为三个步骤(五个阶段) ：<code>加载</code> -&gt; <code>连接（验证、准备、解析）</code>-&gt; <code>初始化</code></p>
 <h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><p><strong>加载的过程描述：</strong></p>
 <ul>
@@ -342,7 +342,63 @@
 <li>set或者get一个类的静态字段（除去那种被final修饰放入常量池的静态字段）</li>
 <li>调用一个类的静态方法</li>
 </ul>
-<h2 id="类的主动引用与被动引用"><a href="#类的主动引用与被动引用" class="headerlink" title="类的主动引用与被动引用"></a>类的主动引用与被动引用</h2><h2 id="三种累加器器"><a href="#三种累加器器" class="headerlink" title="三种累加器器"></a>三种累加器器</h2><h2 id="双亲委托模型"><a href="#双亲委托模型" class="headerlink" title="双亲委托模型"></a>双亲委托模型</h2><h2 id="类的动态加载"><a href="#类的动态加载" class="headerlink" title="类的动态加载"></a>类的动态加载</h2><h2 id="对象的初始化"><a href="#对象的初始化" class="headerlink" title="对象的初始化"></a>对象的初始化</h2><h2 id="自定义加载器"><a href="#自定义加载器" class="headerlink" title="自定义加载器"></a>自定义加载器</h2>
+<h4 id="Java中父类和子类初始化顺序"><a href="#Java中父类和子类初始化顺序" class="headerlink" title="Java中父类和子类初始化顺序"></a>Java中父类和子类初始化顺序</h4><ol>
+<li>父类中静态成员变量和静态代码块</li>
+<li>子类中静态成员变量和静态代码块</li>
+<li>父类中普通成员变量和代码块，父类的构造函数</li>
+<li>子类中普通成员变量和代码块，子类的构造函数</li>
+</ol>
+<h3 id="类的主动引用与被动引用"><a href="#类的主动引用与被动引用" class="headerlink" title="类的主动引用与被动引用"></a>类的主动引用与被动引用</h3><p>在java虚拟机规范中，严格规定了，<strong>只有对类进行主动引用，才会触发其初始化方法</strong>。而除此之外的引用方式称之为被动引用，不会触发类的初始化方法</p>
+<p><strong>主动引用</strong><br>主动引用：在类加载阶段，只执行加载、连接操作，不执行初始化操作</p>
+<p><strong>被动引用</strong><br>主动引用之外的引用情况都称之为被动引用，这些引用不会进行初始化<br>被动引用的几种形式：</p>
+<ol>
+<li>通过子类引用父类的的静态字段，不会导致子类初始化；</li>
+<li>定义类的数组引用而不赋值，不会触发此类的初始化；</li>
+<li>访问类定义的常量，不会触发此类的初始化</li>
+</ol>
+<h2 id="三、三种类加载器"><a href="#三、三种类加载器" class="headerlink" title="三、三种类加载器"></a>三、三种类加载器</h2><p><img src="https://i.loli.net/2020/02/17/yNK2Cj8SP9eD6xR.png" alt="image.png"></p>
+<ul>
+<li>Bootstrap Classloader 是在Java虚拟机启动后初始化的。</li>
+<li>Bootstrap Classloader 负责加载 ExtClassLoader，并且将 ExtClassLoader的父加载器设置为 Bootstrap Classloader</li>
+<li>Bootstrap Classloader 加载完 ExtClassLoader 后，就会加载 AppClassLoader，并且将 AppClassLoader 的父加载器指定为 ExtClassLoader</li>
+</ul>
+<h3 id="Bootstrap-ClassLoader"><a href="#Bootstrap-ClassLoader" class="headerlink" title="Bootstrap ClassLoader"></a>Bootstrap ClassLoader</h3><p><code>启动类加载器</code>：负责加载存放在JDK\jre\lib(JDK代表JDK的安装目录，下同)下，或被-Xbootclasspath参数指定的路径中的，并且能被虚拟机识别的类库（如rt.jar，所有的java.开头的类均被Bootstrap ClassLoader加载）。启动类加载器是无法被Java程序直接引用的。</p>
+<h3 id="Extension-ClassLoader"><a href="#Extension-ClassLoader" class="headerlink" title="Extension ClassLoader"></a>Extension ClassLoader</h3><p><code>扩展类加载器</code>：该加载器由sun.misc.Launcher$ExtClassLoader实现，它负责加载JDK\jre\lib\ext目录中，或者由java.ext.dirs系统变量指定的路径中的所有类库（如javax.开头的类），开发者可以直接使用扩展类加载器。</p>
+<h3 id="Application-ClassLoader"><a href="#Application-ClassLoader" class="headerlink" title="Application ClassLoader"></a>Application ClassLoader</h3><p><code>应用程序类加载器</code>：该类加载器由sun.misc.Launcher$AppClassLoader来实现，它负责加载用户类路径（程序自己classpath下的类）所指定的类，开发者可以直接使用该类加载器，如果应用程序中没有自定义过自己的类加载器，一般情况下这个就是程序中默认的类加载器。</p>
+<h3 id="类加载器的隔离问题"><a href="#类加载器的隔离问题" class="headerlink" title="类加载器的隔离问题"></a>类加载器的隔离问题</h3><p>每个类装载器都有一个自己的命名空间用来保存已装载的类。当一个类装载器装载一个类时，它会通过保存在命名空间里的类全局限定名(Fully Qualified Class Name) 进行搜索来检测这个类是否已经被加载了。</p>
+<p>JVM 及 Dalvik 对类唯一的识别是 <code>ClassLoader id + PackageName + ClassName</code>，所以一个运行程序中是有可能存在两个包名和类名完全一致的类的。并且如果这两个类不是由一个 ClassLoader 加载，是无法将一个类的实例强转为另外一个类的，这就是 ClassLoader 隔离性。</p>
+<p>为了解决类加载器的隔离问题，JVM引入了双亲委托机制</p>
+<h2 id="四、双亲委托模型"><a href="#四、双亲委托模型" class="headerlink" title="四、双亲委托模型"></a>四、双亲委托模型</h2><p>核心思想：其一，<code>自底向上检查类是否已加载</code>；其二，<code>自顶向下尝试加载类</code></p>
+<p>双亲委派模型的工作流程是：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把请求委托给父加载器去完成，依次向上，因此，所有的类加载请求最终都应该被传递到顶层的启动类加载器中，只有当父加载器在它的搜索范围中没有找到所需的类时，即无法完成该加载，子加载器才会尝试自己去加载该类</p>
+<h3 id="具体加载过程"><a href="#具体加载过程" class="headerlink" title="具体加载过程"></a>具体加载过程</h3><ul>
+<li>当AppClassLoader加载一个class时，它首先不会自己去尝试加载这个类，而是把类加载请求委派给父类加载器ExtClassLoader去完成。</li>
+<li>当ExtClassLoader加载一个class时，它首先也不会自己去尝试加载这个类，而是把类加载请求委派给BootStrapClassLoader去完成。</li>
+<li>如果BootStrapClassLoader加载失败（例如在%JAVA_HOME%/jre/lib里未查找到该class），会使用ExtClassLoader来尝试加载；</li>
+<li>如果ExtClassLoader也加载失败，则会使用AppClassLoader来加载，如果AppClassLoader也加载失败，则会报出异常ClassNotFoundException</li>
+</ul>
+<h3 id="双亲委派模型意义"><a href="#双亲委派模型意义" class="headerlink" title="双亲委派模型意义"></a>双亲委派模型意义</h3><ul>
+<li>系统类防止内存中出现多份同样的字节码,使得类有了层次的划分</li>
+<li>保证Java程序安全稳定运行</li>
+</ul>
+<p>就拿<code>java.lang.Object</code>来说，你加载它经过一层层委托最终是由Bootstrap ClassLoader来加载的，也就是最终都是由Bootstrap ClassLoader去找<java_home>\lib中<code>rt.jar</code>里面的java.lang.Object加载到JVM中, 这样如果有不法分子自己造了个java.lang.Object，里面嵌了不好的代码，但是如果按照双亲委派模型来实现类加载的话，最终加载到JVM中的只会是我们rt.jar里面的东西，也就是这些核心的基础类代码得到了保护</java_home></p>
+<p><strong>拓展</strong><br><a href="https://www.zhihu.com/question/49667892" target="_blank" rel="noopener">为什么说java spi破坏双亲委派模型？</a></p>
+<h2 id="五、类的加载方式"><a href="#五、类的加载方式" class="headerlink" title="五、类的加载方式"></a>五、类的加载方式</h2><ul>
+<li>命令行启动应用时候由JVM初始化加载</li>
+<li>通过Class.forName()方法动态加载</li>
+<li>通过ClassLoader.loadClass()方法动态加载</li>
+</ul>
+<p><strong>Class.forName()和ClassLoader.loadClass()</strong></p>
+<ul>
+<li>Class.forName()：把类的.class文件加载到JVM中，对类进行解释的同时执行类中的static静态代码块；</li>
+<li>ClassLoader.loadClass()：只是把.class文件加载到JVM中，不会执行static代码块中的内容，只有在newInstance才会去执行</li>
+</ul>
+<h2 id="六、自定义加载器"><a href="#六、自定义加载器" class="headerlink" title="六、自定义加载器"></a>六、自定义加载器</h2><p>应用程序都是由这三种类加载器互相配合进行加载的，如果有必要，我们还可以加入自定义的类加载器。因为JVM自带的ClassLoader只是懂得从本地文件系统加载标准的java class文件，因此如果编写了自己的ClassLoader，便可以做到如下几点：</p>
+<ul>
+<li>在执行非置信代码之前，自动验证数字签名。</li>
+<li>动态地创建符合用户特定需要的定制化构建类。</li>
+<li>从特定的场所取得java class，例如数据库中和网络中</li>
+</ul>
+
         </div>
 
         
@@ -405,7 +461,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">74.4k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">75.9k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
