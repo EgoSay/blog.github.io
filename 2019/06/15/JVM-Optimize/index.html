@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">2.6k</font>
+						<font color="#2d96bd">2.7k</font>
 					</span>
                     
                 </div>
@@ -206,13 +206,19 @@
         </header>
 
         <div class="post-content">
-            <h1 id="JVM调优"><a href="#JVM调优" class="headerlink" title="JVM调优"></a>JVM调优</h1><blockquote>
-<p>内容整理自:</p>
+            <h1 id="JVM系列-JVM调优"><a href="#JVM系列-JVM调优" class="headerlink" title="JVM系列-JVM调优"></a>JVM系列-JVM调优</h1><blockquote>
+<p>依赖JDK8，内容整理自:</p>
 <ol>
 <li><a href="http://www.ityouknow.com/jvm/2017/09/03/jvm-command.html" target="_blank" rel="noopener">Jvm 系列(四):Jvm 调优-命令篇</a></li>
 <li><a href="https://www.jianshu.com/p/5be9c56171dd" target="_blank" rel="noopener">JVM调优常用参数配置</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/" target="_blank" rel="noopener">Oracle JVM 官方链接</a></li>
 </ol>
 </blockquote>
+<h2 id="GC日志格式"><a href="#GC日志格式" class="headerlink" title="GC日志格式"></a>GC日志格式</h2><blockquote>
+<p>图片引用自 <a href="http://www.ityouknow.com/jvm/2017/09/28/jvm-overview.html" target="_blank" rel="noopener">Jvm 系列(八):Jvm 知识点总览</a></p>
+</blockquote>
+<p><strong>Young GC日志:</strong><br><img src="https://i.loli.net/2020/02/18/Qlfu7B8ctVWYa4X.png" alt="image.png"></p>
+<p><strong>Full GC日志:</strong><br><img src="https://i.loli.net/2020/02/18/4hGPZuXpHB6Ltcl.png" alt="image.png"></p>
 <h2 id="JVM调优命令"><a href="#JVM调优命令" class="headerlink" title="JVM调优命令"></a>JVM调优命令</h2><h3 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h3><p><strong>命令格式:</strong><br><code>jps [options] [hostid]</code><br>option参数</p>
 <ul>
 <li><code>-l</code> : 输出主类全名或jar路径</li>
@@ -254,7 +260,7 @@
 <li>FailedMethod : 失败方法的全限定名</li>
 </ul>
 <h5 id="gc"><a href="#gc" class="headerlink" title="-gc"></a>-gc</h5><p>垃圾回收堆的行为统计，常用命令</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gc 1262</span><br><span class="line"> S0C    S1C     S0U     S1U   EC       EU        OC         OU        PC       PU         YGC    YGCT    FGC    FGCT     GCT</span><br><span class="line">26112.0 24064.0 6562.5  0.0   564224.0 76274.5   434176.0   388518.3  524288.0 42724.7    320    6.417   1      0.398    6.815</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gc 1262</span><br><span class="line"> S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT</span><br><span class="line">22016.0 21504.0 15436.2  0.0   305664.0 90988.0   699392.0   15828.7   31024.0 30336.3 3632.0 3507.6     12    0.438   1      0.045    0.483</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li><p>C即Capacity 总容量，U即Used 已使用的容量</p>
@@ -275,9 +281,13 @@
 </li>
 <li><p>OU : Old区已使用的容量</p>
 </li>
-<li><p>PC 当前perm的容量 (KB)</p>
+<li><p>MC : Metacspace元空间容量</p>
 </li>
-<li><p>PU perm的使用 (KB)</p>
+<li><p>MU : Metacspace元空间使用的容量</p>
+</li>
+<li><p>CCSC : 压缩类空间容量</p>
+</li>
+<li><p>CCSU : 压缩类空间已使用容量</p>
 </li>
 <li><p>YGC : 新生代垃圾回收次数</p>
 </li>
@@ -291,17 +301,23 @@
 </li>
 </ul>
 <h5 id="gccapacity"><a href="#gccapacity" class="headerlink" title="-gccapacity"></a>-gccapacity</h5><p>同-gc，不过还会输出Java堆各区域使用到的最大、最小空间</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gccapacity 1262</span><br><span class="line"> NGCMN    NGCMX     NGC    S0C   S1C       EC         OGCMN      OGCMX      OGC        OC       PGCMN    PGCMX     PGC      PC         YGC    FGC</span><br><span class="line">614400.0 614400.0 614400.0 26112.0 24064.0 564224.0   434176.0   434176.0   434176.0   434176.0 524288.0 1048576.0 524288.0 524288.0    320     1</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gccapacity 1262</span><br><span class="line">  NGCMN    NGCMX     NGC     S0C   S1C       EC      OGCMN      OGCMX       OGC         OC       MCMN     MCMX      MC     CCSMN    CCSMX     CCSC    YGC    FGC</span><br><span class="line">349184.0 349184.0 349184.0 22016.0 21504.0 305664.0   699392.0   699392.0   699392.0   699392.0      0.0 1077248.0  31024.0      0.0 1048576.0   3632.0     12     1</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>NGCMN : 新生代占用的最小空间</li>
 <li>NGCMX : 新生代占用的最大空间</li>
+<li>NGC : 当前新生代容量</li>
+<li>EC : 当前新生代 Eden区容量</li>
 <li>OGCMN : 老年代占用的最小空间</li>
 <li>OGCMX : 老年代占用的最大空间</li>
 <li>OGC：当前年老代的容量 (KB)</li>
 <li>OC：当前年老代的空间 (KB)</li>
-<li>PGCMN : perm占用的最小空间</li>
-<li>PGCMX : perm占用的最大空间</li>
+<li>MCMN : metaspace元空间占用的最小空间</li>
+<li>MCMX : metaspace元空间占用的最大空间</li>
+<li>MC : 当前metaspace元空间的容量</li>
+<li>CCSMN : Compressed class space占用的最小空间</li>
+<li>CCSMX : Compressed class space占用的最大空间</li>
+<li>CCSC : Compressed class space的容量</li>
 </ul>
 <h5 id="gcutil"><a href="#gcutil" class="headerlink" title="-gcutil"></a>-gcutil</h5><p>同-gc，不过输出的是已使用空间占总空间的百分比</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcutil 28920</span><br><span class="line">  S0     S1     E      O      P     YGC     YGCT    FGC    FGCT     GCT</span><br><span class="line"> 12.45   0.00  33.85   0.00   4.44  4       0.242     0    0.000    0.242</span><br></pre></td></tr></table></figure>
@@ -317,7 +333,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcnew 28920</span><br><span class="line"> S0C      S1C      S0U        S1U  TT  MTT  DSS      EC        EU         YGC     YGCT</span><br><span class="line"> 419392.0 419392.0 52231.8    0.0  6   6    209696.0 3355520.0 1172246.0  4       0.242</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>TT：Tenuring threshold(提升阈值)</li>
+<li>TT：Tenuring threshold(提升阈值，晋升到老年代所需年龄)</li>
 <li>MTT：最大的tenuring threshold</li>
 <li>DSS：survivor区域大小 (KB)</li>
 </ul>
@@ -332,13 +348,13 @@
 <li>EC:当前eden空间 (KB)</li>
 </ul>
 <h5 id="gcold"><a href="#gcold" class="headerlink" title="-gcold"></a>-gcold</h5><p>统计旧生代的行为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcold 28920</span><br><span class="line">   PC       PU        OC           OU       YGC    FGC    FGCT     GCT</span><br><span class="line">1048576.0  46561.7   6291456.0     0.0      4      0      0.000    0.242</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcold 28920</span><br><span class="line">   PC       PU        OC           OU       YGC    FGC    FGCT     GCT</span><br><span class="line">1048576.0  46561.7   6291456.0     0.0      4      0      0.000    0.242</span><br></pre></td></tr></table></figure>
 
 <h5 id="gcoldcapacity"><a href="#gcoldcapacity" class="headerlink" title="-gcoldcapacity"></a>-gcoldcapacity</h5><p>统计旧生代的大小和空间</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcoldcapacity 28920</span><br><span class="line">   OGCMN       OGCMX        OGC         OC         YGC   FGC    FGCT     GCT</span><br><span class="line">  6291456.0   6291456.0   6291456.0   6291456.0     4     0    0.000    0.242</span><br></pre></td></tr></table></figure>
 
-<h5 id="gcpermcapacity"><a href="#gcpermcapacity" class="headerlink" title="-gcpermcapacity"></a>-gcpermcapacity</h5><p>永生代行为统计</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcpermcapacity 28920</span><br><span class="line">    PGCMN      PGCMX       PGC         PC      YGC   FGC    FGCT     GCT</span><br><span class="line"> 1048576.0  2097152.0  1048576.0  1048576.0     4     0    0.000    0.242</span><br></pre></td></tr></table></figure>
+<h5 id="gcmetacapacity"><a href="#gcmetacapacity" class="headerlink" title="-gcmetacapacity"></a>-gcmetacapacity</h5><p>metaspace元空间行为统计</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -gcmetacapacity 3491</span><br><span class="line">   MCMN       MCMX        MC       CCSMN      CCSMX       CCSC     YGC   FGC    FGCT     GCT</span><br><span class="line">       0.0  1077248.0    31024.0        0.0  1048576.0     3632.0    12     1    0.045    0.483</span><br></pre></td></tr></table></figure>
 
 <h5 id="printcompilation"><a href="#printcompilation" class="headerlink" title="-printcompilation"></a>-printcompilation</h5><p>hotspot编译方法统计</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jstat -printcompilation 28920</span><br><span class="line">    Compiled  Size  Type Method</span><br><span class="line">    1291      78     1    java/util/ArrayList indexOf</span><br></pre></td></tr></table></figure>
@@ -353,12 +369,12 @@
 <p><strong>命令格式</strong><br><code>jmap [option] LVMID</code></p>
 <p>option参数</p>
 <ul>
-<li>dump : 生成堆转储快照</li>
-<li>finalizerinfo: 显示在F-Queue队列等待Finalizer线程执行finalizer方法的对象</li>
-<li>heap : 显示Java堆详细信息</li>
-<li>histo : 显示堆中对象的统计信息</li>
-<li>permstat : to print permanent generation statistics</li>
-<li>F : 当-dump没有响应时，强制生成dump快照</li>
+<li><code>-dump</code> : 生成堆转储快照</li>
+<li><code>-finalizerinfo</code>: 显示在F-Queue队列等待Finalizer线程执行finalizer方法的对象</li>
+<li><code>-heap</code> : 显示Java堆详细信息</li>
+<li><code>-histo</code>: 显示堆中对象的统计信息</li>
+<li><code>-permstat</code> : to print permanent generation statistics</li>
+<li><code>-F</code> : 当-dump没有响应时，强制生成dump快照</li>
 </ul>
 <h3 id="jhat"><a href="#jhat" class="headerlink" title="jhat"></a>jhat</h3><p>jhat(JVM Heap Analysis Tool)命令是与jmap搭配使用，用来分析jmap生成的dump，jhat内置了一个微型的HTTP/HTML服务器，生成dump的分析结果后，可以在浏览器中查看。在此要注意，一般不会直接在服务器上进行分析，因为jhat是一个耗时并且耗费硬件资源的过程，一般把服务器生成的dump文件复制到本地或其他机器上进行分析</p>
 <p><strong>命令格式</strong><br><code>jhat [dumpfile]</code><br><strong>参数</strong></p>
@@ -376,17 +392,17 @@
 <p><strong>命令格式</strong><br><code>jstack [option] LVMID</code></p>
 <p><strong>option参数</strong></p>
 <ul>
-<li>-F : 当正常输出请求不被响应时，强制输出线程堆栈</li>
-<li>-l : 除堆栈外，显示关于锁的附加信息</li>
-<li>-m : 如果调用到本地方法的话，可以显示C/C++的堆栈</li>
+<li><code>-F</code> : 当正常输出请求不被响应时，强制输出线程堆栈</li>
+<li><code>-l</code> : 除堆栈外，显示关于锁的附加信息</li>
+<li><code>-m</code> : 如果调用到本地方法的话，可以显示C/C++的堆栈</li>
 </ul>
 <h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><p>jinfo(JVM Configuration info)这个命令作用是实时查看和调整虚拟机运行参数。 之前的jps -v口令只能查看到显示指定的参数，如果想要查看未被显示指定的参数的值就要使用jinfo口令</p>
 <p><strong>命令格式</strong><br><code>jinfo [option] [args] LVMID</code></p>
 <p><strong>option参数</strong></p>
 <ul>
-<li>-flag : 输出指定args参数的值</li>
-<li>-flags : 不需要args参数，输出所有JVM参数的值</li>
-<li>-sysprops : 输出系统属性，等同于System.getProperties()</li>
+<li><code>-flag</code> : 输出指定args参数的值</li>
+<li><code>-flags</code>: 不需要args参数，输出所有JVM参数的值</li>
+<li><code>-sysprops</code> : 输出系统属性，等同于System.getProperties()</li>
 </ul>
 <h2 id="JVM调优配置参数"><a href="#JVM调优配置参数" class="headerlink" title="JVM调优配置参数"></a>JVM调优配置参数</h2><h3 id="堆配置"><a href="#堆配置" class="headerlink" title="堆配置"></a>堆配置</h3><ul>
 <li><code>-Xms</code>: 设置堆的最小空间大小</li>
@@ -415,7 +431,12 @@
 <li><code>-XX:+PrintGCTimeStamps</code></li>
 <li><code>-Xloggc:filename</code></li>
 </ul>
-<h2 id="JVM调优案例"><a href="#JVM调优案例" class="headerlink" title="JVM调优案例"></a>JVM调优案例</h2><p><strong>参考链接:</strong><br>美团技术团队- <a href="https://tech.meituan.com/2017/12/29/jvm-optimize.html" target="_blank" rel="noopener">从实际案例聊聊Java应用的GC优化</a></p>
+<h2 id="JVM调优案例"><a href="#JVM调优案例" class="headerlink" title="JVM调优案例"></a>JVM调优案例</h2><p><strong>参考链接:</strong></p>
+<ul>
+<li><a href="https://tech.meituan.com/2017/12/29/jvm-optimize.html" target="_blank" rel="noopener">从实际案例聊聊Java应用的GC优化</a> - 美团技术团队</li>
+<li><a href="https://segmentfault.com/a/1190000005174819" target="_blank" rel="noopener">Java服务GC参数调优案例</a></li>
+<li><a href="https://crowhawk.github.io/2017/08/21/jvm_4/" target="_blank" rel="noopener">如何优化Java GC「译」</a></li>
+</ul>
 
         </div>
 
@@ -479,7 +500,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">75.9k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">76.1k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>

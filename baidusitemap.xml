@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://cjwdream.top/2019/06/15/JVM-Optimize/</loc>
+    <lastmod>2020-02-18</lastmod>
+  </url>  <url>
     <loc>http://cjwdream.top/2019/06/21/JVM-Class-Loading-Mechanism/</loc>
     <lastmod>2020-02-17</lastmod>
   </url>  <url>
@@ -11,9 +14,6 @@
     <lastmod>2020-02-14</lastmod>
   </url>  <url>
     <loc>http://cjwdream.top/2019/06/11/The-Garbage-Collection-In-JVM/</loc>
-    <lastmod>2020-02-13</lastmod>
-  </url>  <url>
-    <loc>http://cjwdream.top/2019/06/15/JVM-Optimize/</loc>
     <lastmod>2020-02-13</lastmod>
   </url>  <url>
     <loc>http://cjwdream.top/2020/01/11/synchronized/</loc>

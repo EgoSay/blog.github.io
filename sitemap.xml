@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://cjwdream.top/2019/06/15/JVM-Optimize/</loc>
+    
+    <lastmod>2020-02-18T14:43:48.176Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://cjwdream.top/2019/06/21/JVM-Class-Loading-Mechanism/</loc>
     
     <lastmod>2020-02-17T12:28:08.971Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>http://cjwdream.top/2019/06/11/The-Garbage-Collection-In-JVM/</loc>
     
     <lastmod>2020-02-13T13:39:27.051Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://cjwdream.top/2019/06/15/JVM-Optimize/</loc>
-    
-    <lastmod>2020-02-13T13:38:02.954Z</lastmod>
     
   </url>
   
