@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Spark基础-Spark作业提交 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Spark基础-Spark作业提交</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">August 4, 2019&nbsp;&nbsp;21:39:59</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">1.2k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Spark基础-Spark作业提交"><a href="#Spark基础-Spark作业提交" class="headerlink" title="Spark基础-Spark作业提交"></a>Spark基础-Spark作业提交</h1><blockquote>
+<p>内容整理自:</p>
+<ol>
+<li><a href="https://www.jianshu.com/p/e1cf4c58ae35" target="_blank" rel="noopener">Spark 架构与作业执行流程</a></li>
+</ol>
+</blockquote>
+<h2 id="Spark提交作业流程"><a href="#Spark提交作业流程" class="headerlink" title="Spark提交作业流程"></a>Spark提交作业流程</h2><h3 id="名词概念"><a href="#名词概念" class="headerlink" title="名词概念"></a>名词概念</h3><ul>
+<li><p><code>Application</code>: 用户编写的Spark应用程序，包含了一个Driver 功能的代码和分布在集群中多个节点上运行的Executor代码</p>
+</li>
+<li><p><code>Driver</code>: Driver即运行上述Application的main()函数并且创建SparkContext准备Spark应用程序的运行环境.在Spark中由SparkContext负责和ClusterManager通信，进行资源的申请、任务的分配和监控等；当Executor部分运行完毕后，Driver负责将SparkContext关闭。通常用SparkContext代表Driver</p>
+</li>
+<li><p><code>Worker</code>：集群中任何可以运行 Application 代码的节点，类似于 YARN 中的 NodeManager 节点。在 Standalone 模式中指的就是通过 Slave 文件配置的 Worker 节点，在 Spark on Yarn 模式中指的就是 NodeManager 节点</p>
+</li>
+<li><p><code>Executor</code>: Application运行在Worker 节点上的一个进程，该进程负责运行Task，并且负责将数据存在内存或者磁盘上，每个Application都有各自独立的一批Executor</p>
+</li>
+<li><p><code>Cluster Manager</code>：指的是在集群上获取资源的外部服务，目前有：</p>
+<ol>
+<li>Standalone：Spark原生的资源管理，由Master负责资源的分配</li>
+<li>Hadoop Yarn：由YARN中的ResourceManager负责资源的分配</li>
+</ol>
+</li>
+</ul>
+<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><p>两个核心：<code>DAGScheduler</code>和<code>TaskScheduler</code><br><img src="https://i.loli.net/2020/02/20/QMtoj2YTvfF1xVK.png" alt="image.png"><br>详情见: <a href="https://cjwdream.top/2019/08/24/Spark%E8%BF%9B%E9%98%B6-Spark%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F/">Spark进阶-Spark调度系统</a></p>
+<h2 id="Spark三种作业提交模式"><a href="#Spark三种作业提交模式" class="headerlink" title="Spark三种作业提交模式"></a>Spark三种作业提交模式</h2><h3 id="local模式"><a href="#local模式" class="headerlink" title="local模式"></a>local模式</h3><ul>
+<li>local模式下，没有所谓的<code>master+worker</code>这种概念</li>
+<li>local模式，相当于，启动一个本地进程，然后在一个进程内，模拟spark集群中作业的运行一个spark作业，就对应了进程中的一个或多个executor线程，就开始执行，包括作业的调度，task分配</li>
+</ul>
+<h3 id="Standalone提交模式"><a href="#Standalone提交模式" class="headerlink" title="Standalone提交模式"></a>Standalone提交模式</h3><p>standalone模式提交, 需要将master设置成spark://master_ip:port，比如spark://192.168.75.101:7077</p>
+<h4 id="Standalone-Client模式"><a href="#Standalone-Client模式" class="headerlink" title="Standalone Client模式"></a>Standalone Client模式</h4><p><img src="https://i.loli.net/2020/02/20/ixkUrjwYI5gzeQ1.png" alt="image.png"></p>
+<p><strong>流程描述</strong></p>
+<ol>
+<li><p>客户端启动后直接运行用户程序，启动Driver相关的工作：DAGScheduler和BlockManagerMaster等。</p>
+</li>
+<li><p>客户端的Driver向Master注册。</p>
+</li>
+<li><p>Master还会让Worker启动Executor。Worker创建一个ExecutorRunner线程，ExecutorRunner会启动ExecutorBackend进程。</p>
+</li>
+<li><p>ExecutorBackend启动后会向Driver的SchedulerBackend注册。Driver的DAGScheduler解析作业并生成相应的Stage，每个Stage包含的Task通过TaskScheduler分配给Executor执行。</p>
+</li>
+<li><p>所有stage都完成后作业结束</p>
+</li>
+</ol>
+<h4 id="Standalone-Cluster模式"><a href="#Standalone-Cluster模式" class="headerlink" title="Standalone Cluster模式"></a>Standalone Cluster模式</h4><p><img src="https://i.loli.net/2020/02/20/EiHWbdOhLzSpPVg.png" alt="image.png"></p>
+<ol>
+<li><p>客户端提交作业给 master</p>
+</li>
+<li><p>Master选择一个 Worker节点启动 Driver，即<code>SchedulerBackend</code>。Worker创建一个DriverRunner线程，DriverRunner启动SchedulerBackend进程</p>
+</li>
+<li><p>Master让其余 Worker启动 Executor，即<code>ExecutorBackend</code>。Worker创建一个ExecutorRunner线程，ExecutorRunner会启动ExecutorBackend进程</p>
+</li>
+<li><p>ExecutorBackend启动后会向Driver的SchedulerBackend注册。SchedulerBackend进程中包含DAGScheduler，它会根据用户程序，生成执行计划，并调度执行。对于每个stage的task，都会被存放到TaskScheduler中，ExecutorBackend向SchedulerBackend汇报的时候把TaskScheduler中的task调度到ExecutorBackend执行</p>
+</li>
+</ol>
+<h4 id="Standalone-Client和Standalone-Cluster区别"><a href="#Standalone-Client和Standalone-Cluster区别" class="headerlink" title="Standalone Client和Standalone Cluster区别"></a>Standalone Client和Standalone Cluster区别</h4><ul>
+<li>client mode下，在哪台机器上用spark-submit脚本提交application，driver就会在那台机器上启动</li>
+<li>cluster mode下，driver会通过master进程，随机被分配给某一个worker进程来启动</li>
+</ul>
+<h3 id="Yarn提交模式"><a href="#Yarn提交模式" class="headerlink" title="Yarn提交模式"></a>Yarn提交模式</h3><h4 id="Yarn-Client-模式"><a href="#Yarn-Client-模式" class="headerlink" title="Yarn-Client 模式"></a>Yarn-Client 模式</h4><p><img src="https://i.loli.net/2020/02/20/QO2Xx4uSWmjoqCe.png" alt="image.png"></p>
+<ol>
+<li><p>Spark Yarn Client向YARN的<code>ResourceManager</code>申请启动<code>Application Master</code></p>
+</li>
+<li><p>ResourceManager收到请求后，在集群中选择一个NodeManager，为该应用程序分配第一个Container，要求它在这个Container中启动应用程序的ApplicationMaster,<strong>与YARN-Cluster区别的是在该ApplicationMaster不运行SparkContext，只与SparkContext进行联系进行资源的分派</strong></p>
+</li>
+<li><p>Client中的SparkContext初始化完毕后，与ApplicationMaster建立通讯，向ResourceManager注册，根据任务信息向ResourceManager申请资源（Container）</p>
+</li>
+<li><p>ApplicationMaster申请到资源（也就是Container）后，便与对应的NodeManager通信，要求它在获得的Container中启动启动CoarseGrainedExecutorBackend，CoarseGrainedExecutorBackend启动后会向Client中的SparkContext注册并申请Task</p>
+</li>
+<li><p>Client中的SparkContext分配Task给CoarseGrainedExecutorBackend执行，CoarseGrainedExecutorBackend运行Task并向Driver汇报运行的状态和进度</p>
+</li>
+<li><p>应用程序运行完成后，Client的SparkContext向ResourceManager申请注销并关闭自己</p>
+</li>
+</ol>
+<h4 id="YARN-Cluster-模式"><a href="#YARN-Cluster-模式" class="headerlink" title="YARN-Cluster 模式"></a>YARN-Cluster 模式</h4><p><img src="https://i.loli.net/2020/02/20/svkXGDRhcCrMZTg.png" alt="image.png"><br>在YARN-Cluster模式中，当用户向YARN中提交一个应用程序后，YARN将分两个阶段运行该应用程序：</p>
+<ul>
+<li>第一个阶段是把Spark的Driver作为一个ApplicationMaster在YARN集群中先启动；</li>
+<li>第二个阶段是由ApplicationMaster创建应用程序，然后为它向ResourceManager申请资源，并启动Executor来运行Task，同时监控它的整个运行过程，直到运行完成</li>
+</ul>
+<h4 id="YARN-Client-与-YARN-Cluster-区别"><a href="#YARN-Client-与-YARN-Cluster-区别" class="headerlink" title="YARN-Client 与 YARN-Cluster 区别"></a>YARN-Client 与 YARN-Cluster 区别</h4><ul>
+<li><p><code>YARN-Cluster</code>模式下，Driver运行在AM(Application Master)中，它负责向YARN申请资源，并监督作业的运行状况。当用户提交了作业之后，就可以关掉Client，作业会继续在YARN上运行，因而YARN-Cluster模式不适合运行交互类型的作业</p>
+</li>
+<li><p><code>YARN-Client</code>模式下，Application Master仅仅向YARN请求Executor，Client会和请求的Container通信来调度他们工作，也就是说Client不能离开</p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/08/04/Spark-Submit-Job/">http://cjwdream.top/2019/08/04/Spark-Submit-Job/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Spark/"># Spark</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2019/09/18/Spark优化-多维度统计计算/">Spark优化-多维度统计计算</a>
+            
+            
+            <a class="next" rel="next" href="/2019/08/01/Spark-Scheduling-Process/">Spark进阶-Spark调度系统</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">77.3k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

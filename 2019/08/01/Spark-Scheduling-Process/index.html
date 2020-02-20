@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">August 24, 2019&nbsp;&nbsp;16:39:59</a>
+                        Date: <a href="#">August 1, 2019&nbsp;&nbsp;16:39:59</a>
                         </span>
                     
                     
@@ -208,7 +208,7 @@
         <div class="post-content">
             <h1 id="Spark调度系统"><a href="#Spark调度系统" class="headerlink" title="Spark调度系统"></a>Spark调度系统</h1><h2 id="一、主要工作流程"><a href="#一、主要工作流程" class="headerlink" title="一、主要工作流程"></a>一、主要工作流程</h2><p>两个核心：<code>DAGScheduler</code>和<code>TaskScheduler</code><br><img src="https://cjwdream.top/image/spark-scheduler.jpg" alt="-w930"></p>
 <h3 id="build-operator-DAG"><a href="#build-operator-DAG" class="headerlink" title="build operator DAG"></a><code>build operator DAG</code></h3><p>用户提交的Job将首先被转换为一系列<code>RDD</code>并通过RDD之间的依赖关系(<code>Dependency</code>)构建DAG, 然后将RDD构成的DAG提交到调度系统</p>
-<h3 id="split-graph-into-stage-of-tasks"><a href="#split-graph-into-stage-of-tasks" class="headerlink" title="split graph into stage of tasks"></a><code>split graph into stage of tasks</code></h3><p><code>DAGScheduler</code>负责接收由RDD构成的DAG，将一系列RDD划分到不同的<code>Stage</code>。根据 Stage的不同类型(<code>ResultStage和 ShuffleMapStage</code>)， 给 Stage 中未完成的 <code>Partition</code> 创建不同类型的Task(<code>ResultStage和 ShuffleMapTask</code>)。 每个Stage将因为未完成Partition的多少, 创建零到多个Task。DAGScheduler最后将每个Stage中的Task以任务集合(<code>TaskSet</code>)的形式提交给<code>TaskSchduler</code>继续处理</p>
+<h3 id="split-graph-into-stage-of-tasks"><a href="#split-graph-into-stage-of-tasks" class="headerlink" title="split graph into stage of tasks"></a><code>split graph into stage of tasks</code></h3><p><code>DAGScheduler</code>负责接收由RDD构成的DAG，将一系列RDD划分到不同的<code>Stage</code>。根据 Stage的不同类型(<code>ResultStage和 ShuffleMapStage</code>)， 给 Stage 中未完成的 <code>Partition</code> 创建不同类型的Task(<code>ResultTask和 ShuffleMapTask</code>)。 每个Stage将因为未完成Partition的多少, 创建零到多个Task。DAGScheduler最后将每个Stage中的Task以任务集合(<code>TaskSet</code>)的形式提交给<code>TaskSchduler</code>继续处理</p>
 <h3 id="launch-tasks-via-cluster-manager"><a href="#launch-tasks-via-cluster-manager" class="headerlink" title="launch tasks via cluster manager"></a><code>launch tasks via cluster manager</code></h3><p>使用集群管理器(<code>cluster manager</code>)分配资源与任务调度, 对于失败的任务还会有一定的重试与容错机制。<code>TaskScheduler</code>负责从<code>DAGScheduler</code>接收<code>TaskSet</code>, 创建<code>TaskSetManager</code>对TaskSet进行管理，并将此TaskSetManager添加到<code>调度池</code>中, 最后将对Task的调度交给后端接口(<code>SchedulerBackend</code>)处理。SchedulerBackend首先申请TaskSheduler，安装Task调度算法(<code>FIFO和FAIR</code>)，对调度池中所有TaskSetManager进行排序，然后对TaskSet按照最大本地性原则分配资源，最后在各个分配的节点上运行TaskSet中的Task</p>
 <h3 id="execute-tasks"><a href="#execute-tasks" class="headerlink" title="execute tasks"></a><code>execute tasks</code></h3><p>执行任务，并将任务中间结果和最终结果存入存储体系</p>
 <h2 id="二、RDD-详解"><a href="#二、RDD-详解" class="headerlink" title="二、RDD 详解"></a>二、RDD 详解</h2><h3 id="RDD简单总结"><a href="#RDD简单总结" class="headerlink" title="RDD简单总结"></a>RDD简单总结</h3><p>参考<a href="https://cjwdream.top/2019/02/14/RDD%E6%80%BB%E7%BB%93/">RDD总结</a></p>
@@ -235,7 +235,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/08/24/Spark进阶-Spark调度系统/">http://cjwdream.top/2019/08/24/Spark进阶-Spark调度系统/</a></span>
+                        <span><a href="http://cjwdream.top/2019/08/01/Spark-Scheduling-Process/">http://cjwdream.top/2019/08/01/Spark-Scheduling-Process/</a></span>
                     </p>
                 
                 
@@ -267,7 +267,7 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/09/18/Spark优化-多维度统计计算/">Spark优化-多维度统计计算</a>
+                <a class="prev" rel="prev" href="/2019/08/04/Spark-Submit-Job/">Spark基础-Spark作业提交</a>
             
             
             <a class="next" rel="next" href="/2019/07/14/resource-collection/">学习资源收集</a>
@@ -284,7 +284,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">76.1k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">77.3k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
