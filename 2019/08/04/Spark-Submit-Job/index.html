@@ -228,7 +228,7 @@
 </ol>
 </li>
 </ul>
-<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><p>两个核心：<code>DAGScheduler</code>和<code>TaskScheduler</code><br><img src="https://i.loli.net/2020/02/20/QMtoj2YTvfF1xVK.png" alt="image.png"><br>详情见: <a href="https://cjwdream.top/2019/08/24/Spark%E8%BF%9B%E9%98%B6-Spark%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F/">Spark进阶-Spark调度系统</a></p>
+<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><p>两个核心：<code>DAGScheduler</code>和<code>TaskScheduler</code><br><img src="https://i.loli.net/2020/02/20/QMtoj2YTvfF1xVK.png" alt="image.png"><br>详情见: <a href="https://cjwdream.top/2019/08/01/Spark-Scheduling-Process/">Spark进阶-Spark调度系统</a></p>
 <h2 id="Spark三种作业提交模式"><a href="#Spark三种作业提交模式" class="headerlink" title="Spark三种作业提交模式"></a>Spark三种作业提交模式</h2><h3 id="local模式"><a href="#local模式" class="headerlink" title="local模式"></a>local模式</h3><ul>
 <li>local模式下，没有所谓的<code>master+worker</code>这种概念</li>
 <li>local模式，相当于，启动一个本地进程，然后在一个进程内，模拟spark集群中作业的运行一个spark作业，就对应了进程中的一个或多个executor线程，就开始执行，包括作业的调度，task分配</li>
