@@ -8,7 +8,7 @@
 
 
 
-<title>shell脚本基础 | EgoSay</title>
+<title>Livy系列-基于Spark的REST服务Livy简介 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">shell脚本基础</h1>
+            <h1 class="post-title">Livy系列-基于Spark的REST服务Livy简介</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 13, 2018&nbsp;&nbsp;21:36:40</a>
+                        Date: <a href="#">March 2, 2019&nbsp;&nbsp;18:29:23</a>
                         </span>
                     
                     
@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">384</font>
+						<font color="#2d96bd">1.1k</font>
 					</span>
                     
                 </div>
@@ -206,29 +206,48 @@
         </header>
 
         <div class="post-content">
-            <h2 id="shell脚本基础"><a href="#shell脚本基础" class="headerlink" title="shell脚本基础"></a>shell脚本基础</h2><h3 id="shell脚本调试"><a href="#shell脚本调试" class="headerlink" title="shell脚本调试"></a>shell脚本调试</h3><p>-n，读一遍脚本中的命令但不执行，用于检查脚本中的语法错误<br>-v，一边执行脚本，一边将执行过的脚本命令打印到标准错误输出<br>-x，提供跟踪执行信息，将执行的每一条命令和结果依次打印出来</p>
-<h3 id="shell脚本对文本中无序的一列数字排序"><a href="#shell脚本对文本中无序的一列数字排序" class="headerlink" title="shell脚本对文本中无序的一列数字排序"></a>shell脚本对文本中无序的一列数字排序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># sort -n 190307.txt | awk '&#123;a+=$0;print$0&#125; END &#123;print "sum="a&#125;'</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="shell命令查看文件空行行号"><a href="#shell命令查看文件空行行号" class="headerlink" title="shell命令查看文件空行行号"></a>shell命令查看文件空行行号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># grep -n ^$ filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/[a-zA-Z0-9@#$%^&amp;*]!=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># sed -n '/^$/=' filename</span></span><br><span class="line">[root@server ~]<span class="comment"># awk '/^$/&#123;print NR&#125;' filename</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="shell文件夹操作"><a href="#shell文件夹操作" class="headerlink" title="shell文件夹操作"></a>shell文件夹操作</h3><ol>
-<li><p>删除一个文件夹下所有文件但是不删除文件夹</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find . -type f | xargs rm -f</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>只复制目录的结构，而不复制目录的内容</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># find ~ -type d -exec mkdir -p demo/\&#123;\&#125; \;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查找当前文件夹下所有的文本文件内容中包含有字符”math”的文件名称</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server-ai ~]<span class="comment"># grep -r "math" /home/chenjiawei/test/shell/ | cut -d ":" -f 1</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>遍历目录及其子目录中的所有文件</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/bash</span><br><span class="line">function read_dir()&#123;</span><br><span class="line">    for file in `ls $1`       #注意此处这是两个反引号，表示运行系统命令</span><br><span class="line">    do</span><br><span class="line">        if [ -d $1&quot;/&quot;$file ]  #注意此处之间一定要加上空格，否则会报错</span><br><span class="line">        then</span><br><span class="line">            read_dir $1&quot;/&quot;$file</span><br><span class="line">        else</span><br><span class="line">            echo $1&quot;/&quot;$file   #在此处处理文件即可</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line">#读取第一个参数</span><br><span class="line">read_dir $1</span><br></pre></td></tr></table></figure>
-
-<p> 执行命令</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sh traveDir.sh DIR_NAME</span><br></pre></td></tr></table></figure>
-
-</li>
+            <h1 id="Livy系列-基于Spark的REST服务Livy简介"><a href="#Livy系列-基于Spark的REST服务Livy简介" class="headerlink" title="Livy系列-基于Spark的REST服务Livy简介"></a>Livy系列-基于Spark的REST服务Livy简介</h1><blockquote>
+<p>内容整理自:</p>
+<ol>
+<li><a href="http://jerryshao.me/2018/01/05/livy-spark-based-rest-service/" target="_blank" rel="noopener">Livy：基于Apache Spark的REST服务</a></li>
 </ol>
+</blockquote>
+<h2 id="Livy简介"><a href="#Livy简介" class="headerlink" title="Livy简介"></a>Livy简介</h2><p>Apache Livy是一个基于Spark的开源REST服务，它能够以REST的方式将代码片段或是序列化的二进制代码提交到Spark集群中去执行, 它提供了以下这些基本功能：</p>
+<ul>
+<li>提交Scala, Python或是R代码片段到远端的Spark集群上执行。</li>
+<li>提交Java, Scala, Python所编写的Spark作业到远端的Spark集群上执行。</li>
+<li>提交批处理应用到集群中运行</li>
+</ul>
+<p>关于Livy REST API的使用，参考<a href="https://livy.incubator.apache.org/docs/latest/rest-api.html" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="Livy基本架构"><a href="#Livy基本架构" class="headerlink" title="Livy基本架构"></a>Livy基本架构</h2><p>Livy是一个典型的REST服务架构，它一方面接受并解析用户的REST请求，转换成相应的操作；另一方面它管理着用户所启动的所有的Spark集群</p>
+<p><img src="https://i.loli.net/2020/02/20/gYGdWiZXI1cCkMz.png" alt="image.png"><br>用户可以以REST请求的方式通过Livy启动一个新的Spark集群，Livy将每一个启动的Spark集群称之为一个会话(session)，一个会话是由一个完整的Spark集群所构成的，并且通过RPC协议在Spark集群和Livy服务端之间进行通信。根据处理交互方式的不同，Livy将会话分成了两种类型：</p>
+<ul>
+<li><code>交互式会话(interactive session)</code>。这与Spark中的交互式处理相同，交互式会话在其启动后可以接收用户所提交的代码片段，在远端的Spark集群上编译并执行。</li>
+<li><code>批处理会话(batch session)</code>。用户可以通过Livy以批处理的方式启动Spark应用，这样的一个方式在Livy中称之为批处理会话，这与Spark中的批处理是相同的</li>
+</ul>
+<h2 id="Livy的企业级特性"><a href="#Livy的企业级特性" class="headerlink" title="Livy的企业级特性"></a>Livy的企业级特性</h2><h3 id="多用户支持"><a href="#多用户支持" class="headerlink" title="多用户支持"></a>多用户支持</h3><p>假定用户tom向Livy服务端发起REST请求启动一个新的会话，而Livy服务端则是由用户livy启动的，这个时候所创建出来Spark集群的用户是谁呢，会是用户tom还是livy？<strong>在默认情况下这个Spark集群的用户是livy</strong>。这会带来访问权限的问题：用户tom无法访问其拥有权限的资源，而相对的是他却可以访问用户livy所拥有的资源。</p>
+<p>为了解决这个问题Livy引入了<strong>Hadoop中的代理用户(proxy user)模式</strong>，代理用户模式广泛使用于多用户的环境，如HiveServer2。在此模式中超级用户可以代理成普通用户去访问资源，并拥有普通用户相应的权限。开启了代理用户模式后，以用户tom所创建的会话所启动的Spark集群用户就会是tom</p>
+<h3 id="端到端安全"><a href="#端到端安全" class="headerlink" title="端到端安全"></a>端到端安全</h3><ul>
+<li>基于Kerberos的Spnego认证实现客户端认证安全</li>
+<li>使用标准的SSL来加密Http协议，保证客户端与Livy服务端之间Http传输的安全性</li>
+<li>基于SASL认证的RPC通信机制保证Livy服务端和Spark集群之间网络通信安全</li>
+</ul>
+<h3 id="失败恢复机制"><a href="#失败恢复机制" class="headerlink" title="失败恢复机制"></a>失败恢复机制</h3><p>Livy提供了失败恢复的机制，当用户启动会话的同时Livy会在可靠的存储上记录会话相关的元信息，一旦Livy从失败中恢复过来时它会试图读取相关的元信息并与Spark集群重新连接。</p>
+<p>为了使用该特性我们需要进行以下Livy配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 开启失败恢复功能</span><br><span class="line">livy.server.recovery.mode: recovery</span><br><span class="line"></span><br><span class="line">// 配置将元信息存储在何种可靠存储上，当前支持filesystem和zookeeper</span><br><span class="line">livy.server.recovery.state-store</span><br><span class="line">// 配置具体的存储路径，如果是filesystem则改配置为文件路径；而zookeeper则为zookeeper集群的URL</span><br><span class="line">livy.server.recovery.state-store.url</span><br></pre></td></tr></table></figure>
+
+<h2 id="Livy与spark-jobserver对比"><a href="#Livy与spark-jobserver对比" class="headerlink" title="Livy与spark-jobserver对比"></a>Livy与spark-jobserver对比</h2><p><strong>Livy的优势：</strong></p>
+<ul>
+<li>Livy不需要对代码进行任何更改，而SJS作业必须扩展特定的类。</li>
+<li>Livy允许提交代码片段(包括Python)以及预编译的jar，而SJS只接受jar。</li>
+<li>除了REST之外，Livy还有Java和Scala API。Python API正在开发中，SJS有一个“python绑定”</li>
+</ul>
+<p><strong>SJS优势：</strong></p>
+<ul>
+<li>SJS可以管理jars，它允许您上传和存储Jars，部署作业的时候只需要通过单独的REST去调用。而Livy每次重新部署作业，都需要重新上传这些jar。</li>
+<li>可以使用HOCON格式配置SJS作业，该格式可以作为REST调用提交</li>
+</ul>
+<p><strong>官方链接</strong><br>Livy： <a href="https://livy.incubator.apache.org/" target="_blank" rel="noopener">https://livy.incubator.apache.org/</a><br>spark-jobserver: <a href="https://github.com/spark-jobserver/spark-jobserver" target="_blank" rel="noopener">https://github.com/spark-jobserver/spark-jobserver</a></p>
 
         </div>
 
@@ -243,7 +262,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2018/05/13/shell脚本基础/">http://cjwdream.top/2018/05/13/shell脚本基础/</a></span>
+                        <span><a href="http://cjwdream.top/2019/03/02/Livy-Introduction/">http://cjwdream.top/2019/03/02/Livy-Introduction/</a></span>
                     </p>
                 
                 
@@ -262,7 +281,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Linux/"># Linux</a>
+                        <a href="/tags/Livy/"># Livy</a>
                     
                         
                 </span>
@@ -275,10 +294,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2018/06/25/计算机网络总结/">计算机网络总结</a>
+                <a class="prev" rel="prev" href="/2019/06/02/JVM-memory-structure/">JVM系列-JVM内存结构</a>
             
             
-            <a class="next" rel="next" href="/2018/04/02/Linux查看文件中指定行数的内容/">Linux查看文件中指定行数的内容</a>
+            <a class="next" rel="next" href="/2019/02/14/Spark基础-RDD总结/">Spark基础-RDD总结</a>
             
         </section>
 
