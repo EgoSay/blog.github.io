@@ -8,7 +8,7 @@
 
 
 
-<title>Linux查看文件中指定行数的内容 | EgoSay</title>
+<title>Livy系列- Livy的核心功能及模块概述 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Linux查看文件中指定行数的内容</h1>
+            <h1 class="post-title">Livy系列- Livy的核心功能及模块概述</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">April 2, 2018&nbsp;&nbsp;10:20:17</a>
+                        Date: <a href="#">March 4, 2019&nbsp;&nbsp;22:20:28</a>
                         </span>
                     
                     
@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">195</font>
+						<font color="#2d96bd">781</font>
 					</span>
                     
                 </div>
@@ -206,17 +206,62 @@
         </header>
 
         <div class="post-content">
-            <h2 id="Linux-查看文件中指定行数的内容"><a href="#Linux-查看文件中指定行数的内容" class="headerlink" title="Linux 查看文件中指定行数的内容"></a>Linux 查看文件中指定行数的内容</h2><h3 id="tail-n-数字-文件名"><a href="#tail-n-数字-文件名" class="headerlink" title="tail -n +/-数字 文件名"></a>tail -n +/-数字 文件名</h3><ol>
-<li><p>tail -n -数字 文件名, 表示查看文件的最后几行，比如查看SpecialVariable.sh的最后5行:</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -n -5 SpecialVariable.sh</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>tail -n +数字 文件名，表示查看文件的某一行到最后一行，比如查看SpecialVariable.sh的第3行到最后一行:</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -n +3 SpecialVariable.sh</span><br></pre></td></tr></table></figure>
-
-</li>
+            <h1 id="Livy系列-Livy的核心功能及模块概述"><a href="#Livy系列-Livy的核心功能及模块概述" class="headerlink" title="Livy系列- Livy的核心功能及模块概述"></a>Livy系列- Livy的核心功能及模块概述</h1><blockquote>
+<p>内容整理自:</p>
+<ol>
+<li><a href="https://www.jianshu.com/p/710f7b30a29b" target="_blank" rel="noopener">Apache Livy 实现思路及模块概述</a></li>
 </ol>
-<h3 id="head-n-数字-文件名"><a href="#head-n-数字-文件名" class="headerlink" title="head -n 数字 文件名"></a>head -n 数字 文件名</h3><p>head -n 数字 文件名，表示查看文件前几行的内容，比如查看SpecialVariable.sh的前3行内容:<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">head -n 3 SpecialVariable.sh</span><br></pre></td></tr></table></figure></p>
-<h3 id="sed-n-“开始行，结束行p”-文件名"><a href="#sed-n-“开始行，结束行p”-文件名" class="headerlink" title="sed -n “开始行，结束行p” 文件名"></a>sed -n “开始行，结束行p” 文件名</h3><p>sed -n “开始行，结束行p” 文件名，表示查看文件的开始行到结束行的内容，比如查看5到9行的内容<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -n &quot;5,9p&quot; SpecialVariable.sh</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="Livy的核心功能点"><a href="#Livy的核心功能点" class="headerlink" title="Livy的核心功能点"></a>Livy的核心功能点</h2><ol>
+<li>通过http请求将任务发送到 Livy server</li>
+<li>Livy server端接收用户的请求, 并进行相应的路由去调用某个类的某个方法</li>
+<li>鉴权(可以不开启)</li>
+<li>根据任务请求启动 Spark应用服务</li>
+<li>执行用户指定的任务，提供获取运行状态、获取运行结果、共享 SparkContext 以及被正常停止等能力</li>
+<li>容错机制，任务能够从失败前状态恢复</li>
+</ol>
+<h2 id="模块概述"><a href="#模块概述" class="headerlink" title="模块概述"></a>模块概述</h2><p>对应上面功能点可以归纳出以下几个模块：</p>
+<ul>
+<li>Client</li>
+<li>router</li>
+<li>权限管理</li>
+<li>生成 Spark App</li>
+<li>交互式 Driver（仅对于 session 任务有，batch 并没有）</li>
+<li>状态数据存储</li>
+</ul>
+<p><img src="https://i.loli.net/2020/02/20/m3VtQnWhfivJGID.png" alt="image.png"></p>
+<h2 id="router"><a href="#router" class="headerlink" title="router"></a>router</h2><p>Livy server 提供的 api 是 rest api，Client 发送的请求也是针对各个资源（uri）的增删改查。router 的核心职责是管理好要把对什么资源的什么操作指派给哪个类的哪个函数来处理。<br>该模块核心类是 <code>SessionServlet</code>，，有两个子类：<code>InteractiveSessionServlet</code> 及 <code>BatchSessionServlet</code>，分别用来路由对 session 及 batch 相关的请求</p>
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><p>权限由 AccessManager 类管理，维护了几种不同级别的 user：</p>
+<ul>
+<li><code>superUser</code></li>
+<li><code>modifyUser</code></li>
+<li><code>viewUser</code></li>
+<li><code>allowedUser</code></li>
+</ul>
+<p><strong>以及不用级别的 acl（访问控制列表）：</strong></p>
+<ul>
+<li><code>viewAcls</code>：superUsers ++ modifyUsers ++ viewUsers，对应查看权限</li>
+<li><code>modifyAcls</code>：superUsers ++ modifyUsers，对应修改权限（包括 kill 权限）</li>
+<li><code>superAcls</code>：superUsers，有所有权限</li>
+<li><code>allowedAcls</code>：superUsers ++ modifyUsers ++ viewUsers ++ allowedUsers，表示 acl 的全集</li>
+</ul>
+<h2 id="生成SparkAPP"><a href="#生成SparkAPP" class="headerlink" title="生成SparkAPP"></a>生成SparkAPP</h2><p>对于 session 和 batch 的任务，生成 Spark App 的逻辑及最终生成的 Spark App 都是不同的</p>
+<p><strong>生成 batch 的 Spark App 涉及的主要类</strong>：</p>
+<ul>
+<li><p><code>SparkProcessBuilder</code>：用于从 livyConf 中提取出运行一个 Spark App 所需的一切，包括 mainClass、executableFile、deployMode、conf、master、queue、env 及 driver 和 executors 的资源配置等等；并最终生成一条启动 Spark App 的 spark-submit 命令</p>
+</li>
+<li><p><code>SparkYarnApp</code>：用来运行 SparkProcessBuilder 生成的启动命令，并监控管理启动运行起来的 Spark App，包括获取状态、日志、诊断信息、kill 等（目前 livy 只支持 local 和 yarn 两种模式）</p>
+</li>
+</ul>
+<p><strong>生成 session 的 Spark App 涉及的主要类：</strong></p>
+<ul>
+<li><p><code>ContextLauncher</code>：用于启动一个新的 Spark App（通过 SparkLauncher）以及获取如何连接到其 driver 的信息（地址、clientId 及秘钥）</p>
+</li>
+<li><p><code>RSCClient</code>：与 Spark Driver 建立连接，向其发送创建、查看状态结果日志、修改statement、job 等请求并获取响应</p>
+</li>
+</ul>
+<h2 id="交互式-Driver"><a href="#交互式-Driver" class="headerlink" title="交互式 Driver"></a>交互式 Driver</h2><p>核心类是 <code>RSCDriver</code>，其继承与 <code>RpcDispatcher</code>，RpcDispatcher 接收来自 <code>RSCClient</code> 发送的 rpc 请求，根据请求的类型调用 <code>RSCDriver</code>相应的方法去处理请求中包含的具体信息，对于最核心的执行代码片段（statement）请求，调用 <code>repl/Session</code> 去处理，repl/Session 最终会根据不同的 <code>session kind</code> 调用不同的 <code>Interpreter</code> 进行真正的代码执行.</p>
+<h2 id="状态数据存储"><a href="#状态数据存储" class="headerlink" title="状态数据存储"></a>状态数据存储</h2><p>核心类是 <code>StateStore</code>，状态数据的存储都是以 key-value 形式，目前有基于<code>filesystem文件系统</code>和 <code>Zookeeper</code> 的实现。另外，<code>SessionStore</code> 继承了该类提供高阶 Api 来进行 sessions 的存储和恢复</p>
 
         </div>
 
@@ -231,7 +276,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2018/04/02/Linux查看文件中指定行数的内容/">http://cjwdream.top/2018/04/02/Linux查看文件中指定行数的内容/</a></span>
+                        <span><a href="http://cjwdream.top/2019/03/04/Livy-Overview/">http://cjwdream.top/2019/03/04/Livy-Overview/</a></span>
                     </p>
                 
                 
@@ -250,7 +295,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Linux/"># Linux</a>
+                        <a href="/tags/Livy/"># Livy</a>
                     
                         
                 </span>
@@ -263,10 +308,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2018/05/13/shell脚本基础/">shell脚本基础</a>
+                <a class="prev" rel="prev" href="/2019/06/02/JVM-memory-structure/">JVM系列-JVM内存结构</a>
             
             
-            <a class="next" rel="next" href="/2018/03/17/shell条件判断中if中的-z到-d的意思/">shell条件判断中if中的-z到-d的意思</a>
+            <a class="next" rel="next" href="/2019/03/02/Livy-Introduction/">Livy系列-基于Spark的REST服务Livy简介</a>
             
         </section>
 
