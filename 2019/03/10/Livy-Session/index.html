@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Livy系列-Livy Session详解 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Livy系列-Livy Session详解</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 10, 2019&nbsp;&nbsp;16:24:37</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">1.3k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Livy系列-Livy-Session详解"><a href="#Livy系列-Livy-Session详解" class="headerlink" title="Livy系列-Livy Session详解"></a>Livy系列-Livy Session详解</h1><blockquote>
+<p>内容整理自:</p>
+<ol>
+<li>简书作者-牛肉圆粉不加葱 <a href="https://www.jianshu.com/nb/19275987" target="_blank" rel="noopener">Apache Livy文集</a></li>
+</ol>
+</blockquote>
+<h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>Livy 共有两种 job，分别是 session 和 batch。session 和 batch 的创建过程也很不相同，batch 的创建以对应的 spark app 启动为终点；而 session 除了要启动相应的 spark app，还要能支持共享 sparkContext 来接受一个个 statements 的提交及运行，我将 session 的创建分为两个大步骤：</p>
+<ul>
+<li><code>client 端</code>：运行在 LivyServer 中，接受 request 直到启动 spark app（注意，这里虽然叫 client 端，但是运行在 LivyServer 中的）</li>
+<li><code>server 端(driver 内部)</code>：session 对应的 spark app driver 的启动</li>
+</ul>
+<h2 id="client端"><a href="#client端" class="headerlink" title="client端"></a>client端</h2><h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><p><img src="https://i.loli.net/2020/02/21/umDwXgQSxTjWbsi.png" alt="image.png"></p>
+<ul>
+<li>启动 session 对应的 spark app</li>
+<li>与 driver 建立连接</li>
+<li>Session 的创建与初始化</li>
+</ul>
+<h3 id="启动-session-对应的-spark-app"><a href="#启动-session-对应的-spark-app" class="headerlink" title="启动 session 对应的 spark app"></a>启动 session 对应的 spark app</h3><p>核心方法为: <code>ContextLauncher#startDriver</code>, 可以分为两个大步骤:</p>
+<ul>
+<li>启动 spark app</li>
+<li>等待 SparkSubmit 退出</li>
+</ul>
+<h4 id="启动-spark-app"><a href="#启动-spark-app" class="headerlink" title="启动 spark app"></a>启动 spark app</h4><p>session 对应的 spark app 的 mainClass 为 <code>RSCDriverBootstrapper</code><br><img src="https://i.loli.net/2020/02/21/xHSwv3utfmqe7K6.png" alt="image.png"></p>
+<p>调用<code>startDriver()</code>方法， new 一个 SparkLauncher 对象，进行了配置、资源、mainClass 等设置，然后调用 launch() 方法拿到了 SparkSubmit 进程的 对应的 Process 对象 process.</p>
+<h4 id="等待-SparkSubmit-退出"><a href="#等待-SparkSubmit-退出" class="headerlink" title="等待 SparkSubmit 退出"></a>等待 SparkSubmit 退出</h4><p>SparkLauncher#launch() 返回的进程是 SparkSubmit 进程，再返回 process 后，会 new 一个 ContextLauncher.ChildProcess 对象，在过程中会新启动一个线程来一直等待 SparkSubmit 进程退出，该线程中的逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 线程阻塞直到这个进程退出</span></span><br><span class="line">    <span class="keyword">int</span> exitCode = child.waitFor();</span><br><span class="line">    <span class="comment">// 如果是非正常退出，表示 Spark App 启动失败，会抛异常</span></span><br><span class="line">    <span class="keyword">if</span> (exitCode != <span class="number">0</span>) &#123;</span><br><span class="line">      LOG.warn(<span class="string">"Child process exited with code &#123;&#125;."</span>, exitCode);</span><br><span class="line">      fail(<span class="keyword">new</span> IOException(String.format(<span class="string">"Child process exited with code %d."</span>, exitCode)));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (InterruptedException ie) &#123;</span><br><span class="line">    LOG.warn(<span class="string">"Waiting thread interrupted, killing child process."</span>);</span><br><span class="line">    Thread.interrupted();</span><br><span class="line">    child.destroy();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    LOG.warn(<span class="string">"Exception while waiting for child process."</span>, e);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="与-driver-建立连接"><a href="#与-driver-建立连接" class="headerlink" title="与 driver 建立连接"></a>与 driver 建立连接</h3><p>session 最大的特点就是可以共享 SparkContext，让用户提交的多个代码片段都能跑在一个 SparkContext 上(联想记忆到 IO多路复用，http长连接)，这有两个好处：</p>
+<ul>
+<li>大大加速任务的启动速度， yarn上启动一个app比较耗时，而使用 session，除了启动 session 也需要相当的耗时外，之后提交的代码片段都将立即执行(联想到<code>http长连接</code>)</li>
+<li>共享 RDD、table：持久化的 RDD、table 都可以被之后的代码片段使用，这在不同用户需要在相同的 RDD、table 上做计算的场景非常有用(联想到IO多路复用, 网络复用)</li>
+</ul>
+<p>由于 driver 可能被 yarn 调度到任何一个节点启动，所以无法由 LivyServer 主动与 driver 建立连接，而是预先在 client 端建立好 RpcServer 等待 driver 来连接。所以是先在client端创建一个RpcServer, 等待driver端连接，连接成功后client获取到了driver端的<br>信息再去连接到driver端的 RpcServer。总结起来就是三步:</p>
+<ul>
+<li><p>client 传递其 RpcServer 信息给 driver<br>时序图中的第 (5) 步：<code>RSCClientFactory#createClient</code>，在该调用中创建了一个 <code>org.apache.livy.rsc.rpc.RpcServer</code>对象赋值给成员 server。</p>
+</li>
+<li><p>driver 连接 client 并传递其 RpcServer 信息（在 <code>RSCDriver#initializeServer</code> 中实现）<br><img src="https://i.loli.net/2020/02/21/Y7ZOQVIewtdzixn.png" alt="image.png"></p>
+</li>
+<li><p>client 接收 driver rpcServer 地址信息并连接</p>
+</li>
+</ul>
+<h3 id="Session-的创建与初始化"><a href="#Session-的创建与初始化" class="headerlink" title="Session 的创建与初始化"></a>Session 的创建与初始化</h3><p>在与 driver 建立连接之后，会使用 rscClient、livyConf 等信息来创建 InteractiveSession 对象并进行初始化，流程如下:<br><img src="https://i.loli.net/2020/02/21/3joYMNDnRO1tGLQ.png" alt="image.png"></p>
+<p><strong>关键的步骤：</strong></p>
+<ul>
+<li>将 session 信息存储到 state store 中以便livy server 挂掉后能进行 recovery 恢复</li>
+<li>向 driver 发送一个空的 PingJob 来确定 driver 的状态是否 ok，若 PingJob 成功执行，则说明 driver 状态 ok，将 session 置为 running 状态；若出错或失败，则说明 driver 出了一些问题，则将 session 的状态置为 error</li>
+</ul>
+<p>成功完成 session 的创建及初始化后，会将 session 添加到 <code>SessionManager</code> 中进行统一管理，SessionManager 的主要职责包括：</p>
+<ul>
+<li>持有所有 sessions</li>
+<li>清理过期 session</li>
+<li>从 state store 中恢复 sessions</li>
+</ul>
+<h2 id="server-端（driver-内部）"><a href="#server-端（driver-内部）" class="headerlink" title="server 端（driver 内部）"></a>server 端（driver 内部）</h2><h3 id="概要-1"><a href="#概要-1" class="headerlink" title="概要"></a>概要</h3><p><img src="https://i.loli.net/2020/02/21/4fTXDoCcza8jBOI.png" alt="image.png"></p>
+<p>如图所示, driver 内部的启动流程可以分为以下五个步骤：</p>
+<ul>
+<li>创建 ReplDriver 实例</li>
+<li>初始化 server</li>
+<li>初始化 SparkContext</li>
+<li>创建 JobContextImpl 实例并执行 jobs</li>
+<li>等待退出</li>
+</ul>
+<h3 id="创建-ReplDriver-实例"><a href="#创建-ReplDriver-实例" class="headerlink" title="创建 ReplDriver 实例"></a>创建 ReplDriver 实例</h3><p>ReplDriver 是 InteractiveSession 对应的 Spark App driver，用来接收 livy server 的各种请求并进行处理。也是 RSCDriver 的子类，RSCDriver：</p>
+<ul>
+<li>持有等待 RSCClient 进行连接的 RpcServer server</li>
+<li>初始化 SparkContext</li>
+<li>处理各种请求：CancelJob、EndSession、JobRequest、BypassJobRequest、SyncJobRequest、GetBypassJobStatus</li>
+<li>处理 add file 请求</li>
+</ul>
+<h3 id="初始化-server"><a href="#初始化-server" class="headerlink" title="初始化 server"></a>初始化 server</h3><p>这一步在 RSCDriver#initializeServer() 中调用，用于连接 client 并告知 server 端 rpc 地址，client 获知 server rpc 地址后会进行连接并发送请求</p>
+<p><img src="https://i.loli.net/2020/02/21/s9btGL8gyHUp1QN.png" alt="image.png"></p>
+<h3 id="初始化-SparkContext"><a href="#初始化-SparkContext" class="headerlink" title="初始化 SparkContext"></a>初始化 SparkContext</h3><p>分为3步：</p>
+<ul>
+<li><p>根据不同的 kind 创建不同类型的代码解释器</p>
+</li>
+<li><p>创建 repl/Session， 其主要职责是:</p>
+<ol>
+<li>启动 interpreter，并获取 SparkContext</li>
+<li>持有线程池来异步执行 statements（通过 interpreter 来执行）</li>
+<li>持有线程池来异步取消 statements</li>
+<li>管理一个 session 下所有的 statements</li>
+</ol>
+</li>
+<li><p>调用 <code>interpreter#start</code>方法启动 Session</p>
+</li>
+</ul>
+<h2 id="如何执行代码片段"><a href="#如何执行代码片段" class="headerlink" title="如何执行代码片段"></a>如何执行代码片段</h2><p><img src="https://i.loli.net/2020/02/21/GjTnFDlwXzqU3ZW.png" alt="image.png"></p>
+<p><strong>executeCodeFunc()方法分析</strong><br>即上图中的第 9 步中的 executeCodeFunc，用来真正运行代码片段的函数，流程如下<br><img src="https://i.loli.net/2020/02/21/MOblw5FtAQB6oGc.png" alt="image.png"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/03/10/Livy-Session/">http://cjwdream.top/2019/03/10/Livy-Session/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Livy/"># Livy</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2019/06/02/JVM-memory-structure/">JVM系列-JVM内存结构</a>
+            
+            
+            <a class="next" rel="next" href="/2019/03/04/Livy-Overview/">Livy系列- Livy的核心功能及模块概述</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">80.4k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
