@@ -8,7 +8,7 @@
 
 
 
-<title>搭建博客记录 | EgoSay</title>
+<title>Flume简介与基本使用 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">搭建博客记录</h1>
+            <h1 class="post-title">Flume简介与基本使用</h1>
             
                 <div class="post-meta">
                     
@@ -186,19 +186,19 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 9, 2019&nbsp;&nbsp;15:48:49</a>
+                        Date: <a href="#">April 13, 2019&nbsp;&nbsp;22:54:45</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/Life/">Life</a>
+                                <a href="/categories/Learning/">Learning</a>
                             
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">600</font>
+						<font color="#2d96bd">941</font>
 					</span>
                     
                 </div>
@@ -206,29 +206,42 @@
         </header>
 
         <div class="post-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
-<li>博客基于MIT License开源于GitHub, 感谢</li>
-<li>博客引擎来自于<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">hexo</a>, 感谢</li>
-<li>博客模版来自于<a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank" rel="noopener">Siricee的Chic</a>, 感谢</li>
-<li>动态背景来自于<a href="https://github.com/chaoticvirus/canvas-colorful-nest.js" target="_blank" rel="noopener">canvas-colorful-nest.js</a>, 感谢 </li>
-<li>书单页面来自于插件<a href="https://github.com/mythsman/hexo-douban" target="_blank" rel="noopener">hexo-douban</a>, 感谢</li>
-<li>CDN加速服务来自于<a href="https://support.cloudflare.com/hc/zh-cn" target="_blank" rel="noopener">Cloudflare</a>, 感谢</li>
+            <h1 id="Flume简介及基本使用"><a href="#Flume简介及基本使用" class="headerlink" title="Flume简介及基本使用"></a>Flume简介及基本使用</h1><blockquote>
+<p>内容参考: <a href="http://flume.apache.org/FlumeUserGuide.html#architecture" target="_blank" rel="noopener">官方文档</a></p>
+</blockquote>
+<h2 id="Flume基本架构"><a href="#Flume基本架构" class="headerlink" title="Flume基本架构"></a>Flume基本架构</h2><p><img src="https://i.loli.net/2020/02/22/p5dQbmyY9fDCPo7.png" alt="image.png"><br>外部数据源以特定格式向 Flume 发送 <code>events (事件)</code>，当 <code>source</code> 接收到 <code>events</code> 时，它将其存储到一个或多个 <code>channel</code>，<code>channel</code> 会一直保存 <code>events</code> 直到它被 <code>sink</code> 所消费。<code>sink</code> 的主要功能从 <code>channel</code> 中读取 <code>events</code>，并将其存入外部存储系统或转发到下一个 <code>source</code>，成功后再从 <code>channel</code> 中移除 <code>events</code></p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>Event</li>
+<li>Source</li>
+<li>Channel</li>
+<li>Sink</li>
+<li>Agent</li>
 </ul>
-<h2 id="Why"><a href="#Why" class="headerlink" title="Why?"></a>Why?</h2><h3 id="为什么选择搭建这样一个博客呢？"><a href="#为什么选择搭建这样一个博客呢？" class="headerlink" title="为什么选择搭建这样一个博客呢？"></a>为什么选择搭建这样一个博客呢？</h3><ol>
-<li>以前在CSDN、简书等平台上也会写博客去记录自己的一些学习总结, 但难免自己的一些小心理满足不了, 还是自己的博客自己随便折腾的好哈哈</li>
-<li>也会记录一些自己的经历成长吧, 自己有时候难免胡思乱想吧</li>
-<li>自己也挺喜欢看书的, 所以整合了豆瓣书单的插件做了一个书单页面, 工作后没有太多时间了, 但是我发现每天看几页, 两个多月吧已经看完了好几本书了, 觉得后面有时间再总结一下写写读书笔记</li>
-<li>经常会有一些想法, 过了时间也容易忘, 以后就在这里写下来吧, 对啦, 以前写的博客有时间的话也会慢慢迁移到这里, 慢慢来吧</li>
-</ol>
-<h2 id="What"><a href="#What" class="headerlink" title="What?"></a>What?</h2><h3 id="做什么样的博客？"><a href="#做什么样的博客？" class="headerlink" title="做什么样的博客？"></a>做什么样的博客？</h3><ol>
-<li>简简单单就好, 包括模版主题也是简约风格, 没有什么酷炫的动画啊, 一些我觉得不是必要的功能也都没开, 让自己专注踏实一点吧, 有时间就写点东西挺好的</li>
-<li>在这里可能会看到一些我的胡思乱想, 所以评论留言啊, 赞赏什么的功能也都没有, 当然欢迎大家来认识交个朋友, GitHub留言或者邮箱都行, 后面看看再留些其他联系方式吧</li>
-</ol>
-<h2 id="How"><a href="#How" class="headerlink" title="How?"></a>How?</h2><h3 id="怎么搭建的这个博客？"><a href="#怎么搭建的这个博客？" class="headerlink" title="怎么搭建的这个博客？"></a>怎么搭建的这个博客？</h3><ol>
-<li>从开始想搭建博客的想法到诞生差不多一周的时间吧, 想过一些方案,比如自己买服务器搭独立站点, <code>Jekyll</code>, <code>Hexo</code>, <code>Hugo</code>等等,最后选择了 <code>hexo + github pages</code></li>
-<li>博客全部都是基于开源方案实现, 基本上就是前言提到的那些, 再次感谢伟大的开源贡献者们</li>
-<li>后面可能还会添加一些小功能完善改进一下, 比如统计分析的插件啊, 页面的一些优化啊等等, 反正生命在于折腾哈哈</li>
-</ol>
+<h3 id="Event"><a href="#Event" class="headerlink" title="Event"></a>Event</h3><p>Event 是 Flume NG 数据传输的基本单元。类似于 JMS 和消息系统中的消息。一个 Event 由标题和正文组成：前者是键/值映射，后者是任意字节数组。</p>
+<h3 id="Agent"><a href="#Agent" class="headerlink" title="Agent"></a>Agent</h3><p>是一个独立的 (JVM) 进程，包含 Source、 Channel、 Sink 等组件</p>
+<h3 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h3><p>数据收集组件，从外部数据源收集数据，并存储到 Channel 中。<br>内置了几十种类型，如 <code>Avro Source</code>，<code>Thrift Source</code>，<code>Kafka Source</code>，<code>JMS Source</code>；</p>
+<h3 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h3><p>Channel 是源和接收器之间的管道，用于临时存储数据。可以是内存或持久化的文件系统：</p>
+<ul>
+<li>Memory Channel : 使用内存，优点是速度快，但数据可能会丢失 (如突然宕机)；</li>
+<li>File Channel : 使用持久化的文件系统，优点是能保证数据不丢失，但是速度慢。</li>
+</ul>
+<p>内置<code>Memory Channel</code>，<code>JDBC Channel</code>，<code>Kafka Channel</code>，<code>File Channel</code> 等</p>
+<h3 id="Sink"><a href="#Sink" class="headerlink" title="Sink"></a>Sink</h3><p>Sink 的主要功能从 Channel 中读取 Event，并将其存入外部存储系统或将其转发到下一个 Source，成功后再从 Channel 中移除 Event。包含<code>HDFS Sink</code>，<code>Hive Sink</code>，<code>HBaseSinks</code>，<code>Avro Sink</code> 等</p>
+<h2 id="Flume-的可靠性"><a href="#Flume-的可靠性" class="headerlink" title="Flume 的可靠性"></a>Flume 的可靠性</h2><p>当节点出现故障时，日志能够被传送到其他节点上而不会丢失。Flume 提供了三种级别的可靠性保障，从强到弱依次分别为：</p>
+<ul>
+<li><code>end-to-end</code>: 收到数据agent首先将event 写到磁盘上，当数据传送成功后，再删除；如果数据发送失败，可以重新发送</li>
+<li><code>Store on failure</code>: 这也是scribe 采用的策略，当数据接收方crash 时，将数据写到本地，待恢复后，继续发送</li>
+<li><code>Besteffort</code>: 数据发送到接收方后，不会进行确认</li>
+</ul>
+<h2 id="Flume的部署类型"><a href="#Flume的部署类型" class="headerlink" title="Flume的部署类型"></a>Flume的部署类型</h2><h3 id="单一流程"><a href="#单一流程" class="headerlink" title="单一流程"></a>单一流程</h3><p><img src="https://i.loli.net/2020/02/22/FLk23neGUh6zBHV.png" alt="image.png"></p>
+<h3 id="multi-agent-flow（多代理流程，多个agent顺序连接）"><a href="#multi-agent-flow（多代理流程，多个agent顺序连接）" class="headerlink" title="multi-agent flow（多代理流程，多个agent顺序连接）"></a>multi-agent flow（多代理流程，多个agent顺序连接）</h3><p><img src="https://i.loli.net/2020/02/22/Biely41PYWOM5Kt.png" alt="image.png"></p>
+<p>可以将多个Agent顺序连接起来，将最初的数据源经过收集，存储到最终的存储系统中。这是最简单的情况，一般情况下，应该控制这种顺序连接的Agent 的数量，因为数据流经的路径变长了，如果不考虑failover的话，出现故障将影响整个Flow上的Agent收集服务</p>
+<h3 id="Consolidation（流的合并，多个Agent的数据汇聚到同一个Agent-）"><a href="#Consolidation（流的合并，多个Agent的数据汇聚到同一个Agent-）" class="headerlink" title="Consolidation（流的合并，多个Agent的数据汇聚到同一个Agent ）"></a>Consolidation（流的合并，多个Agent的数据汇聚到同一个Agent ）</h3><p><img src="https://i.loli.net/2020/02/22/qEQkv4YPUgNszi5.png" alt="image.png"></p>
+<p>这种情况应用的场景比较多，比如要收集Web网站的用户行为日志， Web网站为了可用性使用的负载集群模式，每个节点都产生用户行为日志，可以为每 个节点都配置一个Agent来单独收集日志数据，然后多个Agent将数据最终汇聚到一个用来存储数据存储系统，如HDFS上</p>
+<h3 id="Multiplexing-the-flow（多路复用）"><a href="#Multiplexing-the-flow（多路复用）" class="headerlink" title="Multiplexing the flow（多路复用）"></a>Multiplexing the flow（多路复用）</h3><p><img src="https://i.loli.net/2020/02/22/GHfh7uA4DyCOSPm.png" alt="image.png"></p>
+<p>Flume 支持从一个 Source 向多个 Channel，也就是向多个 Sink 传递事件，这个操作称之为 Fan Out(扇出)。默认情况下 Fan Out 是向所有的 Channel 复制 Event，即所有 Channel 收到的数据都是相同的。同时 Flume 也支持在 Source 上自定义一个复用选择器 (multiplexing selector) 来实现自定义的路由规则。</p>
+<p>举个例子，当syslog， java， nginx、 tomcat等混合在一起的日志流开始流入一个agent后，可以在agent中将混杂的日志流分开，然后给每种日志建立一个自己的传输通道</p>
+<h3 id="load-balance功能"><a href="#load-balance功能" class="headerlink" title="load balance功能"></a>load balance功能</h3><p><img src="https://i.loli.net/2020/02/22/GHfh7uA4DyCOSPm.png" alt="image.png"></p>
 
         </div>
 
@@ -243,7 +256,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/10/09/搭建博客记录/">http://cjwdream.top/2019/10/09/搭建博客记录/</a></span>
+                        <span><a href="http://cjwdream.top/2019/04/13/Flume-Summary/">http://cjwdream.top/2019/04/13/Flume-Summary/</a></span>
                     </p>
                 
                 
@@ -262,7 +275,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/blog/"># blog</a>
+                        <a href="/tags/Flume/"># Flume</a>
                     
                         
                 </span>
@@ -275,10 +288,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/10/13/读书笔记-《自卑与超越》/">读书笔记-《自卑与超越》</a>
+                <a class="prev" rel="prev" href="/2019/06/02/JVM-memory-structure/">JVM系列-JVM内存结构</a>
             
             
-            <a class="next" rel="next" href="/2019/09/18/Spark优化-多维度统计计算/">Spark优化-多维度统计计算</a>
+            <a class="next" rel="next" href="/2019/03/10/Livy-Session/">Livy系列-Livy Session详解</a>
             
         </section>
 
