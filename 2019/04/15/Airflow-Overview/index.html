@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>调度系统-Airflow | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">调度系统-Airflow</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 15, 2019&nbsp;&nbsp;22:01:06</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">2.2k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="调度系统-Airflow"><a href="#调度系统-Airflow" class="headerlink" title="调度系统-Airflow"></a>调度系统-Airflow</h1><h2 id="调度系统的选型"><a href="#调度系统的选型" class="headerlink" title="调度系统的选型"></a>调度系统的选型</h2><p>现在的开源调度系统分为两类：</p>
+<ul>
+<li><p>以 定时类调度系统，设计核心是定时运行、数据分片和弹性扩容，但是对依赖关系支持的不太友好，更适用于后端业务开发，其代表为 <code>XXL-JOB</code> 、<code>Elastic-Job</code></p>
+</li>
+<li><p>以 DAG 为核心的工作流调度系统，强调的是任务的依赖关系, 常见有：</p>
+<ol>
+<li><code>Oozie</code>：Oozie 是基于 XML 格式进行开发的，后续集成到 Hue 里可以可视化配置，但是缺点也很明显，版本管理、日志收集都不太友好，开发灵活性很差，可调度的任务也很少，另外定义过于复杂，维护成本很高。当然最核心还是没有共用变量和共用连接信息的概念。</li>
+<li><code>Azkaban</code>：和 Oozie 差不多，最核心问题还是没有共用变量和共用连接信息的概念</li>
+<li><code>Airflow</code></li>
+<li><code>Dolphinscheduler</code>: 刚开源不久的 Apache 孵化项目，国人开发和贡献的</li>
+</ol>
+</li>
+</ul>
+<h2 id="Airflow基本使用"><a href="#Airflow基本使用" class="headerlink" title="Airflow基本使用"></a>Airflow基本使用</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li><p><code>DAG</code> ：意为有向无循环图，在 Airflow 中则定义了整个完整的作业。同一个 DAG 中的所有 Task 拥有相同的调度时间。</p>
+</li>
+<li><p><code>Task</code>： 为 DAG 中具体的作业任务，它必须存在于某一个 DAG 之中。Task 在 DAG 中配置依赖关系，跨 DAG 的依赖是可行的，但是并不推荐。跨 DAG 依赖会导致 DAG 图的直观性降低，并给依赖管理带来麻烦。</p>
+</li>
+<li><p><code>DAG Run</code>： 当一个 DAG 满足它的调度时间，或者被外部触发时，就会产生一个 DAG Run。可以理解为由 DAG 实例化的实例。</p>
+</li>
+<li><p><code>Task Instance</code>：当一个 Task 被调度启动时，就会产生一个 Task Instance。可以理解为由 Task 实例化的实例</p>
+</li>
+</ul>
+<h3 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h3><p>Airflow 是建立在元数据库上的队列系统。数据库存储队列任务的状态，调度器使用这些状态来确定如何将其它任务添加到队列的优先级。此功能由四个主要组件编排：</p>
+<ul>
+<li><p><code>元数据库</code>：这个数据库存储有关任务状态的信息。数据库使用在 SQLAlchemy 中实现的抽象层执行更新。该抽象层将 Airflow 剩余组件功能从数据库中干净地分离了出来。</p>
+</li>
+<li><p><code>调度器</code>：调度器是一种使用 DAG 定义结合元数据中的任务状态来决定哪些任务需要被执行以及任务执行优先级的过程。调度器通常作为服务运行。</p>
+</li>
+<li><p><code>执行器</code>：Excutor 是一个消息队列进程，它被绑定到调度器中，用于确定实际执行每个任务计划的工作进程。有不同类型的执行器，每个执行器都使用一个指定工作进程的类来执行任务。例如，LocalExecutor 使用与调度器进程在同一台机器上运行的并行进程执行任务。其他像 CeleryExecutor 的执行器使用存在于独立的工作机器集群中的工作进程执行任务。</p>
+</li>
+<li><p><code>Workers</code>：这些是实际执行任务逻辑的进程，由正在使用的执行器确定。</p>
+</li>
+</ul>
+<p>Airflow 的操作建立于存储任务状态和工作流的元数据库之上（即 DAG）。调度器和执行器将任务发送至队列，让 Worker 进程执行。WebServer 运行（经常与调度器在同一台机器上运行）并与数据库通信，在 Web UI 中呈现任务状态和任务执行日志。每个有色框表明每个组件都可以独立于其他组件存在，这取决于部署配置的类型</p>
+<h3 id="安装部署"><a href="#安装部署" class="headerlink" title="安装部署"></a>安装部署</h3><ol>
+<li><p>pip安装: <code>pip install apache-airflow</code></p>
+</li>
+<li><p>修改环境变量新建目录指定为<code>AIRFLOW_HOME</code></p>
+</li>
+<li><p>首次执行<code>airflow</code>命令会在AIRFLOW_HOME目录下初始化生成airflow.cfg文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># airflow</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>mysql新建数据库<code>airflow</code>并配置权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql &gt; create database airflow default character <span class="built_in">set</span> utf8;</span><br><span class="line">mysql &gt; grant all on *.* to airflow@localhost identified by <span class="string">'airflow_test'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化数据库airflow</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># airflow initdb</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改airflow.cfg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">web_server_host = IP</span><br><span class="line">web_server_port = HOST</span><br><span class="line">executor = LocalExecutor</span><br><span class="line">sql_alchemy_conn = mysql数据库地址</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动守护进程(利用supervisord后台挂起)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]<span class="comment"># airflow webserver</span></span><br><span class="line">[root@server ~]<span class="comment"># airflow sheduler</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">default_args = &#123;</span><br><span class="line">    <span class="string">'owner'</span>: <span class="string">'airflow'</span>,</span><br><span class="line">    <span class="string">'depends_on_past'</span>: <span class="literal">False</span>,</span><br><span class="line">    <span class="string">'start_date'</span>: days_ago(<span class="number">2</span>),</span><br><span class="line">    <span class="string">'email'</span>: [<span class="string">'airflow@example.com'</span>],</span><br><span class="line">    <span class="string">'email_on_failure'</span>: <span class="literal">False</span>,</span><br><span class="line">    <span class="string">'email_on_retry'</span>: <span class="literal">False</span>,</span><br><span class="line">    <span class="string">'retries'</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="string">'retry_delay'</span>: timedelta(minutes=<span class="number">5</span>),</span><br><span class="line">    <span class="comment"># 'queue': 'bash_queue',</span></span><br><span class="line">    <span class="comment"># 'pool': 'backfill',</span></span><br><span class="line">    <span class="comment"># 'priority_weight': 10,</span></span><br><span class="line">    <span class="comment"># 'end_date': datetime(2016, 1, 1),</span></span><br><span class="line">    <span class="comment"># 'wait_for_downstream': False,</span></span><br><span class="line">    <span class="comment"># 'dag': dag,</span></span><br><span class="line">    <span class="comment"># 'sla': timedelta(hours=2),</span></span><br><span class="line">    <span class="comment"># 'execution_timeout': timedelta(seconds=300),</span></span><br><span class="line">    <span class="comment"># 'on_failure_callback': some_function,</span></span><br><span class="line">    <span class="comment"># 'on_success_callback': some_other_function,</span></span><br><span class="line">    <span class="comment"># 'on_retry_callback': another_function,</span></span><br><span class="line">    <span class="comment"># 'sla_miss_callback': yet_another_function,</span></span><br><span class="line">    <span class="comment"># 'trigger_rule': 'all_success'</span></span><br><span class="line">&#125;</span><br><span class="line">dag = DAG(</span><br><span class="line">    <span class="string">'test'</span>,</span><br><span class="line">    default_args=default_args,</span><br><span class="line">    description=<span class="string">'my first DAG'</span>,</span><br><span class="line">    schedule_interval=<span class="string">'50 * * * *'</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># examples of tasks created by instantiating operators</span></span><br><span class="line">t1 = BashOperator(</span><br><span class="line">    task_id=<span class="string">'print_date'</span>,</span><br><span class="line">    bash_command=<span class="string">'date'</span>,</span><br><span class="line">    dag=dag,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">t2 = BashOperator(</span><br><span class="line">    task_id=<span class="string">'sleep'</span>,</span><br><span class="line">    depends_on_past=<span class="literal">False</span>,</span><br><span class="line">    bash_command=<span class="string">'sleep 5'</span>,</span><br><span class="line">    retries=<span class="number">3</span>,</span><br><span class="line">    dag=dag,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">t3 = BashOperator(</span><br><span class="line">    task_id=<span class="string">'templated'</span>,</span><br><span class="line">    depends_on_past=<span class="literal">False</span>,</span><br><span class="line">    bash_command=templated_command,</span><br><span class="line">    params=&#123;<span class="string">'my_param'</span>: <span class="string">'Parameter I passed in'</span>&#125;,</span><br><span class="line">    dag=dag,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Setting up Dependencies</span></span><br><span class="line">t1.set_downstream([t2, t3])</span><br><span class="line">t1 &gt;&gt; [t2, t3]</span><br><span class="line">[t2, t3] &lt;&lt; t1</span><br></pre></td></tr></table></figure>
+
+<h3 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h3><h4 id="时区问题"><a href="#时区问题" class="headerlink" title="时区问题"></a>时区问题</h4><p>系统启动的时间，以及写入数据库元数据的时间确是可以配置时区的, 可以通过配置 airflow 的配置文件 airflow.cfg 改变这个时区. 但是在airflow 提供的 webserver 上， 即web界面上我们看到的时间默认都是 UTC+0 的时间。因此就会存在实际调度时间与web页面显示的不一样，解决方案可以参考一下这篇博客<a href="https://blog.csdn.net/Crazy__Hope/article/details/83688986" target="_blank" rel="noopener">airflow 修改中国时区(改airflow源码)</a></p>
+<h4 id="Backfill"><a href="#Backfill" class="headerlink" title="Backfill"></a>Backfill</h4><p>Backfill，大致来讲就是在某些时候因为服务器宕机或者其他原因导致有些任务没有调度，然后重启后 airflow 自动回补执行去调度这些任务，可以使用手动方法来执行这个行为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# airflow backfill sensors -s 2015-06-01 -e 2015-06-07</span><br></pre></td></tr></table></figure>
+
+<p>可以看做一个类似断点恢复机制，其实是一个很好的功能，但在自动触发的时候，因为<code>airflow</code>会默认去回补执行从系统当前时间到我们指定的 start_date （上面配置 dag 的时候指定的一个参数）期间的任务，那么在有些时候就会出现不可预期的问题.<br><strong>举个例子:</strong><br>我设置了这样一批任务，每半小时执行一次调度，然后因为服务器宕机一段时间了，恢复后 airflow 自动触发了 Backfill，系统当前时间到我们指定的 start_date时间段还比较长，堆积了很多任务，然后开始回补执行，半个小时我还没回补执行完第一批任务，然后因为间隔半小时我又有一批新任务加入了进来，可能最后就会因为任务堆积的原因导致跑任务的服务器出现问题</p>
+<h4 id="并发调度问题"><a href="#并发调度问题" class="headerlink" title="并发调度问题"></a>并发调度问题</h4><p>某次因为scheduler 进程挂掉了，重启起来发现全部任务被一块执行了。甚至每个 dag 多天没有跑完的任务直接起来，导致服务器一下压力太大。<br><strong>修改全局文件 airflow.cfg 的参数降低并发</strong>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># The amount of parallelism as a setting to the executor. This defines</span><br><span class="line"># the max number of task instances that should run simultaneously</span><br><span class="line"># on this airflow installation</span><br><span class="line">parallelism = 32</span><br><span class="line"></span><br><span class="line"># The number of task instances allowed to run concurrently by the scheduler</span><br><span class="line">dag_concurrency = 16</span><br><span class="line"></span><br><span class="line"># Are DAGs paused by default at creation</span><br><span class="line">dags_are_paused_at_creation = True</span><br><span class="line"></span><br><span class="line"># When not using pools, tasks are run in the &quot;default pool&quot;,</span><br><span class="line"># whose size is guided by this config element</span><br><span class="line">non_pooled_task_slot_count = 128</span><br><span class="line"></span><br><span class="line"># The maximum number of active DAG runs per DAG</span><br><span class="line">max_active_runs_per_dag = 16</span><br></pre></td></tr></table></figure>
+
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p><strong>airflow 的守护进程工作机制:</strong></p>
+<ul>
+<li><p>调度器 scheduler 会间隔性的去轮询元数据库（Metastore）已注册的 DAG（有向无环图，可理解为作业流）是否需要被执行。如果一个具体的 DAG 根据其调度计划需要被执行，scheduler 守护进程就会先在元数据库创建一个 DagRun 的实例，并触发 DAG 内部的具体 task（任务，可以这样理解：DAG 包含一个或多个task），触发其实并不是真正的去执行任务，而是推送 task 消息至消息队列（即 broker）中，每一个 task 消息都包含此 task 的 DAG ID，task ID，及具体需要被执行的函数。如果 task 是要执行 bash 脚本，那么 task 消息还会包含 bash 脚本的代码。</p>
+</li>
+<li><p>用户可能在 webserver 上来控制 DAG，比如手动触发一个 DAG 去执行。当用户这样做的时候，一个DagRun 的实例将在元数据库被创建，scheduler 使同 #1 一样的方法去触发 DAG 中具体的 task 。</p>
+</li>
+<li><p>worker 守护进程将会监听消息队列，如果有消息就从消息队列中取出消息，当取出任务消息时，它会更新元数据中的 DagRun 实例的状态为正在运行，并尝试执行 DAG 中的 task，如果 DAG 执行成功，则更新任 DagRun 实例的状态为成功，否则更新状态为失败</p>
+</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://airflow.apache.org/docs/stable/tutorial.html#" target="_blank" rel="noopener">Airflow官方文档</a></li>
+<li><a href="https://www.cnblogs.com/piperck/p/10101423.html" target="_blank" rel="noopener">Airflow 使用随笔</a></li>
+<li><a href="https://ttxsgoto.github.io/tags/Airflow/" target="_blank" rel="noopener">Airflow系列-ttxsgoto’ Blog </a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2019/04/15/Airflow-Overview/">http://cjwdream.top/2019/04/15/Airflow-Overview/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/中间件/"># 中间件</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2019/06/02/JVM-memory-structure/">JVM系列-JVM内存结构</a>
+            
+            
+            <a class="next" rel="next" href="/2019/04/13/Flume-Summary/">Flume简介与基本使用</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">87.3k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
