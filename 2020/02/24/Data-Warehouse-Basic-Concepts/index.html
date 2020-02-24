@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">3.8k</font>
+						<font color="#2d96bd">4.1k</font>
 					</span>
                     
                 </div>
@@ -277,13 +277,13 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">department,</span><br><span class="line">site_id,</span><br><span class="line"><span class="keyword">sum</span>(price) <span class="keyword">AS</span> total_sales,</span><br><span class="line"><span class="keyword">count</span>(<span class="keyword">DISTINCT</span> seller_id) <span class="keyword">AS</span> sellers</span><br><span class="line"><span class="keyword">FROM</span> kylin_sales</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> department, site_id</span><br></pre></td></tr></table></figure>
 
 <p>上面的这个查询中，<code>department</code>和<code>site_id</code>是维度，<code>sum（price）</code>和<code>count（distinct seller_id）</code>是度量</p>
-<h2 id="三、Cube、-Cuboid和Cube-Segment"><a href="#三、Cube、-Cuboid和Cube-Segment" class="headerlink" title="三、Cube、 Cuboid和Cube Segment"></a>三、Cube、 Cuboid和Cube Segment</h2><p>给定一个数据模型，我们可以对其上的所有维度进行组合。对于N个维度来说，组合的所有可能性共有 2^n 种.</p>
+<h2 id="三、Cube基本概念"><a href="#三、Cube基本概念" class="headerlink" title="三、Cube基本概念"></a>三、Cube基本概念</h2><p>给定一个数据模型，我们可以对其上的所有维度进行组合。对于N个维度来说，组合的所有可能性共有 2^n 种.</p>
 <ul>
 <li>对于一种维度的组合，将度量做聚合运算，然后将运算的结果保存为一个物化视图，称为<code>Cuboid</code>。</li>
 <li>所有维度组合的Cuboid作为一个整体，被称为<code>Cube</code>。所以简单来说，一个Cube就是<code>许多按维度聚合的物化视图的集合</code></li>
 <li><code>Cube Segment</code>是指针对源数据中的某一个片段， 计算出来的Cube数据。 通常数据仓库中的数据数量会随着时间的增长而增长， 而Cube Segment也是按时间顺序来构建的</li>
 </ul>
-<h2 id="四、Hierarchy、Level和Memeber"><a href="#四、Hierarchy、Level和Memeber" class="headerlink" title="四、Hierarchy、Level和Memeber"></a>四、Hierarchy、Level和Memeber</h2><p>Cube就象一个坐标系，每一个<code>Hierarchy</code>代表了一个坐标轴，而Hierarchy中每一个<code>Member</code>代表了坐标轴上的一个值。下图以时间维度为例展示了Dimension的内部结构:<br><img src="https://i.loli.net/2020/02/24/m4ilyHIVh2jpPnb.png" alt="image.png"></p>
+<h2 id="四、Hierarchy、Level和Member"><a href="#四、Hierarchy、Level和Member" class="headerlink" title="四、Hierarchy、Level和Member"></a>四、Hierarchy、Level和Member</h2><p>Cube就象一个坐标系，每一个<code>Hierarchy</code>代表了一个坐标轴，而Hierarchy中每一个<code>Member</code>代表了坐标轴上的一个值。下图以时间维度为例展示了Dimension的内部结构:<br><img src="https://i.loli.net/2020/02/24/m4ilyHIVh2jpPnb.png" alt="image.png"></p>
 <p>维是用于从不同角度描述事物特征的，一般维都会有<code>多层（Level）</code>，每个Level都会包含一些共有的或特有的属性<code>（Attribute）</code>，可以用下图来展示下维的结构和组成：<br><img src="https://i.loli.net/2020/02/24/2mhLxwafKUbYzjv.png" alt="image.png"></p>
 <p>以时间维为例，时间维一般会包含年、季、月、日这几个Level，每个Level一般都会有ID、NAME、DESCRIPTION这几个公共属性，这几个公共属性不仅适用于时间维，也同样表现在其它各种不同类型的维。其中ID一般被视为代理主键（Agent），它只被用于作为唯一性标志，并且是多维模型中关联关系的代理者，在业务层面并不具有任何意义；NAME一般是业务主键（Business），在业务层面限制唯一性，一般作为数据装载（Load）时的关联键；而DESCRIPTION则记录了详细描述信息，在多维展示和分析时我们都会选择使用DESCRIPTION来表述具体含义</p>
 <p>上面这个结构的维是<strong>无法直接应用于OLAP的,OLAP需要基于有层级的自上而下的钻取，或者自下而上地聚合</strong>。所以每一个维必须有Hierarchy，至少有一个默认的，当然可以有多个，见下图：<br><img src="https://i.loli.net/2020/02/24/mzReQTYMrfLvawd.png" alt="image.png"></p>
@@ -402,6 +402,13 @@
 <td>查询为主</td>
 </tr>
 </tbody></table>
+<h2 id="八、元数据"><a href="#八、元数据" class="headerlink" title="八、元数据"></a>八、元数据</h2><p>元数据（Meta Data）是关于数据的数据，当人们描述现实世界的现象时，就会产生抽象信息，这些抽象信息便可以看作是元数据，元数据主要用来描述数据的上下文信息。通俗的来讲，假若图书馆的每本书中的内容是数据的话，那么找到每本书的索引则是元数据。按其描述对象的不同可以划分为三类元数据：<code>技术元数据</code>、<code>业务元数据</code>和<code>管理元数据</code>:</p>
+<ul>
+<li><code>技术元数据</code>:  技术元数据是描述数据系统中技术领域相关概念、关系和规则的数据，主要包括对数据结构、数据处理方面的特征描述，覆盖数据源接口、数据仓库与数据集市存储、ETL、OLAP、数据封装和前端展现等全部数据处理环节；</li>
+<li><code>业务元数据</code>: 业务元数据是描述数据系统中业务领域相关概念、关系和规则的数据，主要包括业务术语、信息分类、指标定义和业务规则等信息；</li>
+<li><code>管理元数据</code>: 管理元数据是描述数据系统中管理领域相关概念、关系和规则的数据，主要包括人员角色、岗位职责和管理流程等信息。</li>
+</ul>
+<p>具体参考链接: <a href="https://yq.aliyun.com/articles/174269" target="_blank" rel="noopener">聊一聊数据仓库中的元数据管理系统</a></p>
 
         </div>
 
@@ -463,7 +470,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">87.3k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">87.7k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
