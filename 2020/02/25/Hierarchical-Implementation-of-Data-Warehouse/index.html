@@ -8,7 +8,7 @@
 
 
 
-<title>Flink基础 | EgoSay</title>
+<title>数仓系列-数据仓库分层实现 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Flink基础</h1>
+            <h1 class="post-title">数仓系列-数据仓库分层实现</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">December 21, 2019&nbsp;&nbsp;22:10:13</a>
+                        Date: <a href="#">February 25, 2020&nbsp;&nbsp;17:40:37</a>
                         </span>
                     
                     
@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">381</font>
+						<font color="#2d96bd">1.3k</font>
 					</span>
                     
                 </div>
@@ -206,20 +206,65 @@
         </header>
 
         <div class="post-content">
-            <h1 id="Flink基础"><a href="#Flink基础" class="headerlink" title="Flink基础"></a>Flink基础</h1><h2 id="Flink时间语义"><a href="#Flink时间语义" class="headerlink" title="Flink时间语义"></a>Flink时间语义</h2><h3 id="处理时间-Processing-Time"><a href="#处理时间-Processing-Time" class="headerlink" title="处理时间(Processing Time)"></a>处理时间(Processing Time)</h3><p>Process Time 模拟我们真实世界的时间,通过直接去调用本地机器的时间获取</p>
-<h3 id="事件时间-Event-Time"><a href="#事件时间-Event-Time" class="headerlink" title="事件时间(Event Time)"></a>事件时间(Event Time)</h3><p>Event Time 是数据世界的时间，根据每一条处理记录所携带的时间戳来判定</p>
-<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><ul>
-<li>Processing Time 处理起来更加的简单，而 Event Time 要更麻烦一些</li>
-<li>使用 Processing Time 的时候，我们得到的处理结果（或者说流处理应用的内部状态）是不确定的。而因为 Flink 内部对 Event Time 做了各种保障，使用 Event Time 的情况下，无论重放数据多少次，都能得到一个相对确定可重现的结果</li>
-<li>判断应该使用 Processing Time 还是 Event Time 的时候，可以遵循一个原则：当你的应用遇到某些问题要从上一个 checkpoint 或者 savepoint 进行重放，是不是希望结果完全相同。如果希望结果完全相同，就只能用 Event Time；如果接受结果不同，则可以用 Processing Time。Processing Time 的一个常见的用途是，我们要根据现实时间来统计整个系统的吞吐，比如要计算现实时间一个小时处理了多少条数据，这种情况只能使用 Processing Time<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3></li>
-<li><a href="https://cloud.tencent.com/developer/article/1509642" target="_blank" rel="noopener">Flink进阶- Time深度解析</a></li>
+            <h1 id="数仓系列-数据仓库分层实现"><a href="#数仓系列-数据仓库分层实现" class="headerlink" title="数仓系列-数据仓库分层实现"></a>数仓系列-数据仓库分层实现</h1><blockquote>
+<p>内容整理自:</p>
+<ol>
+<li><a href="http://cxy7.com/articles/2017/06/24/1498268635086.html" target="_blank" rel="noopener">《基于大数据的数据仓库分层实现》</a></li>
+</ol>
+</blockquote>
+<h2 id="数仓分层的意义"><a href="#数仓分层的意义" class="headerlink" title="数仓分层的意义"></a>数仓分层的意义</h2><ul>
+<li><p>清晰数据结构：每一个数据分层都有它的作用域，这样我们在使用表的时候能更方便地定位和理解。</p>
+</li>
+<li><p>数据血缘追踪：简单来讲可以这样理解，我们最终给业务呈现的是一能直接使用的张业务表，但是它的来源有很多，如果有一张来源表出问题了，我们希望能够快速准确地定位到问题，并清楚它的危害范围。</p>
+</li>
+<li><p>减少重复开发：规范数据分层，开发一些通用的中间层数据，能够减少极大的重复计算。</p>
+</li>
+<li><p>把复杂问题简单化。讲一个复杂的任务分解成多个步骤来完成，每一层只处理单一的步骤，比较简单和容易理解。而且便于维护数据的准确性，当数据出现问题之后，可以不用修复所有的数据，只需要从有问题的步骤开始修复。</p>
+</li>
+<li><p>屏蔽原始数据的异常。</p>
+</li>
+<li><p>屏蔽业务的影响，不必改一次业务就需要重新接入数据</p>
+</li>
 </ul>
-<h2 id="Flink-Window-详解"><a href="#Flink-Window-详解" class="headerlink" title="Flink Window 详解"></a>Flink Window 详解</h2><p>Flink 有 3 个内置 Window</p>
+<h2 id="四层模型"><a href="#四层模型" class="headerlink" title="四层模型"></a>四层模型</h2><p><img src="https://i.loli.net/2020/02/24/EkZ9THcJPK6i72q.png" alt="image.png"></p>
+<h3 id="ODS层"><a href="#ODS层" class="headerlink" title="ODS层"></a>ODS层</h3><p>ODS（Operational Data Store）操作数据存储</p>
+<p>是最接近数据源中数据的一层，数据源中的数据，经过抽取、洗净、传输，也就说经过ETL之后，装入本层；一般来说ODS层的数据和源系统的数据是同构的，主要目的是简化后续数据加工处理的工作。从数据粒度上来说ODS层的数据粒度是最细的。</p>
+<p>ODS层的表通常包括两类</p>
 <ul>
-<li>以事件数量驱动的Count Window</li>
-<li>以会话间隔驱动的Session Window</li>
-<li>以时间驱动的Time Window</li>
+<li>一个用于存储当前需要加载的数据</li>
+<li>一个用于存储处理完后的历史数据</li>
 </ul>
+<p>历史数据一般保存3-6个月后需要清除，以节省空间。但不同的项目要区别对待，如果源系统的数据量不大，可以保留更长的时间，甚至全量保存</p>
+<p><strong>数据在装入本层前需要做以下工作：</strong></p>
+<ul>
+<li><p>去噪（例如去掉明显偏离正常水平的银行刷卡信息）</p>
+</li>
+<li><p>去重（例如银行账户信息、公安局人口信息中均含有人的姓名，但是只保留一份即可）</p>
+</li>
+<li><p>提脏（例如有的人的银行卡被盗刷，在十分钟内同时有两笔分别在中国和日本的刷卡信息，这便是脏数据）</p>
+</li>
+<li><p>业务提取</p>
+</li>
+<li><p>单位统一</p>
+</li>
+<li><p>砍字段（例如用于支撑前端系统工作，但是在数据挖掘中不需要的字段）</p>
+</li>
+<li><p>业务判别</p>
+</li>
+</ul>
+<h3 id="DW"><a href="#DW" class="headerlink" title="DW"></a>DW</h3><p>数据仓库层(DW)，是数据仓库的主体</p>
+<p>通常按照主题建立各种数据模型，如：星形或雪花结构等；</p>
+<p>有关维度建模的方法及星型、雪花模型等请参考: <a href="https://www.ibm.com/developerworks/cn/data/library/techarticles/dm-0803zhousb/" target="_blank" rel="noopener">浅谈数据仓库建设中的数据建模方法</a></p>
+<h3 id="DM层"><a href="#DM层" class="headerlink" title="DM层"></a>DM层</h3><p>数据集市层（DM）date market，又称DWS, data warehouse service或主题层，存放的是轻度聚合的数据。</p>
+<p>通常根据业务需求，划分成流量、订单、用户等，生成字段比较多的宽表，用于提供后续的业务查询，OLAP分析，数据分发等。</p>
+<p>从数据粒度来说，这层的数据是轻度汇总级的数据，已经不存在明细数据了。从数据的时间跨度来说，通常是DW层的一部分，主要的目的是为了满足用户分析的需求，而从分析的角度来说，用户通常只需要分析近几年（如近三年的数据）的即可。从数据的广度来说，仍然覆盖了所有业务数据</p>
+<h3 id="APP层"><a href="#APP层" class="headerlink" title="APP层"></a>APP层</h3><p>数据产品层（APP），这一层是提供为数据产品使用的结果数据。</p>
+<p>从数据粒度来说是高度汇总的数据。从数据的广度来说，则并不一定会覆盖所有业务数据。从极端情况来说，可以为每一张报表在APP层构建一个模型来支持，达到以空间换时间的目的。</p>
+<p>应用层是根据业务需要，由前面三层数据统计而出的结果，可以直接提供查询展现，或导入至Mysql中使用。我们经常说的报表数据，或者说那种大宽表，一般就放在这里</p>
+<p>需要一个管理元数据信息的系统，能够提供方便的元数据的操作和查询操作。主要是提供给数据产品和数据分析使用的数据，一般会存放在es、mysql等系统中供线上系统使用，也可能会存在Hive或者Druid中供数据分析和数据挖掘使用</p>
+<h2 id="三层模型"><a href="#三层模型" class="headerlink" title="三层模型"></a>三层模型</h2><p><img src="https://i.loli.net/2020/02/24/WIyYrGtU2kZnXAP.png" alt="image.png"></p>
+<p>与四层模型类似，只是把更多逻辑放在了DW层里</p>
+<h3 id="Buffer数据缓存层"><a href="#Buffer数据缓存层" class="headerlink" title="Buffer数据缓存层"></a>Buffer数据缓存层</h3><p>用于存放接口方提供的原始数据的数据库层，此层的表结构与源数据保持基本一致，数据存放时间根据数据量大小和项目情况而定，如果数据量较大，可以只存近期数据，将历史数据进行备份。此层的目的在于数据的中转和备份。</p>
 
         </div>
 
@@ -234,7 +279,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/12/21/Flink-basis/">http://cjwdream.top/2019/12/21/Flink-basis/</a></span>
+                        <span><a href="http://cjwdream.top/2020/02/25/Hierarchical-Implementation-of-Data-Warehouse/">http://cjwdream.top/2020/02/25/Hierarchical-Implementation-of-Data-Warehouse/</a></span>
                     </p>
                 
                 
@@ -253,7 +298,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Flink/"># Flink</a>
+                        <a href="/tags/数据仓库/"># 数据仓库</a>
                     
                         
                 </span>
@@ -266,10 +311,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/12/24/Spark进阶-Spark中OOM问题总结/">Spark进阶-Spark中OOM问题总结</a>
             
-            
-            <a class="next" rel="next" href="/2019/11/24/Kafka消息偏移量机制/">Kafka消息偏移量机制</a>
+            <a class="next" rel="next" href="/2020/02/24/Data-Warehouse-Basic-Concepts/">数仓系列-基本概念整理</a>
             
         </section>
 
