@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">7.2k</font>
+						<font color="#2d96bd">7.4k</font>
 					</span>
                     
                 </div>
@@ -366,8 +366,14 @@
 <li><a href="https://mp.weixin.qq.com/s/wGOxro3uShp2q5w97azx5A" target="_blank" rel="noopener">别废话，各种SQL到底加了什么锁？</a></li>
 </ul>
 <h2 id="四、MySQL的MVCC机制"><a href="#四、MySQL的MVCC机制" class="headerlink" title="四、MySQL的MVCC机制"></a>四、MySQL的<code>MVCC</code>机制</h2><h3 id="MVCC机制是什么？"><a href="#MVCC机制是什么？" class="headerlink" title="MVCC机制是什么？"></a><code>MVCC</code>机制是什么？</h3><p>其实就是在每一行记录的后面增加两个隐藏列，记录创建版本号和删除版本号，而每一个事务在启动的时候，都有一个唯一的递增的版本号。 在<code>InnoDB</code>中，给每行增加两个隐藏字段来实现MVCC，两个列都用来存储事务的版本号，每开启一个新事务，事务的版本号就会递增</p>
-<h3 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h3><p><code>consistent read （一致性读）</code>，InnoDB用多版本来提供查询数据库在某个时间点的快照。如果隔离级别是REPEATABLE READ，那么在同一个事务中的所有一致性读都读的是事务中第一个这样的读读到的快照； 如果是READ COMMITTED，那么一个事务中的每一个一致性读都会读到它自己刷新的快照版本。Consistent read（一致性读）是READ COMMITTED和REPEATABLE READ隔离级别下普通SELECT语句默认的模式。 一致性读不会给它所访问的表加任何形式的锁，因此其它事务可以同时并发的修改它们<br><code>MVCC</code>实现一致性非锁定读，这就有保证在同一个事务中多次读取相同的数据返回的结果是一样的，解决了不可重复读的问题</p>
-<h3 id="通过etcd学习MVCC机制-ectd"><a href="#通过etcd学习MVCC机制-ectd" class="headerlink" title="通过etcd学习MVCC机制: ectd"></a>通过<code>etcd</code>学习<code>MVCC</code>机制: <a href="https://github.com/etcd-io/etcd/tree/master/mvcc" target="_blank" rel="noopener">ectd</a></h3><p><a href="https://blog.betacat.io/post/mvcc-implementation-in-etcd/" target="_blank" rel="noopener">MVCC 在 etcd 中的实现</a></p>
+<h3 id="一致性非锁定读"><a href="#一致性非锁定读" class="headerlink" title="一致性非锁定读"></a>一致性非锁定读</h3><p><code>consistent read （一致性读）</code>，InnoDB用多版本来提供查询数据库在某个时间点的快照。如果隔离级别是REPEATABLE READ，那么在同一个事务中的所有一致性读都读的是事务中第一个这样的读读到的快照； 如果是READ COMMITTED，那么一个事务中的每一个一致性读都会读到它自己刷新的快照版本。Consistent read（一致性读）是READ COMMITTED和REPEATABLE READ隔离级别下普通SELECT语句默认的模式。 一致性读不会给它所访问的表加任何形式的锁，因此其它事务可以同时并发的修改它们。<br>当一个 MVCC 数据库需要更一个一条数据记录的时候，它不会直接用新数据覆盖旧数据，而是将旧数据标记为过时（obsolete）并在别处增加新版本的数据。这样就会有存储多个版本的数据，但是只有一个是最新的。这种方式允许读者读取在他读之前已经存在的数据，即使这些在读的过程中半路被别人修改、删除了，也对先前正在读的用户没有影响。保证了在同一个事务中多次读取相同的数据返回的结果是一样的，解决了不可重复读的问题。<strong>缺点在于：</strong>这种多版本的方式避免了填充删除操作在内存和磁盘存储结构造成的空洞的开销，但是需要系统周期性整理（sweep through）以真实删除老的、过时的数据。</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li>通过<code>etcd</code>学习<code>MVCC</code>机制: <a href="https://github.com/etcd-io/etcd/tree/master/mvcc" target="_blank" rel="noopener">ectd</a></li>
+</ul>
+<ul>
+<li><a href="https://blog.betacat.io/post/mvcc-implementation-in-etcd/" target="_blank" rel="noopener">MVCC 在 etcd 中的实现</a></li>
+<li><a href="https://juejin.im/post/5c68a4056fb9a049e063e0ab" target="_blank" rel="noopener">【MySQL（5）| 五分钟搞清楚 MVCC 机制】</a></li>
+</ul>
 <h2 id="五、MySQL的存储引擎"><a href="#五、MySQL的存储引擎" class="headerlink" title="五、MySQL的存储引擎"></a>五、MySQL的存储引擎</h2><h3 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a><code>InnoDB</code></h3><h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ol>
 <li>支持ACID的事务，支持事务的四种隔离级别;</li>
 <li>支持行级锁及外键约束：因此可以支持写并发;</li>
@@ -399,7 +405,7 @@
 <li>采用非聚集索引，索引文件的数据域存储指向数据文件的指针。辅索引与主索引基本一致，但是辅索引不用保证唯一性。</li>
 <li>适用OLAP(联机分析处理),实时性要求不高但一般数据量大</li>
 </ol>
-<h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><h3 id="ARCHIVE"><a href="#ARCHIVE" class="headerlink" title="ARCHIVE"></a>ARCHIVE</h3><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<h3 id="MEMORY"><a href="#MEMORY" class="headerlink" title="MEMORY"></a>MEMORY</h3><h3 id="ARCHIVE"><a href="#ARCHIVE" class="headerlink" title="ARCHIVE"></a>ARCHIVE</h3><h3 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
 <li><a href="https://juejin.im/post/5c8785baf265da2dd2190707" target="_blank" rel="noopener">MySQL数据库存储引擎简介</a></li>
 <li><a href="https://mp.weixin.qq.com/s/FUXPXKfKyjxAvMUFHZm9UQ" target="_blank" rel="noopener">1分钟了解MyISAM与InnoDB的索引差异</a></li>
 <li><a href="https://mp.weixin.qq.com/s/3_6k9duYkzQfW86FgnUz5A" target="_blank" rel="noopener">频繁插入(insert)的业务，用什么存储引擎更合适</a></li>
@@ -495,7 +501,7 @@
 </ol>
 </li>
 </ul>
-<h4 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h4><ul>
+<h4 id="参考链接-2"><a href="#参考链接-2" class="headerlink" title="参考链接"></a>参考链接</h4><ul>
 <li><a href="https://blog.csdn.net/wuseyukui/article/details/71512793" target="_blank" rel="noopener">MySQL高级 之 explain执行计划详解</a></li>
 <li><a href="https://mp.weixin.qq.com/s/h4B84UmzAUJ81iBY_FXNOg?" target="_blank" rel="noopener">MySQL索引详解</a></li>
 </ul>
@@ -586,7 +592,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">89k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">89.2k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>

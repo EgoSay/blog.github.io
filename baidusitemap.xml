@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://cjwdream.top/2018/10/23/MySQL%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2020-02-26</lastmod>
+  </url>  <url>
     <loc>http://cjwdream.top/2020/02/25/Hierarchical-Implementation-of-Data-Warehouse/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
@@ -99,9 +102,6 @@
   </url>  <url>
     <loc>http://cjwdream.top/2020/01/06/%E3%80%8A%E5%8E%9F%E5%88%99%E3%80%8B%E8%AE%B0/</loc>
     <lastmod>2020-01-06</lastmod>
-  </url>  <url>
-    <loc>http://cjwdream.top/2018/10/23/MySQL%E6%80%BB%E7%BB%93/</loc>
-    <lastmod>2020-01-03</lastmod>
   </url>  <url>
     <loc>http://cjwdream.top/2019/12/24/Spark%E8%BF%9B%E9%98%B6-Spark%E4%B8%ADOOM%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2019-12-24</lastmod>
