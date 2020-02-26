@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.3k</font>
+						<font color="#2d96bd">1.9k</font>
 					</span>
                     
                 </div>
@@ -212,7 +212,7 @@
 <h2 id="Java对象头和monitor"><a href="#Java对象头和monitor" class="headerlink" title="Java对象头和monitor"></a>Java对象头和monitor</h2><blockquote>
 <p>Java对象头和monitor是实现synchronized的基础</p>
 </blockquote>
-<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Hotspot虚拟机的对象头主要包括两部分数据：<code>Mark Word（标记字段）、Klass Pointer（类型指针）</code>。其中<code>Klass Point</code>是是对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，<code>Mark Word</code>用于存储对象自身的运行时数据，如<code>哈希码（HashCode）</code>、<code>GC分代年龄</code>、<code>锁状态标志</code>、<code>线程持有的锁</code>、<code>偏向线程 ID</code>、<code>偏向时间戳</code>等等，它是实现轻量级锁和偏向锁的关键<br><img src="https://i.loli.net/2020/02/10/4I2GzVlWdSYrteg.png" alt="32位JVM中 Mark Word组成"></p>
+<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>Hotspot虚拟机的对象头主要包括两部分数据：<code>Mark Word（标记字段）、Klass Pointer（类型指针）</code>。其中<code>Klass Point</code>是是对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例，<code>Mark Word</code>用于存储对象自身的运行时数据，如<code>哈希码（HashCode）</code>、<code>GC分代年龄</code>、<code>锁状态标志</code>、<code>线程持有的锁</code>、<code>偏向线程 ID</code>、<code>偏向时间戳</code>等等，它是实现轻量级锁和偏向锁的关键<br><img src="https://i.loli.net/2020/02/26/DHLWCBoZ8NAX5pM.png" alt="32位JVM中 Mark Word 组成"></p>
 <p>参考链接：</p>
 <ul>
 <li><a href="https://www.jianshu.com/p/3d38cba67f8b" target="_blank" rel="noopener">Java对象头详解</a></li>
@@ -220,11 +220,27 @@
 <h3 id="monitor"><a href="#monitor" class="headerlink" title="monitor"></a>monitor</h3><p>联想记忆操作系统中的锁</p>
 <h2 id="作用范围"><a href="#作用范围" class="headerlink" title="作用范围"></a>作用范围</h2><p>Java中每一个对象都可以作为锁，这是synchronized实现同步的基础：</p>
 <ul>
-<li>普通同步方法，锁是当前实例对象</li>
-<li>静态同步方法，锁是当前类的class对象</li>
-<li>同步代码块，锁是括号里面的对象</li>
+<li><code>修饰实例方法</code>，锁是当前实例对象</li>
+<li><code>修饰静态方法</code>，锁是当前类的class对象</li>
+<li><code>修饰代码块</code>，锁是括号里面的对象</li>
 </ul>
 <p>同步代码块是使用<code>monitorenter和monitorexit</code>指令实现的，同步方法依靠的是方法修饰符上的<code>ACC_SYNCHRONIZED</code>实现</p>
+<h3 id="多线程并发时竞争锁的情况分析"><a href="#多线程并发时竞争锁的情况分析" class="headerlink" title="多线程并发时竞争锁的情况分析"></a>多线程并发时竞争锁的情况分析</h3><h4 id="锁对象"><a href="#锁对象" class="headerlink" title="锁对象"></a>锁对象</h4><p><strong>情况1：</strong><br>同一个对象在两个线程中分别访问该对象的两个synchronized同步方法</p>
+<p>结果：会产生互斥。</p>
+<p>解释：因为锁针对的是对象，当对象调用一个synchronized方法时，其他同步方法需要等待其执行结束并释放锁后才能执行。</p>
+<p><strong>情况2：</strong><br>不同对象在两个线程中调用同一个synchronized同步方法</p>
+<p>结果：不会产生互斥。</p>
+<p>解释：因为是两个对象，锁针对的是对象，并不是方法，所以可以并发执行，不会互斥。形象的来说就是因为我们每个线程在调用方法的时候都是new 一个对象，那么就会出现两个空间，两把钥匙</p>
+<h4 id="类锁"><a href="#类锁" class="headerlink" title="类锁"></a>类锁</h4><p><strong>情况1：</strong><br>用类直接在两个线程中调用两个不同的synchronized同步方法</p>
+<p>结果：会产生互斥。</p>
+<p>解释：对类（.class）加锁，类对象只有一个，可以理解为任何时候都只有一个空间，里面有N个房间，一把锁，因此房间（同步方法）之间一定是互斥的。</p>
+<p>注：上述情况和用单例模式声明一个对象来调用非静态方法的情况是一样的，因为永远就只有这一个对象。所以访问同步方法之间一定是互斥的。</p>
+<p><strong>情况2：</strong><br>用一个类的静态对象在两个线程中调用静态方法或非静态方法</p>
+<p>结果：会产生互斥。</p>
+<p>解释：因为是一个对象调用，同情况1。</p>
+<p><strong>情况3：</strong><br>一个对象在两个线程中分别调用一个静态同步方法和一个非静态同步方法</p>
+<p>结果：不会产生互斥。</p>
+<p>解释：因为虽然是一个对象调用，但是两个方法的锁类型不同，调用的静态方法实际上是类对象在调用，即这两个方法产生的并不是同一个对象锁，因此不会互斥，会并发执行</p>
 <h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><blockquote>
 <p>jdk1.6对锁的实现引入了大量的优化，如自旋锁、适应性自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等技术来减少锁操作的开销。 锁主要存在四中状态，依次是：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态，他们会随着竞争的激烈而逐渐升级。注意锁可以升级不可降级，这种策略是为了提高获得锁和释放锁的效率</p>
 </blockquote>
@@ -240,6 +256,7 @@
 <h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
 <li><a href="https://www.zhihu.com/question/66733477" target="_blank" rel="noopener">如何理解互斥锁、条件锁、读写锁以及自旋锁</a></li>
 <li><a href="https://blog.csdn.net/u012465296/article/details/53022317" target="_blank" rel="noopener">Java中synchronized的实现原理与应用</a></li>
+<li><a href="https://blog.csdn.net/u010842515/article/details/65443084" target="_blank" rel="noopener">Synchronized同步静态方法和非静态方法总结</a></li>
 </ul>
 
         </div>
@@ -304,7 +321,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">89.2k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">89.8k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
