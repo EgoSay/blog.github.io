@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">5.8k</font>
+						<font color="#2d96bd">10.4k</font>
 					</span>
                     
                 </div>
@@ -206,7 +206,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="计算机网络总结"><a href="#计算机网络总结" class="headerlink" title="计算机网络总结"></a>计算机网络总结</h1><h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><p><img src="https://i.loli.net/2020/02/27/mj3rBJzdDeksQWI.png" alt="image.png"></p>
+            <h1 id="计算机网络总结"><a href="#计算机网络总结" class="headerlink" title="计算机网络总结"></a>计算机网络总结</h1><h2 id="一、体系结构"><a href="#一、体系结构" class="headerlink" title="一、体系结构"></a>一、体系结构</h2><p><img src="https://i.loli.net/2020/02/27/mj3rBJzdDeksQWI.png" alt="image.png"></p>
 <ul>
 <li><code>应用层</code>：应用层协议定义的是应用进程间通信和交互的规则, 为特定应用程序提供数据传输服务，例如 HTTP、DNS 等。数据单位为报文</li>
 <li><code>运输层</code>：运输层的任务就是负责向两台主机中进程之间的通信提供通用的数据传输服务(TCP或UDP)</li>
@@ -246,7 +246,7 @@
 <p><strong>误码率：</strong>一段时间内，传输错误的比特占传输总数的比率；</p>
 <p>目前在数据链路层采用的差错检验方式是<strong>循环冗余检验</strong>；</p>
 <p><strong>注:</strong><br>在数据链路层我们保证的是无比特差错，而并无传输差错，传输差错还包含<code>帧丢失</code>，<code>帧重复</code>，<code>帧失序</code>等；</p>
-<h2 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>计算机要实现网络通信，就必须要有一个用于快速定位的网络地址。IP地址就是计算机在网络中的唯一身份ID，与现实世界中快递的配送需要有具体的住宅地址是一个道理。</p>
+<h2 id="二、IP地址"><a href="#二、IP地址" class="headerlink" title="二、IP地址"></a>二、IP地址</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>计算机要实现网络通信，就必须要有一个用于快速定位的网络地址。IP地址就是计算机在网络中的唯一身份ID，与现实世界中快递的配送需要有具体的住宅地址是一个道理。</p>
 <p><strong>IP地址 = 网络地址 + 主机地址(又称：主机号和网络号组成)</strong></p>
 <h3 id="网段划分"><a href="#网段划分" class="headerlink" title="网段划分"></a>网段划分</h3><p>A类地址：以0开头，第一个字节范围：0 - 127（<code>1.0.0.0 - 126.255.255.255</code>)；<br>B类地址：以10开头， 第一个字节范围：128 - 191（<code>128.0.0.0 - 191.255.255.255</code>)；<br>C类地址：以110开头， 第一个字节范围：192 - 223（<code>192.0.0.0 - 223.255.255.255</code>)；<br>Internet上保留地址用于内部私有使用: <code>10.0.0.0 - 10.255.255.255</code>， <code>172.16.0.0 - 172.31.255.255</code>， <code>192.168.0.0 - 192.168.255.255</code>。</p>
 <p><img src="https://i.loli.net/2020/02/27/jxatcDWSwHzOkI9.png" alt="image.png"></p>
@@ -284,12 +284,12 @@
 <p> 1) 700=1010111100</p>
 <p> 2)该二进制为十位数，N = 10</p>
 <p> 3)将该B类地址的子网掩码255.255.0.0的主机地址全部置 1，得到255.255.255.255 然后再从后向前将后 10位置0,即为： 11111111.11111111.11111100.00000000 即255.255.252.0。这就是该欲划分成主机为700台的B类IP地址 168.195.0.0的子网掩码</p>
-<h2 id="UDP和TCP"><a href="#UDP和TCP" class="headerlink" title="UDP和TCP"></a>UDP和TCP</h2><h3 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h3><h4 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h4><ul>
+<h2 id="三、UDP"><a href="#三、UDP" class="headerlink" title="三、UDP"></a>三、UDP</h2><h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><ul>
 <li>用户数据报协议UDP只在IP的数据报服务至上增加了复用和分用的功能以及差错检测的功能。只有<code>面向无连接的报文</code>，<code>不可靠传输</code>的特点。</li>
 <li>UDP对应用层交下来的数据只添加首部，并进行特别的处理，就交给网络层；</li>
 <li>对网络层传递上来的用户数据报拆封首部后，原封不动的交给应用层<br><img src="https://i.loli.net/2020/02/27/Palc6bMLeHIoKYX.png" alt="image.png"></li>
 </ul>
-<h4 id="UDP首部格式"><a href="#UDP首部格式" class="headerlink" title="UDP首部格式"></a>UDP首部格式</h4><p><img src="https://i.loli.net/2020/02/27/Csva3WZmcDlo4gP.png" alt="image.png"></p>
+<h3 id="UDP首部格式"><a href="#UDP首部格式" class="headerlink" title="UDP首部格式"></a>UDP首部格式</h3><p><img src="https://i.loli.net/2020/02/27/Csva3WZmcDlo4gP.png" alt="image.png"></p>
 <p>UDP首部字段很简单，由4个字段组成，每个字段的长度都是两个字节，共8字节。</p>
 <ul>
 <li>源端口号：在需要对方回信时选用，不需要时可全0</li>
@@ -299,8 +299,8 @@
 </ul>
 <p>在传输的过程中，如果接收方UDP发现收到的报文中的目的端口不存在，会直接丢弃，然后由网际控制报文协议ICMP给发送方发送“端口不可达”差错报文</p>
 <p>关于循环冗余校验法，详见: <a href="https://zhuanlan.zhihu.com/p/61636624" target="_blank" rel="noopener">CRC（循环冗余校验码）简介与实现解析</a></p>
-<h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><p>TCP协议作为传输层主要协议之一，是面向连接，端到端，可靠的全双工通信，面向字节流的数据传输协议</p>
-<h4 id="TCP报文段"><a href="#TCP报文段" class="headerlink" title="TCP报文段"></a>TCP报文段</h4><p>虽然TCP面向字节流，但TCP传输的数据单元却是报文段。TCP报文段分为<code>TCP首部</code>和<code>数据部分</code>，TCP报文段首部的<code>前20个字节</code>是固定的，后面有4n 字节根据需要动态添加的选项，<strong>最大长度为40字节</strong><br><img src="https://i.loli.net/2020/02/27/CgkVo4qNJ1nTP8M.png" alt="image.png"></p>
+<h2 id="四、TCP"><a href="#四、TCP" class="headerlink" title="四、TCP"></a>四、TCP</h2><p>TCP协议作为传输层主要协议之一，是面向连接，端到端，可靠的全双工通信，面向字节流的数据传输协议</p>
+<h3 id="TCP报文段"><a href="#TCP报文段" class="headerlink" title="TCP报文段"></a>TCP报文段</h3><p>虽然TCP面向字节流，但TCP传输的数据单元却是报文段。TCP报文段分为<code>TCP首部</code>和<code>数据部分</code>，TCP报文段首部的<code>前20个字节</code>是固定的，后面有4n 字节根据需要动态添加的选项，<strong>最大长度为40字节</strong><br><img src="https://i.loli.net/2020/02/27/CgkVo4qNJ1nTP8M.png" alt="image.png"></p>
 <ul>
 <li><p><code>源端口和目的端口</code> 各占两个字节，TCP的分用功能也是通过端口实现的。</p>
 </li>
@@ -333,7 +333,7 @@
 <li><p><code>选项</code> 长度可变，最长可达40字节。例如最大报文段长度MSS。MSS指的是数据部分的长度而不是整个TCP报文段长度，MSS默认为536字节长。窗口扩大，时间戳选项等</p>
 </li>
 </ul>
-<h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p><img src="https://i.loli.net/2020/02/27/zLNuslEDPOgmhr1.png" alt="image.png"></p>
+<h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><p><img src="https://i.loli.net/2020/02/27/zLNuslEDPOgmhr1.png" alt="image.png"></p>
 <ul>
 <li><p><strong>第一次</strong>：客户端发送连接请求报文给服务端，其中SYN=1,seq=x(代表客户端的初始序列号)，即<code>ISN(Initial Sequence Number, 初始序号)</code>。发送完毕后进入SYN_END状态。</p>
 </li>
@@ -343,7 +343,7 @@
 </li>
 </ul>
 <p><strong>三次握手原因</strong><br>避免资源被浪费掉。如果在第二步握手时，由于网络延迟导致确认包不能及时到达客户端，那么客户端会认为第一次握手失败，再次发送连接请求，服务端收到后再次发送确认包。在这种情况下，服务端已经创建了两次连接，等待两个客户端发送数据，而实际却只有一个客户端发送数据, 就会造成资源浪费</p>
-<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>四次挥手指客户端和服务端各发送一次请求终止连接的报文，同时双方响应彼此的请求<br><img src="https://i.loli.net/2020/02/28/FiqcMXI8WCYykfr.png" alt="image.png"></p>
+<h3 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h3><p>四次挥手指客户端和服务端各发送一次请求终止连接的报文，同时双方响应彼此的请求<br><img src="https://i.loli.net/2020/02/28/FiqcMXI8WCYykfr.png" alt="image.png"></p>
 <ul>
 <li><p><strong>第一次挥手</strong>：客户端发送FIN=1，seq=x的包给服务端，表示自己没有数据要进行传输，单面连接传输要关闭。发送完后，客户端进入FIN_WAIT_1状态。</p>
 </li>
@@ -361,19 +361,19 @@
 </ul>
 <p><strong>四次挥手原因</strong><br>由于TCP的连接是全双工，双方都可以主动传输数据，一方的断开需要告知对方，让对方可以进行后续相关操作，负责任的表现。</p>
 <p>基于TCP传输的协议有：<code>FTP（文件传输协议）</code>、<code>Telnet（远程登录协议）</code>、<code>SMTP（简单邮件传输协议）</code>、<code>POP3（和SMTP相对，用于接收邮件）</code>、<code>HTTP协议</code>等</p>
-<h4 id="“三次握手，四次挥手”补充"><a href="#“三次握手，四次挥手”补充" class="headerlink" title="“三次握手，四次挥手”补充"></a>“三次握手，四次挥手”补充</h4><h5 id="ISN"><a href="#ISN" class="headerlink" title="ISN"></a>ISN</h5><p>三次握手的一个重要功能是客户端和服务端交换ISN, 以便让对方知道接下来接收数据的时候如何按序列号组装数据。<br>如果ISN是固定的，攻击者很容易猜出后续的确认号<br><code>ISN = M + F(localhost, localport, remotehost, remoteport)</code><br>M是一个计时器，每隔4毫秒加1。 F是一个Hash算法，根据源IP、目的IP、源端口、目的端口生成一个随机数值。要保证hash算法不能被外部轻易推算得出</p>
-<h5 id="TIME-WAIT状态详解"><a href="#TIME-WAIT状态详解" class="headerlink" title="TIME_WAIT状态详解"></a>TIME_WAIT状态详解</h5><p>TIME_WAIT状态设置为<code>2 * Maximum Segment Lifetime(报文最大生存时间)</code>, 存在TIME_WAIT状态的原因:</p>
+<h3 id="“三次握手，四次挥手”补充"><a href="#“三次握手，四次挥手”补充" class="headerlink" title="“三次握手，四次挥手”补充"></a>“三次握手，四次挥手”补充</h3><h4 id="ISN"><a href="#ISN" class="headerlink" title="ISN"></a>ISN</h4><p>三次握手的一个重要功能是客户端和服务端交换ISN, 以便让对方知道接下来接收数据的时候如何按序列号组装数据。<br>如果ISN是固定的，攻击者很容易猜出后续的确认号<br><code>ISN = M + F(localhost, localport, remotehost, remoteport)</code><br>M是一个计时器，每隔4毫秒加1。 F是一个Hash算法，根据源IP、目的IP、源端口、目的端口生成一个随机数值。要保证hash算法不能被外部轻易推算得出</p>
+<h4 id="TIME-WAIT状态详解"><a href="#TIME-WAIT状态详解" class="headerlink" title="TIME_WAIT状态详解"></a>TIME_WAIT状态详解</h4><p>TIME_WAIT状态设置为<code>2 * Maximum Segment Lifetime(报文最大生存时间)</code>, 存在TIME_WAIT状态的原因:</p>
 <ul>
 <li><p>LAST_ACK状态下的SOCKET可能会因为超时未收到ACK报文而重发FIN报文，所以这个TIME_WAIT状态的作用就是用来重发可能丢失的ACK报文</p>
 </li>
 <li><p>确保连接断开，假如要关闭的这个链接后面在相同的IP地址和端口去建立一个新连接，可能会被误认为是旧连接的新请求(一个tcp Session由【源IP、源端口、目的IP、目的端口】四元组唯一决定)，由于TCP报文段最大生存时间为MSL,其保持2MSL时间可以确保网络上两个传输方向的尚未接收到的、迟到的报文段都已经消失，或被路由器丢弃，而2MSL时间后建立新的连接其绝不会收到原来连接的应用程序数据。这样通过设置一个2MSL时长的TIME_WAIT状态可以让新的连接其绝不会收到原来连接的应用程序数据</p>
 </li>
 </ul>
-<h5 id="序列号回绕"><a href="#序列号回绕" class="headerlink" title="序列号回绕"></a>序列号回绕</h5><p>因为ISN是随机的，所以序列号容易就会超过2^31-1. 而tcp对于丢包和乱序等问题的判断都是依赖于序列号大小比较的，此时就出现了所谓的tcp序列号回绕（sequence wraparound）问题</p>
-<h5 id="半连接和全连接"><a href="#半连接和全连接" class="headerlink" title="半连接和全连接"></a>半连接和全连接</h5><p><strong>半连接队列:</strong><br>服务器第一次收到客户端的 SYN 之后，就会处于 SYN_RCVD 状态，此时双方还没有完全建立其连接，服务器会把此种状态下请求连接放在一个队列里，我们把这种队列称之为半连接队列</p>
+<h4 id="序列号回绕"><a href="#序列号回绕" class="headerlink" title="序列号回绕"></a>序列号回绕</h4><p>因为ISN是随机的，所以序列号容易就会超过2^31-1. 而tcp对于丢包和乱序等问题的判断都是依赖于序列号大小比较的，此时就出现了所谓的tcp序列号回绕（sequence wraparound）问题</p>
+<h4 id="半连接和全连接"><a href="#半连接和全连接" class="headerlink" title="半连接和全连接"></a>半连接和全连接</h4><p><strong>半连接队列:</strong><br>服务器第一次收到客户端的 SYN 之后，就会处于 SYN_RCVD 状态，此时双方还没有完全建立其连接，服务器会把此种状态下请求连接放在一个队列里，我们把这种队列称之为半连接队列</p>
 <p><strong>全连接队列:</strong><br>已经完成三次握手，建立起连接的就会放在全连接队列中，如果队列满了就有可能会出现丢包现象</p>
 <p>其他例如<code>syn flood攻击</code>、<code>Syn Cache技术</code>、<code>Syn Cookie技术</code>、<code>SYN Proxy防火墙</code>等详细请参考：<a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener">“三次握手，四次挥手”你真的懂吗？</a></p>
-<h4 id="TCP可靠传输"><a href="#TCP可靠传输" class="headerlink" title="TCP可靠传输"></a>TCP可靠传输</h4><p>可靠的传输应该满足：</p>
+<h3 id="TCP可靠传输"><a href="#TCP可靠传输" class="headerlink" title="TCP可靠传输"></a>TCP可靠传输</h3><p>可靠的传输应该满足：</p>
 <ul>
 <li><p>传输的信道不产生差错；</p>
 </li>
@@ -391,8 +391,14 @@
 <li><p>TCP使用<code>慢开始</code>、<code>拥塞避免</code>、<code>快重传</code>和<code>快恢复</code>来进行<code>拥塞控制</code>，避免网络拥塞</p>
 </li>
 </ul>
-<h5 id="滑动窗口协议"><a href="#滑动窗口协议" class="headerlink" title="滑动窗口协议"></a>滑动窗口协议</h5><p>滑动窗户协议是指数据发送方有一个发送窗口，发送窗口范围内的数据允许发送，随着接收方传来的确认信息以及通知的接收窗口的大小来动态调整发送窗口的起始位置以及大小</p>
-<h5 id="ARQ协议"><a href="#ARQ协议" class="headerlink" title="ARQ协议"></a>ARQ协议</h5><p>ARQ 自动重传请求（Automatic Repeat-reQuest）是一种在数据传输时，使用<code>确认</code>（Acknoledgements，就是我们常说的<code>ACK</code>，接收方发送一个消息，告诉发送方，自己是否正确接到了一个包体）和<code>超时</code>（Timeouts，在收到一个确认消息之前，等待的一个确定的时间段）机制，在不可靠的网络上，实现可靠的数据传输的错误控制方法策略，包括<code>停止等待ARQ协议</code>和<code>连续ARQ协议</code>，<code>错误侦测（Error Detection）</code>、<code>正面确认（Positive Acknowledgment）</code>、<code>逾时重传（Retransmission after Timeout）</code>与负面确认继以重传<code>（Negative Acknowledgment and Retransmission）</code>等机制</p>
+<h4 id="滑动窗口协议"><a href="#滑动窗口协议" class="headerlink" title="滑动窗口协议"></a>滑动窗口协议</h4><p>滑动窗户协议是指数据发送方有一个发送窗口，发送窗口范围内的数据允许发送，随着接收方传来的确认信息以及通知的接收窗口的大小来动态调整发送窗口的起始位置以及大小<br>窗口的滑动有三种情况:</p>
+<ul>
+<li>前沿向右移动，这种情况发生在数据发送并被确认时。</li>
+<li>后沿向右移动，允许发送更多数据。这种情况发生在接收窗口增大或者网络拥塞情况缓解时。</li>
+<li>后沿向左移动，这种情况发生在接收方希望发送窗口缩小时，TCP标准强烈不建议出现这种情况。因为发送方在收到缩小窗口的通知时，可能已经发送了一些缩小部分的数据，容易造成错误</li>
+<li>窗口前沿无法向左移动，因为TCP会将窗口之外已经收到确认的数据清除出缓存</li>
+</ul>
+<h4 id="ARQ协议"><a href="#ARQ协议" class="headerlink" title="ARQ协议"></a>ARQ协议</h4><p>ARQ 自动重传请求（Automatic Repeat-reQuest）是一种在数据传输时，使用<code>确认</code>（Acknoledgements，就是我们常说的<code>ACK</code>，接收方发送一个消息，告诉发送方，自己是否正确接到了一个包体）和<code>超时</code>（Timeouts，在收到一个确认消息之前，等待的一个确定的时间段）机制，在不可靠的网络上，实现可靠的数据传输的错误控制方法策略，包括<code>停止等待ARQ协议</code>和<code>连续ARQ协议</code>，<code>错误侦测（Error Detection）</code>、<code>正面确认（Positive Acknowledgment）</code>、<code>逾时重传（Retransmission after Timeout）</code>与负面确认继以重传<code>（Negative Acknowledgment and Retransmission）</code>等机制</p>
 <p><strong>停止等待ARQ：</strong><br>“停止等待”是指每发送完一个分组就停止发送，等待对方确认，在收到对方确认后再发送下一个分组，有两种错误情况</p>
 <ul>
 <li>当接收方收到错误数据分组时，会直接丢弃分组。</li>
@@ -400,31 +406,151 @@
 </ul>
 <p><strong>连续ARQ协议:</strong></p>
 <ul>
-<li><p>基于滑动窗口思想</p>
+<li><p>滑动窗口协议 与 自动重传请求技术结合形成连续ARQ协议。连续ARQ协议根据超时重发数据方式的不同分为<code>后退N帧ARQ协议</code>和<code>选择重发ARQ协议</code></p>
 </li>
 <li><p>发送方每收到一个确认，就把发送窗口向前滑动一个分组的位置。</p>
 </li>
 <li><p>接收方一般都是采用<code>累积确认(ACK机制)</code>的方式。这就是说接收方不必对收到的分组逐个发送确认，而是可以在收到几个分组后对按序到达的最后一个分组发送确认，这样就表示：到这个分组为止的所有分组都已正确收到了</p>
 </li>
-<li><p><code>后退N帧 ARQ（Go-Back-N ARQ）</code><br>GBN是在发送完一个数据帧后，不停下来等待确认帧，而是可以连续再发若干帧，边发可以边等待确认帧，如果收到了确认帧，又可以继续发送数据帧， 由于减少了等待的时间，利用率就提高了。但是如果接收到错误帧的话，所有该帧后面的帧都要重发</p>
+</ul>
+<h5 id="后退N帧-ARQ（Go-Back-N-ARQ）"><a href="#后退N帧-ARQ（Go-Back-N-ARQ）" class="headerlink" title="后退N帧 ARQ（Go-Back-N ARQ）"></a><code>后退N帧 ARQ（Go-Back-N ARQ）</code></h5><p>GBN是在发送完一个数据帧后，不停下来等待确认帧，而是可以连续再发若干帧，边发可以边等待确认帧，如果收到了确认帧，又可以继续发送数据帧， 由于减少了等待的时间，利用率就提高了。但是如果接收到错误帧的话，所有该帧后面的帧都要重发</p>
+<h5 id="选择性重发-拒绝-ARQ-Selective-Repeat-Reject-ARQ）"><a href="#选择性重发-拒绝-ARQ-Selective-Repeat-Reject-ARQ）" class="headerlink" title="选择性重发/拒绝 ARQ (Selective Repeat/Reject ARQ）"></a><code>选择性重发/拒绝 ARQ (Selective Repeat/Reject ARQ）</code></h5><p>相对于后退N帧 ARQ，在收到错误帧的情况下不需要再重传所有的，只需要选择错误的帧进行重发，进一步提高了复用率。但同时牺牲了空间，因为它需要将已经接收到的正确的信息缓存下来，直到所有信息正确被接收到然后再发送确认收到</p>
+<h4 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h4><p> 通过TCP连接发送数据，如果发送方发送数据很慢，容易造成资源浪费；如果发送方发送数据过快，接收方来不及接收会造成数据丢失。流量控制就是指在接收方能够接收的范围内，合理而又快速的发送数据。
+ </p>
+<h5 id="基于滑动窗口的流量控制"><a href="#基于滑动窗口的流量控制" class="headerlink" title="基于滑动窗口的流量控制"></a>基于滑动窗口的流量控制</h5><p>在TCP连接建立时，接收方会在确认报文段中给出自己接收窗口的大小。在每次发送确认报文时能够根据情况动态调整接收窗口的大小，并将告知发送方。如下图所示：<br><img src="https://i.loli.net/2020/02/28/MFS8DmCKeB7gruW.png" alt="image.png"></p>
+<p>发送方发送序号从1开始的100字节的数据，接收方在确认报文中声明自身的接收窗口大小为300字节。之后发送方发送300字节数据，接收方在确认报文中声明自身接收窗口大小调整为50字节。发送方再发送50字节数据之后，收到接收方传来的确认报文，在该报文中声明接收窗口为0。<br> <br> 在接收方接收窗口为0时，发送方不再发送数据，直到接收方发送确认报文表明窗口大小发生改变。可是这个确认报文不一定能够被发送方接收到，如果一旦该确认报文丢失，双方都将处于等待中，形成死锁。为防止这种情况出现，<strong>TCP规定在收到对方接受窗口为0时，启动一个坚持定时器周期性的发送探测报文，以确定对方接收窗口为0的状态是否改变</strong></p>
+<p> 另外，TCP标准规定：接收方接收窗口为0时，不再接收正常数据，但是<strong>可以接收零窗口探测报文段、确认报文段、携带紧急数据的报文段</strong></p>
+<p> </p>
+<h4 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h4><p>TCP进行拥塞控制常用的算法有四种：<code>慢启动</code>、<code>拥塞避免</code>、<code>快重传</code>、<code>快恢复</code></p>
+<h5 id="慢启动"><a href="#慢启动" class="headerlink" title="慢启动"></a>慢启动</h5><p>TCP为发送方维持一个<strong>拥塞窗口</strong>，记为cwnd, 拥塞窗口的值跟SMSS有关，<strong>SMSS为发送的最大报文段长度</strong>。<br>慢启动算法规定：拥塞窗口初始化后，每收到一个对新报文的确认，拥塞窗口就加一个SMSS的大小。拥塞窗口以字节为单位，但是慢启动以SMSS大小为单位增加。按照慢启动算法，经过一轮传输，拥塞窗口就增大一倍，这是一种指数增长的关系</p>
+<h5 id="拥塞避免"><a href="#拥塞避免" class="headerlink" title="拥塞避免"></a>拥塞避免</h5><p>慢启动算法除了维持拥塞窗口cwnd变量之外，还维持另一个变量慢启动门限ssthresh。当cwnd以指数增长的形式增长到大于或等于ssthresh时，就不再采用慢启动算法，而是采用拥塞避免算法来进行拥塞控制。<br>拥塞避免算法规定：每次收到一个确认时将cwnd增加1/cwnd个SMSS。即不再是像慢启动算法那样经过一轮传输cwnd翻倍了，而是经过一轮传输增加一个SMSS。这是一种加性增长的关系，当拥塞发生时（超时或收到重复确认），cwnd被设置为1个SMSS。ssthresh被设置为当前窗口大小的一半，但最少为 2个报文段</p>
+<p>总结就是：<strong>加性增，乘性减</strong></p>
+<h5 id="快重传"><a href="#快重传" class="headerlink" title="快重传"></a>快重传</h5><p> 如果个别报文段在网络中丢失，网络并没有发生拥塞，这种情况下发送方收不到确认报文，在超时之后会重传该报文。发送方误以为网络发生拥塞，错误的启动慢开始算法，降低了传输效率。<br>  采用快重传算法可以让发送方尽早知道个别报文段的丢失。快重传算法要求接收方不要延时发送确认，即使收到失序的报文段也要立刻发送对已收到报文的重复确认。如下图所示：<br><img src="https://i.loli.net/2020/02/28/rPcZ1O4lSW5Gd9U.png" alt="image.png"><br>接收方收到M1之后发送对M1的确认报文，M2报文丢失，之后接收方收到M3、M4、M5时每次都发送对M1报文的重复确认。<strong>快重传算法规定当收到三次重复确认后，发送方就认为M2报文段丢失，立即重传M2报文段，而不用等待超时时再重传</strong>，这样可以避免发送方误认为网络发生拥塞</p>
+<h5 id="快恢复"><a href="#快恢复" class="headerlink" title="快恢复"></a>快恢复</h5><p>在快重传算法执行后，发送方知道只是丢失个别报文，而不是网络发生拥塞。之后并不会执行慢启动算法，而是执行快恢复算法：<strong>调整门限值ssthresh = cwnd/2，同时设置cwnd = ssthresh + 3 SMSS</strong>。设置拥塞窗口的值为门限值加3个报文段是因为发送方收到三个确认报文，就认为有三个分组已经离开网络到达接收方的缓存，这三个确认报文不再占用网络资源，可以适当增大拥塞窗口的大小</p>
+<h5 id="拥塞控制和流量控制的区别"><a href="#拥塞控制和流量控制的区别" class="headerlink" title="拥塞控制和流量控制的区别"></a>拥塞控制和流量控制的区别</h5><ul>
+<li><p>拥塞控制：拥塞控制是作用于网络的，它是防止过多的数据注入到网络中，避免出现网络负载过大的情况</p>
 </li>
-<li><p><code>选择性重发/拒绝 ARQ (Selective Repeat/Reject ARQ）</code><br>相对于后退N帧 ARQ，在收到错误帧的情况下不需要再重传所有的，只需要选择错误的帧进行重发，进一步提高了复用率。但同时牺牲了空间，因为它需要将已经接收到的正确的信息缓存下来，直到所有信息正确被接收到然后再发送确认收到</p>
+<li><p>流量控制：流量控制是作用于接收者的，它是控制发送者的发送速度从而使接收者来得及接收，防止分组丢失的</p>
 </li>
 </ul>
-<h5 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h5><h2 id="http和https"><a href="#http和https" class="headerlink" title="http和https"></a>http和https</h2><h2 id="常见请求状态码"><a href="#常见请求状态码" class="headerlink" title="常见请求状态码"></a>常见请求状态码</h2><ul>
+<h2 id="五、TCP和UDP的区别"><a href="#五、TCP和UDP的区别" class="headerlink" title="五、TCP和UDP的区别"></a>五、TCP和UDP的区别</h2><ul>
+<li>TCP 面向字节流，UDP 面向报文；</li>
+<li>TCP 面向连接（需要三次握手），UDP 面向非连接；</li>
+<li>TCP 提供可靠的数据传输服务，有丢包重传机制且保证数据顺序，UDP 可能会丢包也不保证数据顺序</li>
+<li>每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信</li>
+<li>TCP要求系统资源较多，UDP较少</li>
+</ul>
+<p><strong>具体编程时的区别，socket()的参数不同</strong></p>
+<ul>
+<li>UDP Server不需要调用listen和accept </li>
+<li>UDP收发数据用sendto/recvfrom函数 </li>
+<li>TCP：地址信息在connect/accept时确定 </li>
+<li>UDP：在sendto/recvfrom函数中每次均 需指定地址信息 </li>
+<li>UDP：shutdown函数无效</li>
+</ul>
+<h2 id="六、HTTP协议"><a href="#六、HTTP协议" class="headerlink" title="六、HTTP协议"></a>六、HTTP协议</h2><p>HTTP协议是超文本传输协议的缩写，英文是Hyper Text Transfer Protocol。它是从WEB服务器传输超文本标记语言(HTML)到本地浏览器的传送协议, 基于TCP/IP通信协议来传递数据</p>
+<h3 id="报文格式"><a href="#报文格式" class="headerlink" title="报文格式"></a>报文格式</h3><p><img src="https://i.loli.net/2020/02/28/Co9Wj7GNUrfFTSl.png" alt="image.png"></p>
+<h4 id="常见请求头"><a href="#常见请求头" class="headerlink" title="常见请求头"></a>常见请求头</h4><ul>
+<li><code>Accept</code>：用于高速服务器，客户机支持的数据类型</li>
+<li><code>Accept-Charset</code>：用于告诉服务器，客户机采用的编码格式</li>
+<li><code>Accept-Encoding</code>：用于告诉服务器，客户机支持的数据压缩格式</li>
+<li><code>Accept-Language</code>：客户机的语言环境</li>
+<li><code>Host</code>：客户机通过这个头高速服务器，想访问的主机名</li>
+<li><code>If-Modified-Since</code>：客户机通过这个头告诉服务器，资源的缓存时间</li>
+<li><code>Referer</code>：客户机通过这个头告诉服务器，它是从哪个资源来访问服务器的（防盗链）</li>
+<li><code>User-Agent</code>：客户机通过这个头告诉服务器，客户机的软件环境</li>
+<li><code>Cookie</code>：客户机通过这个头可以向服务器带数据</li>
+<li><code>Connection</code>：处理完这次请求后是否断开连接还是继续保持连接</li>
+<li><code>Date</code>：当前时间值</li>
+</ul>
+<h4 id="常见响应头"><a href="#常见响应头" class="headerlink" title="常见响应头"></a>常见响应头</h4><ul>
+<li><code>Location</code>: 表示重定向的地址，该头和302的状态码一起使用。</li>
+<li><code>Server</code>: 表示服务器的类型</li>
+<li><code>Content-Encoding</code>: 表示服务器发送给浏览器的数据压缩类型</li>
+<li><code>Content-Length</code>: 表示服务器发送给浏览器的数据长度</li>
+<li><code>Content-Language</code>: 表示服务器支持的语言</li>
+<li><code>Content-Type</code>: 表示服务器发送给浏览器的数据类型及内容编码</li>
+<li><code>Last-Modified</code>: 表示服务器资源的最后修改时间</li>
+<li><code>Refresh</code>: 表示定时刷新</li>
+<li><code>Content-Disposition</code>: 表示告诉浏览器以下载方式打开资源（下载文件时用到）</li>
+<li><code>Transfer-Encoding</code>: 告诉浏览器数据的传送格式</li>
+<li><code>Set-Cookie</code>: 表示服务器发送给浏览器的cookie信息（会话管理用到）</li>
+<li><code>Expires</code>: 告诉浏览器把回送的资源缓存多长时间 -1或0则是不缓存</li>
+<li><code>Cache-Control</code>: no-cache</li>
+<li><code>Pragma</code>: no-cache<br>服务器通过以上两个头，也就是控制浏览器不要缓存数据</li>
+<li><code>Connection</code>: 表示服务器和浏览器的连接状态。close：关闭连接 keep-alive:保存连接</li>
+</ul>
+<h3 id="请求状态码"><a href="#请求状态码" class="headerlink" title="请求状态码"></a>请求状态码</h3><h4 id="状态码分类"><a href="#状态码分类" class="headerlink" title="状态码分类"></a>状态码分类</h4><ul>
+<li>1XX- 信息型，服务器收到请求，需要请求者继续操作。</li>
+<li>2XX- 成功型，请求成功收到，理解并处理。</li>
+<li>3XX - 重定向，需要进一步的操作以完成请求。</li>
+<li>4XX - 客户端错误，请求包含语法错误或无法完成请求。</li>
+<li>5XX - 服务器错误，服务器在处理请求的过程中发生了错误</li>
+</ul>
+<h4 id="常见请求状态码"><a href="#常见请求状态码" class="headerlink" title="常见请求状态码"></a>常见请求状态码</h4><ul>
+<li><code>200</code> OK 请求已成功</li>
 <li><code>204</code> No Content 无内容，服务器成功处理了请求没有返回任何内容</li>
-<li><code>301</code> Moved Permanently 已移动，永久重定向</li>
+<li><code>301</code> Moved Permanently 被请求的资源已移动，永久重定向</li>
 <li><code>302</code> Found 已找到，临时重定向</li>
 <li><code>304</code> Not Modified 未修改，客户的缓存资源是最新的，要客户端使用缓存</li>
+<li><code>400</code> Bad Request 客户端请求有语法错误，不能被服务器所理解</li>
 <li><code>401</code> Unauthorized 未授权，未授权客户机访问数据</li>
 <li><code>403</code> Forbidden 禁止，没有权限访问</li>
+<li><code>404</code> Not Found 请求资源不存在，可能是输入了错误的URL</li>
 <li><code>405</code> Method Not Allowed 方法不允许</li>
+<li><code>406</code> Not Acceptable 请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体</li>
 <li><code>500</code> Internal Server Error 内部服务器错误</li>
 <li><code>502</code> Bad Gateway 无效网关，作为网关或者代理的服务器执行请求时接收到无效的响应</li>
 <li><code>503</code> Service Unavailable 服务不可用，服务器由于维护或者负载过重未能应答</li>
 <li><code>504</code> Gateway Timeout 网关连接超时，网关或者代理的服务器无法在规定的时间内应答</li>
 </ul>
-<h2 id="Post和Get请求的异同"><a href="#Post和Get请求的异同" class="headerlink" title="Post和Get请求的异同"></a>Post和Get请求的异同</h2><h2 id="请求幂等性"><a href="#请求幂等性" class="headerlink" title="请求幂等性"></a>请求幂等性</h2><h2 id="从浏览器输入域名到展示页面过程"><a href="#从浏览器输入域名到展示页面过程" class="headerlink" title="从浏览器输入域名到展示页面过程"></a>从浏览器输入域名到展示页面过程</h2><p><strong>事件顺序：</strong></p>
+<h3 id="Post和Get请求的异同"><a href="#Post和Get请求的异同" class="headerlink" title="Post和Get请求的异同"></a>Post和Get请求的异同</h3><ul>
+<li><p>GET请求的数据会附在URL之后（就是把数据放置在HTTP协议头中），以?分割URL和传输数据，参数之间以&amp;相连。POST把提交的数据则放置在是HTTP包的包体中</p>
+</li>
+<li><p>Get可提交的数据量较小(因为数据附在URL之后)、而Post提交的数据量较大，浏览器和服务器会有不同的限制</p>
+</li>
+</ul>
+<ul>
+<li><p>Post安全性比Get高，GET的数据在 URL 中对所有人都是可见的；说Get是安全的指的仅仅是<strong>非修改信息</strong>，Get用于获取/查询资源信息，Post用于更新资源信息</p>
+</li>
+<li><p>GET是幂等的，POST不是</p>
+</li>
+<li><p>GET编码类型application/x-www-form-url，POST编码类型encodedapplication/x-www-form-urlencoded 或 multipart/form-data</p>
+</li>
+<li><p>GET历史参数保留在浏览器历史中。POST参数不会保存在浏览器历史中</p>
+</li>
+</ul>
+<h3 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h3><p>HTTP方法的幂等性是指一次和多次请求某一个资源应该具有同样的副作用。即：同一个请求，发送一次和发送N次效果是一样的！<br>幂等的方法：GET、DELETE、PUT<br>PUT与POST均是创建或更新，唯一不同是POST非幂等</p>
+<h3 id="http1-x-2-0"><a href="#http1-x-2-0" class="headerlink" title="http1.x/2.0"></a>http1.x/2.0</h3><h4 id="http1-1"><a href="#http1-1" class="headerlink" title="http1.1"></a>http1.1</h4><ul>
+<li><p>引入了持久连接（ persistent connection），即TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。</p>
+</li>
+<li><p>引入了管道机制（ pipelining），即在同一个TCP连接里，客户端可以同时发送多个</p>
+</li>
+<li><p>请求，进一步改进了HTTP协议的效率。</p>
+</li>
+<li><p>新增方法：PUT、 PATCH、 OPTIONS、 DELETE。</p>
+</li>
+<li><p>http协议不带有状态，每次请求都必须附上所有信息。请求的很多字段都是重复的，浪费带宽，影响速度</p>
+</li>
+</ul>
+<h4 id="http2-0"><a href="#http2-0" class="headerlink" title="http2.0"></a>http2.0</h4><ul>
+<li><p>http/2是一个<strong>彻底的二进制协议</strong>，头信息和数据体都是二进制，并且统称为”帧”（frame）：头信息帧和数据帧。 避免 http1.x在传输数据时明文传输内容容易导致的安全性问题</p>
+</li>
+<li><p><strong>复用TCP连接</strong>，在一个连接里，客户端和浏览器都可以同时发送多个请求或回应，且不用按顺序一一对应，避免了队头堵塞的问题,此双向的实时通信称为多工（ Multiplexing）。</p>
+</li>
+<li><p>HTTP/2 允许服务器未经请求，主动向客户端发送资源，即<strong>服务器推送</strong>。</p>
+</li>
+<li><p>引入<strong>头信息压缩机制（</strong> header compression） ,头信息使用gzip或compress压缩后再发送</p>
+</li>
+</ul>
+<h4 id="https"><a href="#https" class="headerlink" title="https"></a>https</h4><p>HTTPS 经由 HTTP 进行通信，利用 SSL/TLS 协议来加密数据包，是 HTTP 的安全版，与http主要区别:</p>
+<ul>
+<li>HTTPS 协议需要到CA申请证书</li>
+<li>HTTP 和 HTTPS 使用端口不一样，前者是80，后者是443</li>
+<li>HTTP 协议运行在 TCP 之上，所有传输的内容都是明文，HTTPS 运行在 SSL/TLS 之上，SSL/TLS运行在TCP之上，所有传输的内容都经过加密的</li>
+<li>HTTPS 可以有效的防止运营商劫持</li>
+</ul>
+<h2 id="七、浏览器输入域名到展示页面过程"><a href="#七、浏览器输入域名到展示页面过程" class="headerlink" title="七、浏览器输入域名到展示页面过程"></a>七、浏览器输入域名到展示页面过程</h2><p><strong>事件顺序：</strong></p>
 <ol>
 <li>DNS 域名解析：查找域名对应的 IP 地址</li>
 <li>建立 TCP 连接： TCP 采用三次握手与服务器建立连接，提供可靠的传输服务</li>
@@ -441,13 +567,48 @@
 <li><p>网络层：IP(IP数据数据包传输和路由选择)，ICMP(提供网络传输过程中的差错检测)，ARP(将本机的默认网关IP地址映射成物理MAC地址)</p>
 </li>
 </ul>
-<h2 id="session和cookie"><a href="#session和cookie" class="headerlink" title="session和cookie"></a>session和cookie</h2><h2 id="TCP-Socket-HTTP-长连接和短连接的区别与应用"><a href="#TCP-Socket-HTTP-长连接和短连接的区别与应用" class="headerlink" title="TCP/Socket/HTTP 长连接和短连接的区别与应用"></a>TCP/Socket/HTTP 长连接和短连接的区别与应用</h2><h2 id="交换机、路由器、网关"><a href="#交换机、路由器、网关" class="headerlink" title="交换机、路由器、网关"></a>交换机、路由器、网关</h2><h2 id="Restful和openAPI"><a href="#Restful和openAPI" class="headerlink" title="Restful和openAPI"></a>Restful和openAPI</h2><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<h2 id="八、session和cookie区别"><a href="#八、session和cookie区别" class="headerlink" title="八、session和cookie区别"></a>八、session和cookie区别</h2><ul>
+<li><p>cookie数据存放在客户的浏览器上，session数据放在服务器上。</p>
+</li>
+<li><p>cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗</p>
+</li>
+<li><p>考虑到安全应当使用session。</p>
+</li>
+<li><p>session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。考虑到减轻服务器性能方面，应当使用COOKIE。</p>
+</li>
+<li><p>单个cookie保存的数据不能超过4K，很多浏览器都限制一个站点最多保存20个cookie</p>
+</li>
+</ul>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>session在一定程度上依赖于cookie。服务端执行session机制时候会生成session的id值，这个id值会发送给客户端，客户端每次请求都会把这个id值放到http请求的头部发送给服务端，而这个id值在客户端会保存下来，保存的容器就是cookie</p>
+<h2 id="九、长连接和短连接与WebSocket"><a href="#九、长连接和短连接与WebSocket" class="headerlink" title="九、长连接和短连接与WebSocket"></a>九、长连接和短连接与WebSocket</h2><h3 id="长连接和短连接"><a href="#长连接和短连接" class="headerlink" title="长连接和短连接"></a>长连接和短连接</h3><h4 id="长连接和短连接区别"><a href="#长连接和短连接区别" class="headerlink" title="长连接和短连接区别"></a>长连接和短连接区别</h4><p>在HTTP/1.0中，默认使用的是短连接。也就是说，浏览器和服务器每进行一次HTTP操作，就建立一次连接，但<strong>任务结束就中断连接</strong>。<br>从 HTTP/1.1起，默认使用长连接，用以保持连接特性。使用长连接的HTTP协议，会在响应头设置：<code>Connection:keep-alive</code><br>在使用长连接的情况下，当一个网页打开完成后，客户端和服务器之间用于传输HTTP数据的 TCP连接不会关闭，如果客户端再次访问这个服务器上的网页，会继续使用这一条已经建立的连接。Keep-Alive不会永久保持连接，它有一个保持时间，可以在不同的服务器软件（如Apache）中设定这个时间。实现长连接要客户端和服务端都支持长连接。</p>
+<p><strong>HTTP协议的长连接和短连接，本质上是TCP协议的长连接和短连接</strong></p>
+<h4 id="长连接和短连接应用场景"><a href="#长连接和短连接应用场景" class="headerlink" title="长连接和短连接应用场景"></a>长连接和短连接应用场景</h4><ul>
+<li><p><strong>长连接多用于操作频繁，点对点的通讯，而且连接数不能太多情况</strong>。每个TCP连接都需要三步握手，这需要时间，如果每个操作都是先连接，再操作的话那么处理速度会降低很多，所以每个操作完后都不断开，次处理时直接发送数据包就OK了，不用建立TCP连接。 例如：数据库的连接用长连接， 如果用短连接频繁的通信会造成socket错误，而且频繁的socket 创建也是对资源的浪费。</p>
+</li>
+<li><p>而像WEB网站的http服务一般都用短链接，因为长连接对于服务端来说会耗费一定的资源，而像WEB网站这么频繁的成千上万甚至上亿客户端的连接用短连接会更省一些资源，如果用长连接，而且同时有成千上万的用户，如果每个用户都占用一个连接的话，那可想而知吧。 所以<strong>并发量大，但每个用户无需频繁操作情况下需用短连接好</strong></p>
+</li>
+</ul>
+<h3 id="短轮训和长轮训"><a href="#短轮训和长轮训" class="headerlink" title="短轮训和长轮训"></a>短轮训和长轮训</h3><p>和短连接和长连接有本质区别。长、短连接是客户端与服务端建立和保持TCP连接的机制；而长、短轮询是指客户端请求服务端，服务端给予应答的方式。</p>
+<ul>
+<li><p>短轮询：重复发送Http请求，查询目标事件是否完成，优点：编写简单，缺点：浪费带宽和服务器资源</p>
+</li>
+<li><p>长轮询：在服务端hold住Http请求（死循环或者sleep等等方式），等到目标时间发生(保持这个请求等待数据到来或者恰当的超时)，返回Http响应。优点：在无消息的情况下不会频繁的请求，缺点：编写复杂</p>
+</li>
+</ul>
+<h3 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h3><h4 id="WebSocket连接建立"><a href="#WebSocket连接建立" class="headerlink" title="WebSocket连接建立"></a>WebSocket连接建立</h4><p>客户端浏览器首先要向服务器发起一个HTTP请求，这个请求和通常的HTTP请求不同，包含了一些附加头信息，其中附加头信息“<code>Upgrade: WebSocket</code>”表明这是一个申请协议升级的HTTP请求</p>
+<h4 id="WebSocket和HTTP长连接区别"><a href="#WebSocket和HTTP长连接区别" class="headerlink" title="WebSocket和HTTP长连接区别"></a>WebSocket和HTTP长连接区别</h4><ul>
+<li>HTTP1.1通过使用Connection:keep-alive进行长连接，HTTP 1.1默认进行持久连接。在一次 TCP 连接中可以完成多个 HTTP 请求，但是对每个请求仍然要单独发 header，Keep-Alive不会永久保持连接，它有一个保持时间，可以在不同的服务器软件（如Apache）中设定这个时间。</li>
+<li>websocket的长连接，是一个真的全双工，第一次tcp链路建立之后，后续数据可以双方都进行发送，不需要发送请求头，并且这个连接会持续存在直到客户端或者服务器端的某一方主动关闭连接，与HTTP长连接不同，WebSocket可以更灵活的控制连接关闭的时机，而不是HTTP协议的Keep-Alive一到，服务端立马就关闭（这样很不人性化）</li>
+</ul>
+<h2 id="十、参考链接"><a href="#十、参考链接" class="headerlink" title="十、参考链接"></a>十、参考链接</h2><ul>
 <li><a href="https://www.jianshu.com/p/1d900d1c4d45" target="_blank" rel="noopener">计算机网络如何计算子网掩码</a></li>
 <li><a href="https://juejin.im/post/5d2757356fb9a07ef7109ecc" target="_blank" rel="noopener">TCP/UDP协议详解</a></li>
 <li><a href="https://blog.csdn.net/qq_42468130/article/details/82760291" target="_blank" rel="noopener">计算机网络知识点汇总（谢希仁 第七版）</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener">“三次握手，四次挥手”你真的懂吗？</a></li>
 <li><a href="https://juejin.im/post/5c8f615ff265da612009824a" target="_blank" rel="noopener">网络学习笔记（二）：TCP可靠传输原理</a></li>
 <li><a href="https://xiaoxueying.gitbooks.io/computer-networks-5th-/content/ke_kao_chuan_shu_de_gong_zuo_yuan_li.html" target="_blank" rel="noopener">Computer NetWorks(5th)</a></li>
+<li><a href="https://blog.51cto.com/13932385/2393194" target="_blank" rel="noopener">http协议各版本差异</a></li>
+<li><a href="https://segmentfault.com/a/1190000020427990" target="_blank" rel="noopener">长连接、短连接、长轮询、短轮询、WebSocket释疑</a></li>
 </ul>
 
         </div>
@@ -512,7 +673,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">95.5k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">100.1k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
