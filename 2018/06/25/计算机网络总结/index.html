@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">4.1k</font>
+						<font color="#2d96bd">5.8k</font>
 					</span>
                     
                 </div>
@@ -226,11 +226,22 @@
 <p>*<em>3. 统计时分复用STDM *</em><br>改进的时分复用，按需动态分配时隙，而不是固定分配时隙 （时隙数小于连接在集中器上的用户数，使得每次传送的STDM帧中的分组都是满的</p>
 <p><strong>4. 波分复用WDM</strong><br>光的频分复用，利用在光线技术通信中；</p>
 <p><strong>5. 码分复用CDM</strong><br>每个用户在相同的时间使用相同的频带进行通信，但各用户使用经过挑选的不同码型，从而使得个用户之间可以进行独立的通信</p>
-<h3 id="数据链路层三个基本问题"><a href="#数据链路层三个基本问题" class="headerlink" title="数据链路层三个基本问题"></a>数据链路层三个基本问题</h3><p>数据链路层的三个基本问题:<code>封装成帧</code>，<code>透明传输</code>，<code>差错检测</code></p>
+<h3 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h3><p>数据链路层的主要功能：</p>
+<ul>
+<li>链路管理</li>
+<li>帧同步</li>
+<li>流量控制</li>
+<li>差错控制</li>
+<li>将数据与控制信息区分开</li>
+<li>透明传输</li>
+<li>寻址</li>
+</ul>
+<p>数据链路层的三个基本问题:<code>封装成帧</code>，<code>透明传输</code>，<code>差错检测</code></p>
 <h4 id="封装成帧"><a href="#封装成帧" class="headerlink" title="封装成帧"></a>封装成帧</h4><p>将IP数据报的前后分别添加首部和尾部构成帧，以便于接收端能够在物理层的比特流中知道帧的开始和结束，即进行<strong>帧定界</strong>；</p>
 <p>此外，首部和尾部还要添加许多控制信息，链路层协议规定了所能传送的帧的数据部分长度上限，<strong>最大传送单元——MTU</strong><br><img src="https://i.loli.net/2020/02/27/MYyNcxrWQUPRgpI.png" alt="image.png"></p>
 <h4 id="透明传输"><a href="#透明传输" class="headerlink" title="透明传输"></a>透明传输</h4><p>透明传输的概念是指在数据链路层传输时，所传输的数据在数据链路层没有任何的阻挡，接收方所收到的数据和发送方发送的数据没有任何差别，也就是说，数据链路层对其传输的数据帧是完全透明的；</p>
 <p><strong>字节填充：</strong><br>在传输的过程中，为防止数据部分出现帧定界符，使得接收方误以为收到的数据提前结束，所以采用转义字符的方法，将在数据部分出现的控制字符前插入转义字符，，在接收方的数据链路层将插入的转义字符删除<br><img src="https://i.loli.net/2020/02/27/jZ1WSVaTIBgFGLt.png" alt="image.png"></p>
+<p><strong>零比特填充法:</strong><br>只要发现5个连续1，则立即填入一个0，保证不出现6个连续1</p>
 <h4 id="差错检测"><a href="#差错检测" class="headerlink" title="差错检测"></a>差错检测</h4><p>差错检测指的是在传输过程中产生的比特差错；</p>
 <p><strong>误码率：</strong>一段时间内，传输错误的比特占传输总数的比率；</p>
 <p>目前在数据链路层采用的差错检验方式是<strong>循环冗余检验</strong>；</p>
@@ -293,7 +304,7 @@
 <ul>
 <li><p><code>源端口和目的端口</code> 各占两个字节，TCP的分用功能也是通过端口实现的。</p>
 </li>
-<li><p><code>序号</code> 占4个字节，范围是[0,232],TCP是面向字节流的，每个字节都是按顺序编号。例如一个报文段，序号字段是201，携带数据长度是100，那么第一个数据的序号就是201，最后一个就是300。当达到最大范围，又从0开始。</p>
+<li><p><code>序号（Sequence Number)</code> 占4个字节，范围是[0,232],TCP是面向字节流的，每个字节都是按顺序编号。例如一个报文段，序号字段是201，携带数据长度是100，那么第一个数据的序号就是201，最后一个就是300。当达到最大范围，又从0开始。</p>
 </li>
 <li><p><code>确认</code>号 占4个字节，是期望收到对方下一个报文段的第一个字节的序号。若确认号=N,则表示序号N前所有的数据已经正确收到了。</p>
 </li>
@@ -303,7 +314,7 @@
 </li>
 <li><p><code>URG（紧急</code>） 当URG=1,表明紧急指针字段有效，该报文段有紧急数据，应尽快发送。</p>
 </li>
-<li><p><code>ACK(确认)</code> 仅当ACK=1时，确认号才有效，连接建立后，所有的报文段ACK都为1。</p>
+<li><p><code>确认号(Acknowledgement Number)</code> 仅当ACK=1时，确认号才有效，连接建立后，所有的报文段ACK都为1。</p>
 </li>
 <li><p><code>PSH(推送)</code> 接收方接收到PSH=1的报文段，会尽快交付接收应用经常，不再等待整个缓存填满再交付。实际较少使用。</p>
 </li>
@@ -324,7 +335,7 @@
 </ul>
 <h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p><img src="https://i.loli.net/2020/02/27/zLNuslEDPOgmhr1.png" alt="image.png"></p>
 <ul>
-<li><p><strong>第一次</strong>：客户端发送连接请求报文给服务端，其中SYN=1,seq=x。发送完毕后进入SYN_END状态。</p>
+<li><p><strong>第一次</strong>：客户端发送连接请求报文给服务端，其中SYN=1,seq=x(代表客户端的初始序列号)，即<code>ISN(Initial Sequence Number, 初始序号)</code>。发送完毕后进入SYN_END状态。</p>
 </li>
 <li><p><strong>第二次</strong>：服务端接收到报文后，发回确认报文，其中ACK=1,ack=x+1，因为需要客户端确认，所以报文中也有SYN=1,seq=y的信息。发送完后进入SYN_RCVD状态。</p>
 </li>
@@ -332,7 +343,7 @@
 </li>
 </ul>
 <p><strong>三次握手原因</strong><br>避免资源被浪费掉。如果在第二步握手时，由于网络延迟导致确认包不能及时到达客户端，那么客户端会认为第一次握手失败，再次发送连接请求，服务端收到后再次发送确认包。在这种情况下，服务端已经创建了两次连接，等待两个客户端发送数据，而实际却只有一个客户端发送数据, 就会造成资源浪费</p>
-<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>四次挥手指客户端和服务端各发送一次请求终止连接的报文，同时双方响应彼此的请求<br><img src="media/15720628609237/15828068493423.jpg" alt></p>
+<h4 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h4><p>四次挥手指客户端和服务端各发送一次请求终止连接的报文，同时双方响应彼此的请求<br><img src="https://i.loli.net/2020/02/28/FiqcMXI8WCYykfr.png" alt="image.png"></p>
 <ul>
 <li><p><strong>第一次挥手</strong>：客户端发送FIN=1，seq=x的包给服务端，表示自己没有数据要进行传输，单面连接传输要关闭。发送完后，客户端进入FIN_WAIT_1状态。</p>
 </li>
@@ -343,9 +354,64 @@
 <li><p><strong>第四次挥手</strong>：客户端收到请求包后，发送ACK=1,ack=y+1的确认包给服务端，并进入TIME_WAIT状态，有可能要重传确认包。服务端收到确认包后，进入CLOSED状态，服务端到客户端的连接已断开。客户端等到一段时间后也会进入CLOSED状态。</p>
 </li>
 </ul>
+<p><strong>注：</strong></p>
+<ul>
+<li>默认情况下(不改变socket选项)，当你调用close( or closesocket，以下说close不再重复)时，如果发送缓冲中还有数据，TCP会继续把数据发送完。</li>
+<li>发送了FIN只是表示这端不能继续发送数据(应用层不能再调用send发送)，但是还可以接收数据</li>
+</ul>
 <p><strong>四次挥手原因</strong><br>由于TCP的连接是全双工，双方都可以主动传输数据，一方的断开需要告知对方，让对方可以进行后续相关操作，负责任的表现。</p>
 <p>基于TCP传输的协议有：<code>FTP（文件传输协议）</code>、<code>Telnet（远程登录协议）</code>、<code>SMTP（简单邮件传输协议）</code>、<code>POP3（和SMTP相对，用于接收邮件）</code>、<code>HTTP协议</code>等</p>
-<h2 id="http和https"><a href="#http和https" class="headerlink" title="http和https"></a>http和https</h2><h2 id="常见请求状态码"><a href="#常见请求状态码" class="headerlink" title="常见请求状态码"></a>常见请求状态码</h2><ul>
+<h4 id="“三次握手，四次挥手”补充"><a href="#“三次握手，四次挥手”补充" class="headerlink" title="“三次握手，四次挥手”补充"></a>“三次握手，四次挥手”补充</h4><h5 id="ISN"><a href="#ISN" class="headerlink" title="ISN"></a>ISN</h5><p>三次握手的一个重要功能是客户端和服务端交换ISN, 以便让对方知道接下来接收数据的时候如何按序列号组装数据。<br>如果ISN是固定的，攻击者很容易猜出后续的确认号<br><code>ISN = M + F(localhost, localport, remotehost, remoteport)</code><br>M是一个计时器，每隔4毫秒加1。 F是一个Hash算法，根据源IP、目的IP、源端口、目的端口生成一个随机数值。要保证hash算法不能被外部轻易推算得出</p>
+<h5 id="TIME-WAIT状态详解"><a href="#TIME-WAIT状态详解" class="headerlink" title="TIME_WAIT状态详解"></a>TIME_WAIT状态详解</h5><p>TIME_WAIT状态设置为<code>2 * Maximum Segment Lifetime(报文最大生存时间)</code>, 存在TIME_WAIT状态的原因:</p>
+<ul>
+<li><p>LAST_ACK状态下的SOCKET可能会因为超时未收到ACK报文而重发FIN报文，所以这个TIME_WAIT状态的作用就是用来重发可能丢失的ACK报文</p>
+</li>
+<li><p>确保连接断开，假如要关闭的这个链接后面在相同的IP地址和端口去建立一个新连接，可能会被误认为是旧连接的新请求(一个tcp Session由【源IP、源端口、目的IP、目的端口】四元组唯一决定)，由于TCP报文段最大生存时间为MSL,其保持2MSL时间可以确保网络上两个传输方向的尚未接收到的、迟到的报文段都已经消失，或被路由器丢弃，而2MSL时间后建立新的连接其绝不会收到原来连接的应用程序数据。这样通过设置一个2MSL时长的TIME_WAIT状态可以让新的连接其绝不会收到原来连接的应用程序数据</p>
+</li>
+</ul>
+<h5 id="序列号回绕"><a href="#序列号回绕" class="headerlink" title="序列号回绕"></a>序列号回绕</h5><p>因为ISN是随机的，所以序列号容易就会超过2^31-1. 而tcp对于丢包和乱序等问题的判断都是依赖于序列号大小比较的，此时就出现了所谓的tcp序列号回绕（sequence wraparound）问题</p>
+<h5 id="半连接和全连接"><a href="#半连接和全连接" class="headerlink" title="半连接和全连接"></a>半连接和全连接</h5><p><strong>半连接队列:</strong><br>服务器第一次收到客户端的 SYN 之后，就会处于 SYN_RCVD 状态，此时双方还没有完全建立其连接，服务器会把此种状态下请求连接放在一个队列里，我们把这种队列称之为半连接队列</p>
+<p><strong>全连接队列:</strong><br>已经完成三次握手，建立起连接的就会放在全连接队列中，如果队列满了就有可能会出现丢包现象</p>
+<p>其他例如<code>syn flood攻击</code>、<code>Syn Cache技术</code>、<code>Syn Cookie技术</code>、<code>SYN Proxy防火墙</code>等详细请参考：<a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener">“三次握手，四次挥手”你真的懂吗？</a></p>
+<h4 id="TCP可靠传输"><a href="#TCP可靠传输" class="headerlink" title="TCP可靠传输"></a>TCP可靠传输</h4><p>可靠的传输应该满足：</p>
+<ul>
+<li><p>传输的信道不产生差错；</p>
+</li>
+<li><p>保证传输数据的正确性，无差错、不丢失、不重复、并且按序到达</p>
+</li>
+</ul>
+<p><strong>TCP可靠传输的实现:</strong></p>
+<ul>
+<li><p>采用三次握手来建立TCP连接，四次握手来释放TCP连接，从而保证建立的传输信道是可靠的。</p>
+</li>
+<li><p>TCP采用了<code>ARQ协议</code>来保证数据传输的正确性</p>
+</li>
+<li><p>TCP使用<code>滑动窗口协议</code>来保证接方能够及时处理所接收到的数据，进行流量控制。</p>
+</li>
+<li><p>TCP使用<code>慢开始</code>、<code>拥塞避免</code>、<code>快重传</code>和<code>快恢复</code>来进行<code>拥塞控制</code>，避免网络拥塞</p>
+</li>
+</ul>
+<h5 id="滑动窗口协议"><a href="#滑动窗口协议" class="headerlink" title="滑动窗口协议"></a>滑动窗口协议</h5><p>滑动窗户协议是指数据发送方有一个发送窗口，发送窗口范围内的数据允许发送，随着接收方传来的确认信息以及通知的接收窗口的大小来动态调整发送窗口的起始位置以及大小</p>
+<h5 id="ARQ协议"><a href="#ARQ协议" class="headerlink" title="ARQ协议"></a>ARQ协议</h5><p>ARQ 自动重传请求（Automatic Repeat-reQuest）是一种在数据传输时，使用<code>确认</code>（Acknoledgements，就是我们常说的<code>ACK</code>，接收方发送一个消息，告诉发送方，自己是否正确接到了一个包体）和<code>超时</code>（Timeouts，在收到一个确认消息之前，等待的一个确定的时间段）机制，在不可靠的网络上，实现可靠的数据传输的错误控制方法策略，包括<code>停止等待ARQ协议</code>和<code>连续ARQ协议</code>，<code>错误侦测（Error Detection）</code>、<code>正面确认（Positive Acknowledgment）</code>、<code>逾时重传（Retransmission after Timeout）</code>与负面确认继以重传<code>（Negative Acknowledgment and Retransmission）</code>等机制</p>
+<p><strong>停止等待ARQ：</strong><br>“停止等待”是指每发送完一个分组就停止发送，等待对方确认，在收到对方确认后再发送下一个分组，有两种错误情况</p>
+<ul>
+<li>当接收方收到错误数据分组时，会直接丢弃分组。</li>
+<li>发送方在一定时间没有收到确认，则会重传分组，即超时重传</li>
+</ul>
+<p><strong>连续ARQ协议:</strong></p>
+<ul>
+<li><p>基于滑动窗口思想</p>
+</li>
+<li><p>发送方每收到一个确认，就把发送窗口向前滑动一个分组的位置。</p>
+</li>
+<li><p>接收方一般都是采用<code>累积确认(ACK机制)</code>的方式。这就是说接收方不必对收到的分组逐个发送确认，而是可以在收到几个分组后对按序到达的最后一个分组发送确认，这样就表示：到这个分组为止的所有分组都已正确收到了</p>
+</li>
+<li><p><code>后退N帧 ARQ（Go-Back-N ARQ）</code><br>GBN是在发送完一个数据帧后，不停下来等待确认帧，而是可以连续再发若干帧，边发可以边等待确认帧，如果收到了确认帧，又可以继续发送数据帧， 由于减少了等待的时间，利用率就提高了。但是如果接收到错误帧的话，所有该帧后面的帧都要重发</p>
+</li>
+<li><p><code>选择性重发/拒绝 ARQ (Selective Repeat/Reject ARQ）</code><br>相对于后退N帧 ARQ，在收到错误帧的情况下不需要再重传所有的，只需要选择错误的帧进行重发，进一步提高了复用率。但同时牺牲了空间，因为它需要将已经接收到的正确的信息缓存下来，直到所有信息正确被接收到然后再发送确认收到</p>
+</li>
+</ul>
+<h5 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h5><h2 id="http和https"><a href="#http和https" class="headerlink" title="http和https"></a>http和https</h2><h2 id="常见请求状态码"><a href="#常见请求状态码" class="headerlink" title="常见请求状态码"></a>常见请求状态码</h2><ul>
 <li><code>204</code> No Content 无内容，服务器成功处理了请求没有返回任何内容</li>
 <li><code>301</code> Moved Permanently 已移动，永久重定向</li>
 <li><code>302</code> Found 已找到，临时重定向</li>
@@ -379,6 +445,9 @@
 <li><a href="https://www.jianshu.com/p/1d900d1c4d45" target="_blank" rel="noopener">计算机网络如何计算子网掩码</a></li>
 <li><a href="https://juejin.im/post/5d2757356fb9a07ef7109ecc" target="_blank" rel="noopener">TCP/UDP协议详解</a></li>
 <li><a href="https://blog.csdn.net/qq_42468130/article/details/82760291" target="_blank" rel="noopener">计算机网络知识点汇总（谢希仁 第七版）</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener">“三次握手，四次挥手”你真的懂吗？</a></li>
+<li><a href="https://juejin.im/post/5c8f615ff265da612009824a" target="_blank" rel="noopener">网络学习笔记（二）：TCP可靠传输原理</a></li>
+<li><a href="https://xiaoxueying.gitbooks.io/computer-networks-5th-/content/ke_kao_chuan_shu_de_gong_zuo_yuan_li.html" target="_blank" rel="noopener">Computer NetWorks(5th)</a></li>
 </ul>
 
         </div>
@@ -443,7 +512,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">93.8k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">95.5k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
