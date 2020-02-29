@@ -8,7 +8,7 @@
 
 
 
-<title>分布式互斥 | EgoSay</title>
+<title>数仓系列-数据建模方法 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">分布式互斥</h1>
+            <h1 class="post-title">数仓系列-数据建模方法</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">January 24, 2020&nbsp;&nbsp;21:17:46</a>
+                        Date: <a href="#">February 29, 2020&nbsp;&nbsp;22:14:35</a>
                         </span>
                     
                     
@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.2k</font>
+						<font color="#2d96bd">1.5k</font>
 					</span>
                     
                 </div>
@@ -206,38 +206,69 @@
         </header>
 
         <div class="post-content">
-            <h1 id="分布式互斥"><a href="#分布式互斥" class="headerlink" title="分布式互斥"></a>分布式互斥</h1><blockquote>
-<p>内容来自极客时间专栏: <a href="https://time.geekbang.org/column/intro/233" target="_blank" rel="noopener">《分布式技术原理与算法解析》</a></p>
+            <h1 id="数仓系列-数据建模方法"><a href="#数仓系列-数据建模方法" class="headerlink" title="数仓系列-数据建模方法"></a>数仓系列-数据建模方法</h1><blockquote>
+<p>内容整理自:</p>
+<ol>
+<li><a href="http://cxy7.com/articles/2017/06/24/1498271858331.html" target="_blank" rel="noopener">数据仓库中的数据建模方法</a></li>
+<li><a href="https://juejin.im/post/5d5be159f265da03970bbc3a" target="_blank" rel="noopener">数据仓库的建设方法篇</a></li>
+</ol>
 </blockquote>
-<p>互斥指的是对于一个条件资源，在同一时间只能被一个单位占用，在分布式系统里，这种排他性的资源访问方式，叫作<code>分布式互斥（Distributed Mutual Exclusion）</code>，而这种被互斥访问的共享资源就叫作<code>临界资源（Critical Resource）</code></p>
-<p>分布式互斥的几种实现方式:</p>
-<h2 id="集中式算法"><a href="#集中式算法" class="headerlink" title="集中式算法"></a>集中式算法</h2><blockquote>
-<p>联想到<code>Yarn的资源调度机制</code></p>
-</blockquote>
-<p>系统引入一个协调者的角色，每个程序在请求资源的时候先向协调者发送一个请求，然后协调者判断资源是否空闲，空闲的话就直接分配给这个程序，如果被占用的话，就给这个请求排号，相当于一个请求队列排队获取资源. 但同时也会存在以下两个问题:</p>
+<h2 id="数据模型的基本概念"><a href="#数据模型的基本概念" class="headerlink" title="数据模型的基本概念"></a>数据模型的基本概念</h2><p>数据模型是抽象描述现实世界的一种工具和方法，是通过抽象的实体及实体之间联系的形式，来表示现实世界中事务的相互关系的一种映射。在这里，数据模型表现的抽象的是实体和实体之间的关系，通过对实体和实体之间关系的定义和描述，来表达实际的业务中具体的业务关系，分为以下几个层次:<br><img src="https://i.loli.net/2020/02/24/ls3VwaDKoSdmEqB.png" alt="image.png"></p>
+<p>通过上面的图形，我们能够很容易的看出在整个数据仓库得建模过程中，我们需要经历一般四个过程：</p>
 <ul>
-<li>单点问题，协调者故障，会导致所有的程序均无法访问临界资源，导致整个系统不可用, 因此需要额外的机制保障协调者的正常运行状态(其实感觉 zookeeper 也是类似这种)</li>
-<li>协调者通常会成为系统的性能瓶颈，协调者处理的消息数量会随着需要访问临界资源的程序数量线性增加<br>集中式算法示意图如下所示:<br><img src="https://i.loli.net/2020/01/23/yJ8eGmMcwx5tkoR.png" alt="image.png"></li>
+<li><p>业务建模，生成业务模型，主要解决业务层面的分解和程序化。</p>
+</li>
+<li><p>领域建模，生成领域模型，主要是对业务模型进行抽象处理，生成领域概念模型。</p>
+</li>
+<li><p>逻辑建模，生成逻辑模型，主要是将领域模型的概念实体以及实体之间的关系进行数据库层次的逻辑化。</p>
+</li>
+<li><p>物理建模，生成物理模型，主要解决，逻辑模型针对不同关系型数据库的物理化以及性能等一些具体的技术问题</p>
+</li>
 </ul>
-<h2 id="分布式算法"><a href="#分布式算法" class="headerlink" title="分布式算法"></a>分布式算法</h2><blockquote>
-<p>HDFS中文件修改机制采用了这种算法</p>
-</blockquote>
-<p>不同于集中式算法，分布式算法实现的原理是当某个程序请求资源时，先向系统内所有其他程序发送请求，其他程序如果没有占用这个资源那么返回同意的结果，在接收到所有其他程序返回的同意消息后，才可以访问临界资源。<br>这个算法可用性很低，主要包括两个方面的原因：</p>
+<h2 id="范式建模"><a href="#范式建模" class="headerlink" title="范式建模"></a>范式建模</h2><p>在数据仓库的模型设计中目前一般采用第三范式，它有着严格的数学定义。从其表达的含义来看，一个符合第三范式的关系必须具有以下三个条件 :</p>
 <ul>
-<li>随着系统内程序数增多，消息数量会随着需要访问临界资源的程序数量呈指数级增加(<code>2n * (n-1)</code>)，容易产生<code>“信令风暴”</code>，也就是程序收到的请求完全超过了自己的处理能力，而导致自己正常的业务无法开展</li>
-<li>我们知道在计算机网络中消息的可靠性保证也是很难的，会出现比如消息丢失，消息延时到达等情况，在分布式算法中也同样， 比如某个程序发生故障，导致无法发送同意请求资源的响应消息或者延时响应，那么其他程序往往就会因此而陷入等待使系统阻塞，导致系统不可用</li>
+<li>每个属性值唯一，不具有多义性 ;</li>
+<li>每个非主属性必须完全依赖于整个主键，而非主键的一部分 ;</li>
+<li>每个非主属性不能依赖于其他关系中的属性，因为这样的话，这种属性应该归到其他关系中去</li>
 </ul>
-<p>分布式算法根据“先到先得”以及“投票全票通过”的机制，让每个程序按时间顺序公平地访问资源，简单粗暴、易于实现，适用于临界资源使用频度较低，且系统规模较小的场景</p>
-<h2 id="令牌环算法"><a href="#令牌环算法" class="headerlink" title="令牌环算法"></a>令牌环算法</h2><p>算法示意图如下：<br><img src="https://i.loli.net/2020/01/23/qCe9tIJKcW5xFGw.png" alt="image.png"><br>如同所示，程序排成环形结构，令牌循环传递，收到令牌的程序有权访问临界资源，访问完成后将令牌传送到下一个程序；若该程序不需要访问临界资源，则直接把令牌传送给下一个程序；</p>
-<p>ps: 我一开始想到了限流机制的<code>令牌桶算法</code>，但其实不一样</p>
-<h2 id="总结-amp-思考"><a href="#总结-amp-思考" class="headerlink" title="总结 &amp; 思考"></a>总结 &amp; 思考</h2><p><img src="https://i.loli.net/2020/01/23/Q4tENIZ6VFXPGr3.png" alt="image.png"></p>
-<h3 id="思考："><a href="#思考：" class="headerlink" title="思考："></a>思考：</h3><blockquote>
-<p>以下思考内容可能存在问题，欢迎指正</p>
-</blockquote>
-<h4 id="集中式算法-1"><a href="#集中式算法-1" class="headerlink" title="集中式算法"></a>集中式算法</h4><p>改进思路: 可参照redis集群通信模式，通过hash key将大量的请求分散到不同的master,以处理大量请求,每个master由小集群主从节点来保障单点故障</p>
-<h4 id="分布式算法-1"><a href="#分布式算法-1" class="headerlink" title="分布式算法"></a>分布式算法</h4><p>设置超时，如果某个节点发生故障迟迟没有响应达到超时时间限制，将其从系统中剔除出去，或者直接忽略</p>
-<h4 id="令牌环算法-1"><a href="#令牌环算法-1" class="headerlink" title="令牌环算法"></a>令牌环算法</h4><p>改进思路: 可根据参与者使用频率列出权重，结合平滑加权轮询算法选出下一个参与者<br>同时需要注意若环中某个节点发生故障需要及时剔除出去，保证令牌在正常节点之间传递</p>
-<h4 id="传统单机上的互斥方法，为什么不能用于分布式环境呢"><a href="#传统单机上的互斥方法，为什么不能用于分布式环境呢" class="headerlink" title="传统单机上的互斥方法，为什么不能用于分布式环境呢"></a>传统单机上的互斥方法，为什么不能用于分布式环境呢</h4><p>单机上互斥可以用信号量、锁机制、线程同步等方法，可以在jvm层级或单机硬件层面做到互斥。分布式环境，彼此都是运行在不同的服务器彼此不可感知，需要用额外的手段保证各节点访问互斥</p>
+<h2 id="维度建模"><a href="#维度建模" class="headerlink" title="维度建模"></a>维度建模</h2><p>最简单的描述就是，按照事实表，维表来构建数据仓库，数据集市。如<code>星型模式</code>、<code>雪花模型</code>等</p>
+<h3 id="星型模型-Star-schema"><a href="#星型模型-Star-schema" class="headerlink" title="星型模型(Star-schema)"></a>星型模型(Star-schema)</h3><p><img src="media/15825499685422/15825530629838.jpg" alt></p>
+<p>上图的这个架构中是典型的星型架构。星型架构是一种非正规化的结构，<strong>多维数据集的每一个维度都直接与事实表相连接，不存在渐变维度，所以数据有一定的冗余</strong>，如在地域维度表中，存在国家 A 省 B 的城市 C 以及国家 A 省 B 的城市 D 两条记录，那么国家 A 和省 B 的信息分别存储了两次，即存在冗余</p>
+<p><strong>特点</strong></p>
+<ul>
+<li><p>只有一个事实表，并且每一个维度有一个单独的表。</p>
+</li>
+<li><p>事实表中的每一个元组都是一个外键指向维度表的主键。</p>
+</li>
+<li><p>每一个维度表的列是组成这个维度的所有属性</p>
+</li>
+<li><p>事实表与维度表通过主键外键相关联，维度表之间没有关联，就像很多星星围绕在一个恒星周围，故取名为星形模型。</p>
+</li>
+</ul>
+<p><strong>优点</strong></p>
+<ul>
+<li><p>星形模型是最简单， 也是最常用的模型。</p>
+</li>
+<li><p>由于星形模型只有一张大表， 因此它相比于其他模型更适合于大数据处理。</p>
+</li>
+<li><p>其他模型可以通过一定的转换， 变为星形模型</p>
+</li>
+</ul>
+<h3 id="雪花模型-Snow-Schema"><a href="#雪花模型-Snow-Schema" class="headerlink" title="雪花模型(Snow Schema)"></a>雪花模型(Snow Schema)</h3><p>当有一个或多个维表没有直接连接到事实表上，而是通过其他维表连接到事实表上时，其图解就像多个雪花连接在一起,故称雪花模型。<br>雪花模型是对星型模型的维表进一步层次化，原有的各维表可能被扩展为小的事实表，形成一些局部的 “ 层次 “ 区域，这些被分解的表都连接到主维度表而不是事实表<br><img src="https://i.loli.net/2020/02/24/WqIgTOG81v9HdNQ.png" alt="image.png"></p>
+<p>如上图所示，将地域维表又分解为国家，省份，城市等维表。它的<strong>优点</strong>是 : 通过最大限度地减少数据存储量以及联合较小的维表来改善查询性能，去除了数据冗余。</p>
+<p>数据仓库大多数时候是比较适合使用星型模型构建底层数据Hive表，通过大量的冗余来提升查询效率，星型模型对OLAP的分析引擎支持比较友好，这一点在Kylin中比较能体现。而雪花模型在关系型数据库中如MySQL，Oracle中非常常见，尤其像电商的数据库表。</p>
+<h3 id="事实星座模型（Fact-Constellation）"><a href="#事实星座模型（Fact-Constellation）" class="headerlink" title="事实星座模型（Fact Constellation）"></a>事实星座模型（Fact Constellation）</h3><p>星座模型是更复杂的模型，其中包含了多个事实表，而维度表是公用的，可以共享多个事实表共享维表，这种模式可以看作星座模式集，因此称作星系模式(galaxy schema)，或者事实星座(fact constellation)<br><img src="https://i.loli.net/2020/02/24/wT1zxtHXlNm9Pfq.png" alt="image.png"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><strong>维度建模法的优点:</strong><br>维度建模非常直观，紧紧围绕着业务模型，可以直观的反映出业务模型中的业务问题。不需要经过特别的抽象处理，即可以完成维度建模</p>
+<p><strong>维度建模法的缺点:</strong></p>
+<ul>
+<li><p>由于在构建星型模式之前需要进行大量的数据预处理，因此会导致大量的数据处理工作。</p>
+</li>
+<li><p>当业务发生变化，需要重新进行维度的定义时，往往需要重新进行维度数据的预处理。而在这些与处理过程中，往往会导致大量的数据冗余。</p>
+</li>
+<li><p>如果只是依靠单纯的维度建模，不能保证数据来源的一致性和准确性，而且在数据仓库的底层，不是特别适用于维度建模的方法。</p>
+</li>
+</ul>
+<p>维度建模的领域主要适用于数据集市层，它的最大的作用其实是为了解决数据仓库建模中的性能问题。维度建模很难能够提供一个完整地描述真实业务实体之间的复杂关系的抽象方法。</p>
 
         </div>
 
@@ -252,7 +283,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2020/01/24/Distributed-mutex/">http://cjwdream.top/2020/01/24/Distributed-mutex/</a></span>
+                        <span><a href="http://cjwdream.top/2020/02/29/Data-Warehouse-Modeling/">http://cjwdream.top/2020/02/29/Data-Warehouse-Modeling/</a></span>
                     </p>
                 
                 
@@ -271,7 +302,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/分布式/"># 分布式</a>
+                        <a href="/tags/数据仓库/"># 数据仓库</a>
                     
                         
                 </span>
@@ -284,10 +315,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/01/28/Distributed-Election/">分布式选举</a>
             
-            
-            <a class="next" rel="next" href="/2020/01/12/volatile/">volatile关键字</a>
+            <a class="next" rel="next" href="/2020/02/25/Hierarchical-Implementation-of-Data-Warehouse/">数仓系列-数据仓库分层实现</a>
             
         </section>
 
