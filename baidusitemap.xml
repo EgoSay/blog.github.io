@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://cjwdream.top/2019/06/11/The-Garbage-Collection-In-JVM/</loc>
+    <lastmod>2020-03-04</lastmod>
+  </url>  <url>
     <loc>http://cjwdream.top/2017/08/19/HashMap/</loc>
     <lastmod>2020-03-04</lastmod>
   </url>  <url>
@@ -54,9 +57,6 @@
   </url>  <url>
     <loc>http://cjwdream.top/2019/06/02/JVM-memory-structure/</loc>
     <lastmod>2020-02-14</lastmod>
-  </url>  <url>
-    <loc>http://cjwdream.top/2019/06/11/The-Garbage-Collection-In-JVM/</loc>
-    <lastmod>2020-02-13</lastmod>
   </url>  <url>
     <loc>http://cjwdream.top/2020/02/06/Consistent-Hash/</loc>
     <lastmod>2020-02-08</lastmod>

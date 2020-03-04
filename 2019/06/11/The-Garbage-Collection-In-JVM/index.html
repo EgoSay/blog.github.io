@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">3.6k</font>
+						<font color="#2d96bd">4.3k</font>
 					</span>
                     
                 </div>
@@ -206,7 +206,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="JVM之垃圾收集"><a href="#JVM之垃圾收集" class="headerlink" title="JVM之垃圾收集"></a>JVM之垃圾收集</h1><blockquote>
+            <h1 id="JVM系列-JVM之垃圾收集"><a href="#JVM系列-JVM之垃圾收集" class="headerlink" title="JVM系列-JVM之垃圾收集"></a>JVM系列-JVM之垃圾收集</h1><blockquote>
 <p>内容来自:</p>
 <ol>
 <li><a href="https://github.com/wangzhiwubigdata/God-Of-BigData/blob/master/JVM/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AD%96%E7%95%A5%E4%B8%8E%E7%AE%97%E6%B3%95.md" target="_blank" rel="noopener">垃圾收集策略与算法</a></li>
@@ -253,6 +253,8 @@
 <li>该类的 java.lang.Class 对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
 </ul>
 <p>一个类被虚拟机加载进方法区，那么在堆中就会有一个代表该类的对象。这个对象在类被加载进方法区时创建，在方法区该类被删除时清除。</p>
+<h3 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h3><p>Java中如果<code>长生命周期的对象持有短生命周期的引用</code>，就很可能会出现内存泄露,比如在单例模式中，很多时候我们可以把这个单例对象的生命周期与整个程序的生命周期看做差不多的，所以是一个长生命周期的对象。如果这个对象持有其他对象的引用，就有可能发生内存泄露</p>
+<p>更详细的内容请参考: <a href="https://blog.csdn.net/anxpp/article/details/51325838" target="_blank" rel="noopener">JAVA 内存泄露详解（原因、例子及解决）</a></p>
 <h2 id="二、垃圾收集算法"><a href="#二、垃圾收集算法" class="headerlink" title="二、垃圾收集算法"></a>二、垃圾收集算法</h2><p>学会了如何判定无效对象、无用类、废弃常量之后，剩余工作就是回收这些垃圾。常见的垃圾收集算法有以下几个：</p>
 <h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>判断哪些数据需要清除，并对它们进行标记，然后清除被标记的数据。</p>
 <p>这种方法有两个<strong>不足</strong>：</p>
@@ -267,7 +269,10 @@
 </ul>
 <p>为了解决空间利用率问题，可以将内存分为三块： Eden、From Survivor、To Survivor，比例是 8:1:1，每次使用 Eden 和其中一块 Survivor。回收时，将 Eden 和 Survivor 中还存活的对象一次性复制到另外一块 Survivor 空间上，最后清理掉 Eden 和刚才使用的 Survivor 空间。这样只有 10% 的内存被浪费。</p>
 <p>但是我们无法保证每次回收都只有不多于 10% 的对象存活，当 Survivor 空间不够，需要依赖其他内存（指老年代）进行分配担保。</p>
-<h4 id="分配担保"><a href="#分配担保" class="headerlink" title="分配担保"></a>分配担保</h4><p>为对象分配内存空间时，如果 Eden+Survivor 中空闲区域无法装下该对象，会触发 MinorGC 进行垃圾收集。但如果 Minor GC 过后依然有超过 10% 的对象存活，这样存活的对象直接通过分配担保机制进入老年代，然后再将新对象存入 Eden 区。</p>
+<h4 id="分配担保"><a href="#分配担保" class="headerlink" title="分配担保"></a>分配担保</h4><p>通过清除老年代中废弃数据来扩大老年代空闲空间，以便给新生代作担保。</p>
+<p><strong>JDK 6 Update 24 之前：</strong><br>在发生 Minor GC 之前，虚拟机会<strong>先检查老年代最大可用的连续空间是否大于新生代所有对象总空间</strong>， 如果这个条件成立，Minor GC 可以确保是安全的； 如果不成立，则虚拟机会查看 HandlePromotionFailure 值是否设置为允许担保失败， 如果是，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小， 如果大于，将尝试进行一次 Minor GC,尽管这次 Minor GC 是有风险的； 如果小于，或者 HandlePromotionFailure 设置不允许冒险，那此时也要改为进行一次 Full GC。</p>
+<p><strong>JDK 6 Update 24 之后：</strong><br>只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小，就会进行 Minor GC，否则将进行 Full GC。</p>
+<p>这个过程就是分配担保</p>
 <h3 id="标记-整理算法（老年代）"><a href="#标记-整理算法（老年代）" class="headerlink" title="标记-整理算法（老年代）"></a>标记-整理算法（老年代）</h3><p>在回收垃圾前，首先将废弃对象做上标记，然后将未标记的对象移到一边，最后清空另一边区域即可。</p>
 <p>这是一种老年代的垃圾收集算法。老年代的对象一般寿命比较长，因此每次垃圾回收会有大量对象存活，如果采用复制算法，每次需要复制大量存活的对象，效率很低。</p>
 <h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>根据对象存活周期的不同，将内存划分为几块。一般是把 Java 堆分为新生代和老年代，针对各个年代的特点采用最适当的收集算法。</p>
@@ -318,6 +323,15 @@
 <li><code>并发标记</code>：使用一条标记线程与用户线程并发执行。此过程进行可达性分析，速度很慢。</li>
 <li><code>最终标记</code>：Stop The World，使用多条标记线程并发执行。</li>
 <li><code>筛选回收</code>：回收废弃对象，此时也要 Stop The World，并使用多条筛选回收线程并发执行</li>
+</ul>
+<h2 id="补充拓展"><a href="#补充拓展" class="headerlink" title="补充拓展"></a>补充拓展</h2><h3 id="触发-JVM-进行-Full-GC的情况"><a href="#触发-JVM-进行-Full-GC的情况" class="headerlink" title="触发 JVM 进行 Full GC的情况"></a>触发 JVM 进行 Full GC的情况</h3><h4 id="System-gc-方法的调用"><a href="#System-gc-方法的调用" class="headerlink" title="System.gc() 方法的调用"></a>System.gc() 方法的调用</h4><p>此方法的调用是建议 JVM 进行 Full GC，注意这<code>只是建议而非一定</code>，但在很多情况下它会触发 Full GC，从而增加 Full GC 的频率。通常情况下我们只需要让虚拟机自己去管理内存即可，我们可以通过 <code>-XX:+ DisableExplicitGC</code>来禁止调用 System.gc()。</p>
+<h4 id="老年代空间不足"><a href="#老年代空间不足" class="headerlink" title="老年代空间不足"></a>老年代空间不足</h4><p>老年代空间不足会触发 Full GC操作，若进行该操作后空间依然不足，则会抛出如下错误：<code>java.lang.OutOfMemoryError: Java heap space</code></p>
+<h4 id="永久代空间不足"><a href="#永久代空间不足" class="headerlink" title="永久代空间不足"></a>永久代空间不足</h4><p>JVM 规范中运行时数据区域中的方法区，在 HotSpot 虚拟机中也称为永久代（Permanet Generation），存放一些类信息、常量、静态变量等数据，当系统要加载的类、反射的类和调用的方法较多时，永久代可能会被占满，会触发 Full GC。如果经过 Full GC 仍然回收不了，那么 JVM 会抛出如下错误信息：<code>java.lang.OutOfMemoryError: PermGen space</code></p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li><p>CMS GC 时出现 promotion failed 和 concurrent mode failure<br>promotion failed，就是上文所说的<strong>分配担保失败</strong>，而 concurrent mode failure 是在执行 CMS GC 的过程中同时有对象要放入老年代，而此时老年代空间不足造成的。</p>
+</li>
+<li><p>统计得到的Minor GC晋升到旧生代的平均大小大于老年代的剩余空间</p>
+</li>
 </ul>
 
         </div>
@@ -382,7 +396,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">101.9k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">102.6k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
