@@ -8,7 +8,7 @@
 
 
 
-<title>Spark基础-Spark基本概念 | EgoSay</title>
+<title>Java中的异常 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Spark基础-Spark基本概念</h1>
+            <h1 class="post-title">Java中的异常</h1>
             
                 <div class="post-meta">
                     
@@ -186,7 +186,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">January 19, 2019&nbsp;&nbsp;19:27:27</a>
+                        Date: <a href="#">November 5, 2017&nbsp;&nbsp;22:25:11</a>
                         </span>
                     
                     
@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">582</font>
+						<font color="#2d96bd">701</font>
 					</span>
                     
                 </div>
@@ -206,19 +206,41 @@
         </header>
 
         <div class="post-content">
-            <h2 id="Spark中的基本概念"><a href="#Spark中的基本概念" class="headerlink" title="Spark中的基本概念"></a>Spark中的基本概念</h2><h3 id="RDD"><a href="#RDD" class="headerlink" title="RDD"></a>RDD</h3><p><code>Resilient Distributed Dataset</code>, 弹性分布式数据集, Spark中基本的数据类型，还有<code>DataFrame</code> 以及 <code>DataSet</code></p><p><br>        三者的关系：<br>    - <code>RDD</code>: 最基本的数据类型, 类比于数据库中列的概念, 即单个字段的一列数据<code>DataFrame</code> 和 <code>Dataset</code> 也是基于 RDD 提供的<br>    - <code>DataFrame</code>: <code>DataFrame[Row]</code>, 分布式的<code>Row</code>的集合, 类比于数据库中的一张表, 有很多行数据(Row), 每一行的数据又有许多不同字段的值<br>    - <code>DataSet</code>: 相当于<code>DataFrame</code>的一个特例, 特例在于<code>DataSet</code>中存储的是强类型的数据, 不再是<code>Row</code></p>
-<h3 id="算子"><a href="#算子" class="headerlink" title="算子"></a>算子</h3><p>计算的类型, 分为<code>Transformation</code>和<code>Action</code>两种算子, 这就涉及到惰性运算的概念了, 参考<a href="http://allenn.cn/articles/2016-10/2016-10-26-spark-is-lazy/" target="_blank" rel="noopener">Spark中的惰性运算</a></p><p></p>
+            <h1 id="Java中的异常处理"><a href="#Java中的异常处理" class="headerlink" title="Java中的异常处理"></a>Java中的异常处理</h1><h2 id="异常的分类"><a href="#异常的分类" class="headerlink" title="异常的分类"></a>异常的分类</h2><p>Java通过面向对象的方式对异常进行处理，Java把异常按照不同的类型进行分类。所有异常类的基类是Throwable类，两大子类分别是Error和Exception：</p>
 <ul>
-<li><code>Transformation</code>算子主要包括：map、mapPartitions、flatMap、filter、union、groupByKey、repartition、cache等</li>
-<li><code>Action</code>算子主要包括：reduce、collect、show、count、foreach、saveAsTextFile等<p><br>注意: 如果声明了数据需要cache或者persist，但在action操作前释放掉的话，该数据实际上并没有被缓存</p></li>
+<li><code>Error</code>是程序无法处理的错误，例如OOM等</li>
+<li><code>Exception</code>是程序本身可以进行处理的异常，分两大类<code>运行时异常(RuntimeException)</code>和<code>检查异常(Checked Exception)</code>，检查型异常需要使用try, catch和finally关键字在编译期进行处理，否则编译器会报错<br><img src="https://i.loli.net/2020/03/05/R1VBEvdNbQDSXFA.png" alt="image.png"></li>
 </ul>
-<h3 id="Job"><a href="#Job" class="headerlink" title="Job"></a>Job</h3><p>用户提交的任务, 当在程序中遇到一个<code>action</code>算子的时候，就会提交一个<code>job</code>，执行前面的一系列操作</p>
-<h3 id="Stage"><a href="#Stage" class="headerlink" title="Stage"></a>Stage</h3><p>Job拆分的执行阶段, 一个 <code>Job</code>可能被划分为一到多个 <code>Stage</code>, <code>Stage</code>的划分是根据<code>shuffle</code>依赖进行的</p>
-<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><p>具体执行任务, Spark中最细的执行单位, <code>Stage</code>继续往下分解就是<code>Task</code><br>分为<code>ShuffleMapTask</code> 和 <code>ResultTask</code>两种, 类比于 <code>Hadoop</code>中的<code>Map</code> 和 <code>Reduce</code></p><p><br><code>RDD</code>在计算的时候，每个分区都会起一个task，所以rdd的分区数目决定了总的的task数目。每个Task执行的结果就是生成了目标RDD的一个partiton。在Map阶段partition数目保持不变。在Reduce阶段，RDD的聚合会触发shuffle操作，聚合后的RDD的partition数目跟具体操作有关，例如repartition操作会聚合成指定分区数。coalesce算子同样可以改变partition的数目，不过只能减少不能增加。repartition和coalesce算子的区别在于前者会引发shuffle，后者则不会</p>
-<h3 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h3><p>数据分区, 即一个<code>RDD</code>的数据可以划分为多少个分区</p>
-<h3 id="NarrowDependcy"><a href="#NarrowDependcy" class="headerlink" title="NarrowDependcy"></a>NarrowDependcy</h3><p>窄依赖, 分为 <code>OneToOneDependency</code> 和 <code>RangeDependency</code>, 比如map、union等操作</p>
-<h3 id="ShuffleDependcy"><a href="#ShuffleDependcy" class="headerlink" title="ShuffleDependcy"></a>ShuffleDependcy</h3><p><code>shuffle</code>依赖, 也称为宽依赖, 比如<code>groupByKey</code>等操作</p>
-<h3 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h3><p>有向无环图, 反映<code>RDD</code>之间的依赖关系</p>
+<h2 id="finally代码块的执行"><a href="#finally代码块的执行" class="headerlink" title="finally代码块的执行"></a>finally代码块的执行</h2><p><strong>无论是否捕获异常，finally里的代码块都会被执行</strong>，涉及 break 及 continue 语句的时候，finally 子句也会得到执行。在以下几种特殊情况下，finally 块不会被执行：</p>
+<ul>
+<li>在 finally 语句块中发生了异常。</li>
+<li>在前面的代码中用了 System.exit()或者已经return返回 退出程序。</li>
+<li>程序所在的线程死亡。</li>
+<li>关闭 CPU</li>
+</ul>
+<h3 id="return和finally的执行"><a href="#return和finally的执行" class="headerlink" title="return和finally的执行"></a>return和finally的执行</h3><p>参考: <a href="https://blog.csdn.net/love_java_cc/article/details/52785389" target="_blank" rel="noopener">Java基础——finally return执行的先后顺序</a></p>
+<ul>
+<li>return语句先执行，不过没有立即返回，而是去执行finally语句，等finally语句执行完了，return语句再返回结果！</li>
+<li>finally块中的return语句会覆盖try块中的return返回</li>
+</ul>
+<h2 id="throw-和-throws-的区别？"><a href="#throw-和-throws-的区别？" class="headerlink" title="throw 和 throws 的区别？"></a>throw 和 throws 的区别？</h2><ul>
+<li>throw用于方法内部，throws用于方法声明上</li>
+<li>throw后跟异常对象，throws后跟异常类型</li>
+<li>throw后只能跟一个异常对象，throws后可以一次声明多种异常类型</li>
+</ul>
+<h2 id="final、finally、finalize-有什么区别？"><a href="#final、finally、finalize-有什么区别？" class="headerlink" title="final、finally、finalize 有什么区别？"></a>final、finally、finalize 有什么区别？</h2><ul>
+<li>final：是修饰符，如果修饰类，此类不能被继承；如果修饰方法和变量，则表示此方法和此变量不能在被改变，只能使用。</li>
+<li>finally：是 try{} catch{} finally{} 最后一部分，表示不论发生任何情况都会执行，finally 部分可以省略，但如果 finally 部分存在，则一定会执行 finally 里面的代码。</li>
+<li>finalize： 是 Object 类的一个方法，在垃圾收集器执行的时候会调用被回收对象的此方法</li>
+</ul>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>参考自阿里巴巴《Java规范手册》</p>
+<ul>
+<li>不要捕获 Java 类库中定义的继承自 RuntimeException 的运行时异常类，如：<code>IndexOutOfBoundsException / NullPointerException</code>，这类异常由程序员预检查来规避，保证程序健壮性</li>
+<li>捕获异常是为了处理它，不要捕获了却什么都不处理而抛弃之</li>
+<li>有 try 块放到了事务代码中， catch 异常后，如果需要回滚事务，一定要注意<code>手动回滚事务</code></li>
+<li>不能在 finally 块中使用 return， finally 块中的 return 返回后方法结束执行，不会再执行 try 块中的 return 语句</li>
+<li>做到精准区分异常类型，避免对大段代码进行 try-catch，避免使用Exception抛出。</li>
+</ul>
 
         </div>
 
@@ -233,7 +255,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/01/19/Spark基础-Spark中的一些基本概念/">http://cjwdream.top/2019/01/19/Spark基础-Spark中的一些基本概念/</a></span>
+                        <span><a href="http://cjwdream.top/2017/11/05/Java-Exception/">http://cjwdream.top/2017/11/05/Java-Exception/</a></span>
                     </p>
                 
                 
@@ -252,7 +274,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Spark/"># Spark</a>
+                        <a href="/tags/Java基础/"># Java基础</a>
                     
                         
                 </span>
@@ -265,10 +287,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/02/14/Spark基础-RDD总结/">Spark基础-RDD总结</a>
+                <a class="prev" rel="prev" href="/2018/02/22/shell变量/">shell变量</a>
             
             
-            <a class="next" rel="next" href="/2018/10/23/MySQL总结/">MySQL总结</a>
+            <a class="next" rel="next" href="/2017/09/16/Java-Collections/">Java集合汇总</a>
             
         </section>
 
