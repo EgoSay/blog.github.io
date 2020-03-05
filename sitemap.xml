@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://cjwdream.top/2020/01/09/Java-Concurrency-basis/</loc>
+    
+    <lastmod>2020-03-05T03:14:43.380Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://cjwdream.top/2019/06/11/The-Garbage-Collection-In-JVM/</loc>
     
     <lastmod>2020-03-04T12:09:00.482Z</lastmod>
@@ -236,13 +243,6 @@
     <loc>http://cjwdream.top/about/index.html</loc>
     
     <lastmod>2020-01-12T08:49:45.042Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://cjwdream.top/2020/01/09/Java-Concurrency-basis/</loc>
-    
-    <lastmod>2020-01-10T13:24:17.964Z</lastmod>
     
   </url>
   
