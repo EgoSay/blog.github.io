@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>数仓系列-Kylin概览 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">数仓系列-Kylin概览</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 6, 2020&nbsp;&nbsp;20:41:32</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">2.8k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="数仓系列-Kylin概览"><a href="#数仓系列-Kylin概览" class="headerlink" title="数仓系列-Kylin概览"></a>数仓系列-Kylin概览</h1><h2 id="Kylin的特点"><a href="#Kylin的特点" class="headerlink" title="Kylin的特点"></a>Kylin的特点</h2><p>Kylin的主要特点包括支持SQL接口、支持超大规模数据集、亚秒级响应、可伸缩性、高吞吐率、BI工具集成等。</p>
+<ol>
+<li><code>标准SQL接口</code>：Kylin是以标准的SQL作为对外服务的接口。</li>
+<li><code>支持超大数据集</code>：Kylin对于大数据的支撑能力可能是目前所有技术中最为领先的。早在2015年eBay的生产环境中就能支持百亿记录的秒级查询，之后在移动的应用场景中又有了千亿记录秒级查询的案例。</li>
+<li><code>亚秒级响应</code>：Kylin拥有优异的查询相应速度，这点得益于预计算，很多复杂的计算，比如连接、聚合，在离线的预计算过程中就已经完成，这大大降低了查询时刻所需的计算量，提高了响应速度。</li>
+<li><code>可伸缩性和高吞吐率</code>：单节点Kylin可实现每秒70个查询，还可以搭建Kylin的集群。</li>
+<li><code>BI工具集成</code>： Kylin可以与现有的BI工具集成，具体包括如下内容。<ol>
+<li>ODBC：与Tableau、Excel、PowerBI等工具集成</li>
+<li>JDBC：与Saiku、BIRT等Java工具集成</li>
+<li>RestAPI：与JavaScript、Web网页集成</li>
+</ol>
+</li>
+</ol>
+<h2 id="Kylin的基本架构"><a href="#Kylin的基本架构" class="headerlink" title="Kylin的基本架构"></a>Kylin的基本架构</h2><p><img src="https://i.loli.net/2020/02/25/uToxc3QFHjOKw4k.png" alt="image.png"></p>
+<p><strong>REST Server</strong><br>REST Server是一套面向应用程序开发的入口点，旨在实现针对Kylin平台的应用开发工作。 此类应用程序可以提供查询、获取结果、触发cube构建任务、获取元数据以及获取用户权限等等。另外可以通过Restful接口实现SQL查询。</p>
+<p><strong>查询引擎（Query Engine）</strong><br>当cube准备就绪后，查询引擎就能够获取并解析用户查询。它随后会与系统中的其它组件进行交互，从而向用户返回对应的结果。 </p>
+<p><strong>Routing</strong><br>负责将解析的SQL生成的执行计划转换成cube缓存的查询，cube是通过预计算缓存在HBase中，这部分查询可以在秒级设置毫秒级完成</p>
+<p><strong>元数据管理工具（Metadata）</strong><br>Kylin是一款元数据驱动型应用程序。元数据管理工具是一大关键性组件，用于对保存在Kylin当中的所有元数据进行管理，其中包括最为重要的cube元数据。其它全部组件的正常运作都需以元数据管理工具为基础。 Kylin的元数据存储在HBase中。 </p>
+<p><strong>任务引擎（Cube Build Engine</strong>）<br>这套引擎的设计目的在于处理所有离线任务，其中包括shell脚本、Java API以及Map Reduce任务等等。任务引擎对Kylin当中的全部任务加以管理与协调，从而确保每一项任务都能得到切实执行并解决其间出现的故障。  </p>
+<h2 id="Kylin工作原理"><a href="#Kylin工作原理" class="headerlink" title="Kylin工作原理"></a>Kylin工作原理</h2><p>Apache Kylin的工作原理本质上是<code>MOLAP（Multidimension On-Line Analysis Processing）Cube</code>，也就是多维立方体分析，详细概念参考: <a href="https://cjwdream.top/2020/02/24/Data-Warehouse-Basic-Concepts/">数仓系列-基本概念整理</a></p>
+<h3 id="核心算法"><a href="#核心算法" class="headerlink" title="核心算法"></a>核心算法</h3><p>对数据模型做Cube预计算，并利用计算的结果加速查询：</p>
+<ul>
+<li><p>指定数据模型，定义维度和度量；</p>
+</li>
+<li><p>预计算Cube，计算所有Cuboid并保存为物化视图；<br>预计算过程是Kylin从Hive中读取原始数据，按照我们选定的维度进行计算，并将结果集保存到HBase中，默认的计算引擎为MapReduce，可以选择Spark作为计算引擎。<strong>一次build的结果，我们称为一个Segment</strong>。构建过程中会涉及多个Cuboid的创建，具体创建过程由kylin.cube.algorithm参数决定，参数值可选 auto，layer 和 inmem， 默认值为 auto，即 Kylin 会通过采集数据动态地选择一个算法 (layer or inmem)，如果用户很了解 Kylin 和自身的数据、集群，可以直接设置喜欢的算法。</p>
+</li>
+<li><p>执行查询，读取Cuboid，运行，产生查询结果</p>
+</li>
+</ul>
+<h4 id="layer-逐层构建-算法"><a href="#layer-逐层构建-算法" class="headerlink" title="layer(逐层构建)算法"></a>layer(逐层构建)算法</h4><p><img src="https://i.loli.net/2020/02/25/znXtJi17DWFegKm.png" alt="image.png"></p>
+<p>一个N维的Cube，是由1个N维子立方体、N个(N-1)维子立方体、N*(N-1)/2个(N-2)维子立方体、……、N个1维子立方体和1个0维子立方体构成，总共有2^N 个子立方体组成，在逐层算法中，按维度数逐层减少来计算，每个层级的计算（除了第一层，它是从原始数据聚合而来），是基于它上一层级的结果来计算的。比如，[Group by A, B]的结果，可以基于[Group by A, B, C]的结果，通过去掉C后聚合得来的；这样可以减少重复计算；当 0维度Cuboid计算出来的时候，整个Cube的计算也就完成了。</p>
+<p><strong>注意:</strong><br>每一轮的计算都是一个MapReduce任务，且串行执行；一个N维的Cube，至少需要N次MapReduce Job</p>
+<p><strong>算法优点：</strong></p>
+<ol>
+<li>此算法充分利用了MapReduce的能力，处理了中间复杂的排序和洗牌工作，故而算法代码清晰简单，易于维护；</li>
+<li>受益于Hadoop的日趋成熟，此算法对集群要求低，运行稳定；在内部维护Kylin的过程中，很少遇到在这几步出错的情况；即便是在Hadoop集群比较繁忙的时候，任务也能完成。</li>
+</ol>
+<p><strong>算法缺点：</strong></p>
+<ol>
+<li>当Cube有比较多维度的时候，所需要的MapReduce任务也相应增加；由于Hadoop的任务调度需要耗费额外资源，特别是集群较庞大的时候，反复递交任务造成的额外开销会相当可观；</li>
+<li>由于Mapper不做预聚合，此算法会对Hadoop MapReduce输出较多数据; 虽然已经使用了Combiner来减少从Mapper端到Reducer端的数据传输，所有数据依然需要通过Hadoop MapReduce来排序和组合才能被聚合，无形之中增加了集群的压力;</li>
+<li>对HDFS的读写操作较多：由于每一层计算的输出会用做下一层计算的输入，这些Key-Value需要写到HDFS上；当所有计算都完成后，Kylin还需要额外的一轮任务将这些文件转成HBase的HFile格式，以导入到HBase中去；</li>
+</ol>
+<p>总体而言，该算法的效率较低，尤其是<strong>当Cube维度数较大</strong>的时候。</p>
+<h4 id="inmem-快速构建-算法"><a href="#inmem-快速构建-算法" class="headerlink" title="inmem(快速构建)算法"></a>inmem(快速构建)算法</h4><p>也被称作“逐段”(By Segment) 或“逐块”(By Split) 算法，从<code>1.5.x</code>开始引入该算法，利用Mapper端计算先完成大部分聚合，再将聚合后的结果交给Reducer，从而降低对网络瓶颈的压力。该算法的主要思想是：</p>
+<ul>
+<li>对Mapper所分配的数据块，将它计算成一个完整的小Cube 段（包含所有Cuboid）；</li>
+<li>每个Mapper将计算完的Cube段输出给Reducer做合并，生成大Cube，也就是最终结果；</li>
+</ul>
+<p>如图所示解释了此流程。<br><img src="https://i.loli.net/2020/02/25/Hj3eXzcprm9hAsL.png" alt="image.png"></p>
+<p><strong>与layer(逐层构建)算法相比，快速算法主要有两点不同：</strong></p>
+<ul>
+<li>Mapper会利用内存做预聚合，算出所有组合；Mapper输出的每个Key都是不同的，这样会减少输出到Hadoop MapReduce的数据量，Combiner也不再需要；</li>
+<li>一轮MapReduce便会完成所有层次的计算，减少Hadoop任务的调配</li>
+</ul>
+<h2 id="Kylin-Cube的构建过程"><a href="#Kylin-Cube的构建过程" class="headerlink" title="Kylin Cube的构建过程"></a>Kylin Cube的构建过程</h2><p>如图，是一个构建Cube的Job过程:<br><img src="https://i.loli.net/2020/02/25/gHndzVGiLbEyTmr.png" alt="image.png"></p>
+<h3 id="几个重要流程分析"><a href="#几个重要流程分析" class="headerlink" title="几个重要流程分析"></a>几个重要流程分析</h3><h4 id="从Hive表生成Base-Cuboid"><a href="#从Hive表生成Base-Cuboid" class="headerlink" title="从Hive表生成Base Cuboid"></a>从Hive表生成Base Cuboid</h4><p>在实际的cube构建过程中，会首先根据cube的Hive事实表和维表生成一张大宽表，然后计算大宽表列的基数，建立维度字典，估算cuboid的大小，建立cube对应的HBase表，再计算base cuboid。</p>
+<p><strong>计算base cuboid就是一个MapReduce作业，其输入是上面提到的Hive大宽表，输出是的key是各种维度组合，value是Hive大宽表中指标的值</strong></p>
+<p>核心源码: <code>org.apache.kylin.engine.mr.steps.BaseCuboidMapperBase</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// map 阶段生成key-value的代码</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">outputKV</span><span class="params">(String[] flatRow, Context context)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] rowKey = baseCuboidBuilder.buildKey(flatRow);</span><br><span class="line">    outputKey.set(rowKey, <span class="number">0</span>, rowKey.length);</span><br><span class="line"></span><br><span class="line">    ByteBuffer valueBuf = baseCuboidBuilder.buildValue(flatRow);</span><br><span class="line">    outputValue.set(valueBuf.array(), <span class="number">0</span>, valueBuf.position());</span><br><span class="line">    context.write(outputKey, outputValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="从HBase-Cuboid-逐层计算-Cuboid"><a href="#从HBase-Cuboid-逐层计算-Cuboid" class="headerlink" title="从HBase Cuboid 逐层计算 Cuboid"></a>从HBase Cuboid 逐层计算 Cuboid</h4><p>核心源码: org.apache.kylin.engine.mr.steps.CuboidReducer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doReduce</span><span class="params">(Text key, Iterable&lt;Text&gt; values, Context context)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">        aggs.reset();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (Text value : values) &#123;</span><br><span class="line">            <span class="keyword">if</span> (vcounter++ % BatchConstants.NORMAL_RECORD_LOG_THRESHOLD == <span class="number">0</span>) &#123;</span><br><span class="line">                logger.info(<span class="string">"Handling value with ordinal (This is not KV number!): "</span> + vcounter);</span><br><span class="line">            &#125;</span><br><span class="line">            codec.decode(ByteBuffer.wrap(value.getBytes(), <span class="number">0</span>, value.getLength()), input);</span><br><span class="line">            aggs.aggregate(input, needAggrMeasures);</span><br><span class="line">        &#125;</span><br><span class="line">        aggs.collectStates(result);</span><br><span class="line"></span><br><span class="line">        ByteBuffer valueBuf = codec.encode(result);</span><br><span class="line"></span><br><span class="line">        outputValue.set(valueBuf.array(), <span class="number">0</span>, valueBuf.position());</span><br><span class="line">        context.write(key, outputValue);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Cuboid-转化为HBase的HFile"><a href="#Cuboid-转化为HBase的HFile" class="headerlink" title="Cuboid 转化为HBase的HFile"></a>Cuboid 转化为HBase的HFile</h4><p>参考： <a href="https://blog.bcmeng.com/post/hbase-bulkload.html" target="_blank" rel="noopener">Hive 数据 bulkload 导入 HBase</a></p>
+<h2 id="Kylin的部署以及基本使用"><a href="#Kylin的部署以及基本使用" class="headerlink" title="Kylin的部署以及基本使用"></a>Kylin的部署以及基本使用</h2><p>参考官方链接: <a href="http://kylin.apache.org/cn/docs/install/index.html" target="_blank" rel="noopener"> Apache Kylin</a></p>
+<p><strong>补充:</strong><br>在实践过程中，我们采用 Nginx + Kylin集群方案(参考<a href="http://kylin.apache.org/cn/docs/install/kylin_cluster.html" target="_blank" rel="noopener">《Kylin的集群部署模式部署》</a>)，但由于资源紧缺， Kylin集群和 Hadoop集群在统一的服务器上，经常会出现某个时刻i资源紧张导致 Kylin进程崩溃，甚至拖垮HBase的问题，因此建议部署单独的Kylin集群，同时构建好监控机制</p>
+<h2 id="Kylin的优化"><a href="#Kylin的优化" class="headerlink" title="Kylin的优化"></a>Kylin的优化</h2><p>Kylin核心在于Cube，如何设计一个好的Cube对 Kylin的性能来说便是至关重要的, 影响Cube膨胀率和构建时间的重要因素主要有以下几个方面:</p>
+<ul>
+<li><p>Cube中的维度数量较多，且没有进行很好的Cuboid剪枝优化，导致Cuboid数量极多;</p>
+</li>
+<li><p>Cube中存在较高基数的维度，导致包含这类维度的每一个Cuboid占用的空间都很大，这些Cuboid累积造成整体Cube体积变大;</p>
+</li>
+<li><p>存在比较占用空间的度量，例如Count Distinct，因此需要在Cuboid的每一行中都为其保存一个较大的寄存器，最坏的情况将会导致Cuboid中每一行都有数十KB，从而造成整个Cube的体积变大;</p>
+</li>
+</ul>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><h4 id="维度优化"><a href="#维度优化" class="headerlink" title="维度优化"></a>维度优化</h4><p><strong>维度优化手段</strong></p>
+<ul>
+<li>聚合组</li>
+<li>衍生维度</li>
+<li>强制维度</li>
+<li>层次维度</li>
+<li>联合维度</li>
+<li>Extended Column</li>
+</ul>
+<p>详细参考: <a href="https://blog.csdn.net/qzqanzc/article/details/89450709" target="_blank" rel="noopener">Apache Kylin 优化指南</a></p>
+<h4 id="并发粒度优化"><a href="#并发粒度优化" class="headerlink" title="并发粒度优化"></a>并发粒度优化</h4><p>当Segment中某一个Cuboid的大小超出一定的阈值时，系统会将该Cuboid的数据分片到多个分区中，以实现Cuboid数据读取的并行化，从而优化Cube的查询速度。</p>
+<p>构建引擎根据Segment估计的大小，以及参数<code>“kylin.hbase.region.cut”</code>的设置决定Segment在存储引擎中总共需要几个分区来存储，如果存储引擎是HBase，那么分区的数量就对应于HBase中的Region数量。<code>kylin.hbase.region.cut</code>的默认值是5.0，单位是GB，也就是说对于一个大小估计是50GB的Segment，构建引擎会给它分配10个分区。用户还可以通过设置<code>kylin.hbase.region.count.min</code>（默认为1）和<code>kylin.hbase.region.count.max</code>（默认为500）两个配置来决定每个Segment最少或最多被划分成多少个分区。</p>
+<p>由于每个Cube的并发粒度控制不尽相同，因此建议构建cube的时候为每个Cube量身定制控制并发粒度的参数。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://kyligence.io/zh/blog/apache-kylin-cube-query-optimize-deeply/" target="_blank" rel="noopener">Apache Kylin 深入Cube和查询优化</a></li>
+<li><a href="https://blog.bcmeng.com/post/kylin-job.html" target="_blank" rel="noopener">Apache Kylin Job 生成和调度详解</a></li>
+<li><a href="https://blog.bcmeng.com/post/kylin-cube.html" target="_blank" rel="noopener">Apache Kylin Cube 构建原理</a></li>
+<li><a href="https://blog.csdn.net/qzqanzc/article/details/89450709" target="_blank" rel="noopener">Apache Kylin 优化指南</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/27461561" target="_blank" rel="noopener">【案例分享】Apache Kylin在美团点评的应用</a></li>
+</ul>
+<p>推荐 <a href="https://blog.bcmeng.com/page/2.html" target="_blank" rel="noopener">编程小梦|康凯森的技术博客</a>, 博主是Apache Kylin等多个开源项目的 commiter, 博客有很多关于 OLAP 离线大数据方向的优质文章</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2020/03/06/Kylin-Overview/">http://cjwdream.top/2020/03/06/Kylin-Overview/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/数据仓库/"># 数据仓库</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/02/29/Data-Warehouse-Modeling/">数仓系列-数据建模方法</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">107k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
