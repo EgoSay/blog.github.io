@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">2.4k</font>
+						<font color="#2d96bd">2.6k</font>
 					</span>
                     
                 </div>
@@ -229,6 +229,17 @@
 </li>
 </ul>
 <p>HDFS不适合存储小文件的原因，每个文件都会产生元信息，当小文件多了之后元信息也就多了，对namenode会造成压力</p>
+<h3 id="联邦HDFS"><a href="#联邦HDFS" class="headerlink" title="联邦HDFS"></a>联邦HDFS</h3><p>每个NameNode维护一个命名空间，不同NameNode之间的命名空间相互独立, 每个DataNode需要注册到每个namenode上</p>
+<ul>
+<li><p>多个NN共用一个集群DN的存储资源，每个NN都可以单独对外提供服务。</p>
+</li>
+<li><p>每个NN都会定义一个存储池，有单独的id，每个DN都为所有存储池提供存储。</p>
+</li>
+<li><p>DN会按照存储池id向其对应的NN汇报块信息，同时，DN会向所有NN汇报本地存储可用资源情况。</p>
+</li>
+<li><p>如果需要在客户端方便的访问若干个NN上的资源，可以使用客户端挂载表，把不同的目录映射到不同的NN，但NN上必须存在相应的目录</p>
+</li>
+</ul>
 <h2 id="四、NameNode工作机制"><a href="#四、NameNode工作机制" class="headerlink" title="四、NameNode工作机制"></a>四、NameNode工作机制</h2><p><img src="https://i.loli.net/2020/03/07/89YWKAb1L2pgQ4H.png" alt="NameNode工作机制.png"><br>HDFS读写 -&gt; 滚动记录日志 -&gt; SN向NN询问是否需要checkPoint -&gt; 时间到了(60分钟) 或者edits数据满了触发检查点 -&gt; SN请求执行checkPoint -&gt; NN拷贝edits文件和fsimag文件到SN -&gt; SN端合并editslog到fsimage -&gt; SN将计算合并完的fsimage同步到NN</p>
 <h2 id="五、DataNode工作机制"><a href="#五、DataNode工作机制" class="headerlink" title="五、DataNode工作机制"></a>五、DataNode工作机制</h2><p><img src="https://i.loli.net/2020/03/07/Mi5R7TC8zYIF1VD.jpg" alt="DataNode节点工作机制.jpeg"></p>
 <ol>
@@ -377,7 +388,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">109.5k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">109.7k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
