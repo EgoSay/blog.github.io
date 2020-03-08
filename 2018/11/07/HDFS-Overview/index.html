@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Hadoop系列-HDFS | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Hadoop系列-HDFS</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 7, 2018&nbsp;&nbsp;21:24:15</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">2.4k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Hadoop系列-HDFS"><a href="#Hadoop系列-HDFS" class="headerlink" title="Hadoop系列-HDFS"></a>Hadoop系列-HDFS</h1><h2 id="一、HDFS的启动过程"><a href="#一、HDFS的启动过程" class="headerlink" title="一、HDFS的启动过程"></a>一、HDFS的启动过程</h2><ol>
+<li>加载文件的元信息</li>
+<li>加载日志文件</li>
+<li>设置检查点</li>
+<li>进入安全模式。作用是：检查数据块的副本率，冗余度是否达到要求</li>
+</ol>
+<h2 id="二、HDFS的运行机制"><a href="#二、HDFS的运行机制" class="headerlink" title="二、HDFS的运行机制"></a>二、HDFS的运行机制</h2><p>用户文件会被切块后存储在多台DataNode服务器当中，并且每个文件在整个集群中存放多个副本，可以提高数据的安全性</p>
+<h2 id="三、基本架构"><a href="#三、基本架构" class="headerlink" title="三、基本架构"></a>三、基本架构</h2><ul>
+<li><p>NameNode: 整个文件系统的管理节点，负责记录文件如何被切分成Block数据块，同时记录这些数据块的存储信息</p>
+<ol>
+<li>Fsimage: 元数据存储在硬盘上的镜像文件</li>
+<li>edits: 系统操作的日志记录文件</li>
+<li>Fstime: 保存最近一次checkpoint的时间</li>
+<li>seen_txid: 最后一个edites的数字</li>
+<li>version</li>
+</ol>
+</li>
+<li><p>Secondary NameNode: 辅助后台程序(不是NameNode的容灾节点)，与NameNode进行通信，以便定期保存HDFS元数据的快照</p>
+</li>
+<li><p>DataNode: 数据节点，负责把HDFS数据块读写到本地的文件系统</p>
+</li>
+</ul>
+<p>HDFS不适合存储小文件的原因，每个文件都会产生元信息，当小文件多了之后元信息也就多了，对namenode会造成压力</p>
+<h2 id="四、NameNode工作机制"><a href="#四、NameNode工作机制" class="headerlink" title="四、NameNode工作机制"></a>四、NameNode工作机制</h2><p><img src="https://i.loli.net/2020/03/07/89YWKAb1L2pgQ4H.png" alt="NameNode工作机制.png"><br>HDFS读写 -&gt; 滚动记录日志 -&gt; SN向NN询问是否需要checkPoint -&gt; 时间到了(60分钟) 或者edits数据满了触发检查点 -&gt; SN请求执行checkPoint -&gt; NN拷贝edits文件和fsimag文件到SN -&gt; SN端合并editslog到fsimage -&gt; SN将计算合并完的fsimage同步到NN</p>
+<h2 id="五、DataNode工作机制"><a href="#五、DataNode工作机制" class="headerlink" title="五、DataNode工作机制"></a>五、DataNode工作机制</h2><p><img src="https://i.loli.net/2020/03/07/Mi5R7TC8zYIF1VD.jpg" alt="DataNode节点工作机制.jpeg"></p>
+<ol>
+<li>DataNode启动向NN注册，然后定期汇报block数据块的信息</li>
+<li>NN和DataNode之间通过心跳检测机制，心跳1次/3s，如果超过10分钟未收到心跳则认为节点不可用</li>
+</ol>
+<h2 id="六、HDFS读数据流程"><a href="#六、HDFS读数据流程" class="headerlink" title="六、HDFS读数据流程"></a>六、HDFS读数据流程</h2><p><img src="https://i.loli.net/2020/03/07/LMJDYWGScBnzVHE.png" alt="HDFS读流程.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">FileSystem fs = FileSystem.get(conf);</span><br><span class="line">Path file = <span class="keyword">new</span> Path(<span class="string">"demo.txt"</span>);</span><br><span class="line">FSDataInputStream inStream = fs.open(file);</span><br><span class="line">String data = inStream.readUTF();</span><br><span class="line">System.out.println(data);</span><br><span class="line">inStream.close();</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>客户端初始化<code>FileSystem</code>对象，调用<code>open()</code>方法获取一个<code>DistributedFileSystem</code> 对象</li>
+<li>DistributedFileSystem 通过RPC向NN请求获取第一批block locations</li>
+<li>前两部会生成一个FSDataInputStream,该对象会被封装成DFSInputStream 对象</li>
+<li>客户端调用<code>read()</code>方法，DFSInputStream 会找出离客户端最近的 Datanode 并连接开始读取此文件的第一个数据块，数据从 Datanode 传输向客户端</li>
+<li>当第一个数据块读取完毕，DFSInputStream关闭连接，然后连接下一次数据块的DataNode节点继续数据传输</li>
+<li>如果在读数据的时候DFSInputStream 和 Datanode数据节点的通讯发生异常，就会尝试连接下一个包含次数据块的DataNode节点, 并且会记录哪个 datanode 发生错误，剩余的blocks 读的时候就会直接跳过该 datanode</li>
+<li>客户端读取数据完毕后调用close()方法关闭连接然后将数据写入到本地文件系统</li>
+</ol>
+<h2 id="七、HDFS写数据流程"><a href="#七、HDFS写数据流程" class="headerlink" title="七、HDFS写数据流程"></a>七、HDFS写数据流程</h2><p><img src="https://i.loli.net/2020/03/07/u2wi17XYCOnDRgc.png" alt="HDFS写流程.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">FileSystem fs = FileSystem.get(conf);</span><br><span class="line">Path file = <span class="keyword">new</span> Path(<span class="string">"demo.txt"</span>);</span><br><span class="line">FSDataOutputStream outStream = fs.create(file);</span><br><span class="line">out.write(<span class="string">"Welcome to HDFS Java API !!!"</span>.getBytes(<span class="string">"UTF-8"</span>));</span><br><span class="line">outStream.close();</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>客户端调用的<code>create</code>方法, 创建一个文件输出流<code>DFSDataOutputStream</code>对象，向NN请求上传文件</li>
+<li>DistributedFileSystem 通过 RPC 调用 NN 去创建一个没有 blocks 关联的新文件条目（Entry）, 创建前NN会校验文件是否存在或者是否有权限创建，成功直接先将操作写入EditLog(<code>WAL，write ahead log</code>)，并返回输出流对象，否则抛出IO异常</li>
+<li>客户端会首先将文件进行拆分，比如一个Block块128M，文件有300M会被切分为3个块，两个128M，一个44M，然后向NN请求Block该传输到哪些DataNode服务器上</li>
+<li>NN返回可写的DN节点信息，客户端和NameNode分配的多个DataNode构成pipeline管道建立起连接，client端向输出流对象中写数据</li>
+<li>通过FSDataOutputStream对象向DN写数据，这些数据会被拆分成一个个小的packet，然后排成队列 data quene。客户端每向第一个DataNode写入一个packet，这个packet便会直接在pipeline里传给第二个、第三个…DataNode，<strong>并不是写好一个块或一整个文件后才向后分发</strong></li>
+<li>每个DN写完一个block后向客户端响应<code>ack确认信息</code>, 注意并不是每写完一个packet后就返回确认信息</li>
+<li>客户端完成写数据后调用<code>close</code>方法关闭流</li>
+</ol>
+<p><strong>补充:</strong></p>
+<ul>
+<li>客户端执行 write 操作后，<strong>写完的 block 才是可见的，正在写的 block 对客户端是不可见的</strong>，只有调用 <code>sync</code>方法，客户端才确保该文件的写操作已经全部完成，当客户端调用 close 方法时，会默认调用 sync 方法。是否需要手动调用取决你根据程序需要在数据健壮性和吞吐率之间的权衡</li>
+</ul>
+<h3 id="写的过程中错误处理"><a href="#写的过程中错误处理" class="headerlink" title="写的过程中错误处理:"></a>写的过程中错误处理:</h3><h4 id="写的过程某个DN副本节点错误"><a href="#写的过程某个DN副本节点错误" class="headerlink" title="写的过程某个DN副本节点错误:"></a>写的过程某个DN副本节点错误:</h4><ol>
+<li>首先pipeline会被关闭掉</li>
+<li>将已经发送到管道但还没有收到确认的packet写回到 data quene, 避免数据丢失</li>
+<li>然后当前正常工作的DN数据节点将会被赋予一个新的版本号（利用namenode中租约的信息可以获得最新的时间戳版本），这样故障节点恢复后由于版本信息不对，故障DataNode恢复后会被删除</li>
+<li>删除故障节点，选择正常的DN数据节点重新建立管道，然后开始重新写入数据</li>
+<li>发现副本不足，NN会去其他的DN节点上创建一个新的副本</li>
+</ol>
+<h4 id="写的过程客户端崩溃解决"><a href="#写的过程客户端崩溃解决" class="headerlink" title="写的过程客户端崩溃解决:"></a>写的过程客户端崩溃解决:</h4><p>当数据写入过程中客户端异常退出时，同一block数据块的不同副本可能存在不一致的状态。 选择某一副本作为主数据节点，协调其他数据节点，NN会通过租约机制(lease)找到所有DN副本节点拥有这个数据块信息的最小block长度，然后将该数据块恢复到他们中的最小长度</p>
+<p>详细参考: <a href="http://bigdatadecode.club/[%E8%AF%91]HDFS%E6%81%A2%E5%A4%8D%E8%BF%87%E7%A8%8B1.html" target="_blank" rel="noopener">HDFS恢复过程1</a></p>
+<h2 id="八、HDFS副本机制"><a href="#八、HDFS副本机制" class="headerlink" title="八、HDFS副本机制"></a>八、HDFS副本机制</h2><p>第一副本：如果上传节点是DN，则上传该节点；如果上传节点是NN，则随机选择DN<br>第二副本：放置在不同机架的DN上<br>第三副本：放置在与第二副本相同机架的不同DN上</p>
+<h2 id="九、HDFS安全模式"><a href="#九、HDFS安全模式" class="headerlink" title="九、HDFS安全模式"></a>九、HDFS安全模式</h2><p>安全模式是HDFS的一种工作状态，处于安全模式的状态下，只向客户端提供文件的只读视图，不接受对命名空间的修改</p>
+<ul>
+<li>NN启动时首先会将fsimage加载到内存中，然后执行edits日志记录中的操作，当在内存中成功建立文件系统元数据的映射后，新建一个fsimage和一个edits空的编辑日志文件, 这个时候NN运行在安全模式</li>
+<li>在此阶段NN通过DN收集信息，对每个文件的数据块进行统计，当确认满足最小副本条件时，即一定比例的数据块都达到最小副本数，就会退出安全模式。当不满足的时候安排DN对对副本数不足的数据块进行复制，直至达到最小副本数</li>
+<li>在启动一个刚刚格式化的HDFS时不会进入安全模式，因为没有数据块</li>
+</ul>
+<p>退出安全模式：hdfs namenode -safemode leave</p>
+<h2 id="十、HA高可用机制"><a href="#十、HA高可用机制" class="headerlink" title="十、HA高可用机制"></a>十、HA高可用机制</h2><p>参考: <a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/index.html" target="_blank" rel="noopener">Hadoop NameNode 高可用 (High Availability) 实现解析</a></p>
+<h3 id="基本架构实现"><a href="#基本架构实现" class="headerlink" title="基本架构实现"></a>基本架构实现</h3><p>HDFS的HA高可用通过zk保证，基本架构:<br><img src="https://i.loli.net/2020/03/07/7fjFz8Jm2oDOphL.png" alt="image.png"></p>
+<ul>
+<li><p><code>Active NameNode</code> 和 <code>Standby NameNode</code>: 主备NameNode节点，只有处于Active的主NameNode节点对外提供服务</p>
+</li>
+<li><p><code>共享存储系统</code>: 保存了NN运行过程中产生的元数据, 主备NN通过共享存储系统实现元数据同步，在进行主备切换的时候新的NN只有确认元数据完全同步后才能对外提供服务</p>
+</li>
+<li><p><code>主备切换控制器 ZKFailoverController</code>： ZKFC作为独立的进程运行，能及时监测到NN的健康状态，当主NN出现故障时借助zk集群实现主备自动选举切换</p>
+</li>
+<li><p>DataNode： DataNode需要同时向主备NN上传数据块信息保证 HDFS 的数据块和 DataNode 之间的映射关系同步</p>
+</li>
+<li><p>Zookeeper 集群：为主备切换控制器提供主备选举支持</p>
+</li>
+</ul>
+<h3 id="主备切换实现"><a href="#主备切换实现" class="headerlink" title="主备切换实现"></a>主备切换实现</h3><blockquote>
+<p>参考: <a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/index.html" target="_blank" rel="noopener">Hadoop NameNode 高可用 (High Availability) 实现解析</a></p>
+</blockquote>
+<p>NameNode 主备切换主要由<code>ZKFailoverController</code>、<code>HealthMonitor</code> 和 <code>ActiveStandbyElector</code> 这 3 个组件来协同实现：</p>
+<ul>
+<li><p>主备切换控制器 ZKFailoverController 启动的时候会创建 HealthMonitor 和 ActiveStandbyElector 这两个主要的内部组件，ZKFailoverController 在创建 HealthMonitor 和 ActiveStandbyElector 的同时，也会向 HealthMonitor 和 ActiveStandbyElector 注册相应的回调方法。</p>
+</li>
+<li><p>HealthMonitor 主要负责检测 NameNode 的健康状态，如果检测到 NameNode 的状态发生变化，会回调 ZKFailoverController 的相应方法进行自动的主备选举。</p>
+</li>
+<li><p>ActiveStandbyElector 主要负责完成自动的主备选举，内部封装了 Zookeeper 的处理逻辑，一旦 Zookeeper 主备选举完成，会回调 ZKFailoverController 的相应方法来进行 NameNode 的主备状态切换</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/03/07/2zsOfXnG3KY8ApN.png" alt="image.png"><br><strong>如图，流程分析:</strong></p>
+<ol>
+<li>HealthMonitor初始化完成后会启动内部线程定时调用对应 NameNode 的 HAServiceProtocol RPC 接口的方法，对 NameNode 的健康状态进行检测</li>
+<li>当检测到NN状态发生变化时，回调 ZKFailoverController 的相应方法进行处理</li>
+<li>ZKFailoverController监测到需要进行主备切换时使用ActiveStandbyElector进行处理</li>
+<li>ActiveStandbyElector与ZK进行交互完成自动选举，然后回调ZKFailoverController 的相应方法通知当前NN</li>
+<li>ZKFailoverController 调用对应 NameNode 的 HAServiceProtocol RPC 接口的方法将 NameNode 转换为 Active 状态或 Standby 状态</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2018/11/07/HDFS-Overview/">http://cjwdream.top/2018/11/07/HDFS-Overview/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Hadoop/"># Hadoop</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2019/01/19/Spark基础-Spark中的一些基本概念/">Spark基础-Spark基本概念</a>
+            
+            
+            <a class="next" rel="next" href="/2018/10/23/MySQL总结/">MySQL总结</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">109.5k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
