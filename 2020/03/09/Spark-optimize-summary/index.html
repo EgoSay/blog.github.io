@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Spark进阶-Spark调优总结 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Spark进阶-Spark调优总结</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 9, 2020&nbsp;&nbsp;14:07:05</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">4.2k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Spark调优总结"><a href="#Spark调优总结" class="headerlink" title="Spark调优总结"></a>Spark调优总结</h1><blockquote>
+<p>内容整理自:<br><a href="https://mp.weixin.qq.com/s/4B7cgMfyzkcOU_2ktNuK4g" target="_blank" rel="noopener">三万字长文 | Spark性能优化实战手册</a></p>
+</blockquote>
+<h2 id="开发调优"><a href="#开发调优" class="headerlink" title="开发调优"></a>开发调优</h2><ul>
+<li><p>避免创建重复RDD</p>
+</li>
+<li><p>尽可能复用同一个RDD</p>
+</li>
+<li><p>对多次使用的RDD进行持久化</p>
+</li>
+<li><p>尽量避免使用shuffle类算子</p>
+</li>
+<li><p>使用map-side预聚合的shuffle操作，比如使用reduceByKey或者aggregateByKey算子来替代掉groupByKey算子</p>
+</li>
+<li><p>使用高性能的算子，比如<code>mapPartitions替代普通map</code>、使用foreachPartitions替代foreach、使用filter之后进行coalesce操作、使用repartitionAndSortWithinPartitions替代repartition与sort类操作</p>
+</li>
+<li><p>广播大变量</p>
+</li>
+<li><p>使用Kryo优化序列化性能</p>
+</li>
+<li><p>优化数据结构: 尽量使用字符串替换对象，使用原始类型(int、Long)替换字符串、使用数组替代集合</p>
+</li>
+</ul>
+<h2 id="资源调优"><a href="#资源调优" class="headerlink" title="资源调优"></a>资源调优</h2><p>Spark运行流程:<br><img src="https://i.loli.net/2020/03/08/RFBr63DS8PTvUq2.png" alt="image.png"></p>
+<h3 id="资源参数调优"><a href="#资源参数调优" class="headerlink" title="资源参数调优"></a>资源参数调优</h3><ul>
+<li><code>num-executors</code>: 用于设置Spark作业总共要用多少个Executor进程来执行</li>
+<li><code>executor-memory</code>: 该参数用于设置每个Executor进程的内存。Executor内存的大小，很多时候直接决定了Spark作业的性能，而且跟常见的JVM OOM异常，也有直接的关联</li>
+<li><code>executor-cores</code>: 该参数用于设置每个Executor进程的CPU core数量。这个参数决定了每个Executor进程并行执行task线程的能力</li>
+<li><code>driver-memory</code>: 用于设置Driver进程的内存, Driver的内存通常来说不设置，或者设置1G左右应该就够了,需要注意的是如果使用collect算子拉取所有数据到driver端，需要保证Driver有足够的内存</li>
+<li><code>spark.default.parallelism</code>: 用于设置每个stage的默认task数量, 官网建议的设置原则为<code>num-executors * executor-cores的2~3倍</code>较为合适，比如Executor的总CPU core数量为300个，那么设置1000个task是可以的</li>
+<li><code>spark.storage.memoryFraction</code>: 用于设置RDD持久化数据在Executor内存中能占的比例，默认是0.6,根据你选择的不同的持久化策略，如果内存不够时，可能数据就不会持久化，或者数据会写入磁盘</li>
+<li><code>spark.shuffle.memoryFraction</code>: 用于设置shuffle过程中一个task拉取到上个stage的task的输出后，进行聚合操作时能够使用的Executor内存的比例，默认是0.2</li>
+</ul>
+<h3 id="资源参数参考示例"><a href="#资源参数参考示例" class="headerlink" title="资源参数参考示例"></a>资源参数参考示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">./bin/spark-submit \</span><br><span class="line">--master yarn-cluster \</span><br><span class="line">--num-executors <span class="number">100</span> \</span><br><span class="line">--executor-memory <span class="number">6</span>G \</span><br><span class="line">--executor-cores <span class="number">4</span> \</span><br><span class="line">--driver-memory <span class="number">1</span>G \</span><br><span class="line">--conf spark.<span class="keyword">default</span>.parallelism=<span class="number">1000</span> \</span><br><span class="line">--conf spark.storage.memoryFraction=<span class="number">0.5</span> \</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据倾斜调优"><a href="#数据倾斜调优" class="headerlink" title="数据倾斜调优"></a>数据倾斜调优</h2><ul>
+<li>绝大多数task执行很快，个别task却执行很慢，而Spark运行进度取决于耗时最长的那个task。</li>
+<li>在shuffle阶段，如果某个key对应的数据量特别大，就会发生数据倾斜</li>
+</ul>
+<h3 id="调优思路"><a href="#调优思路" class="headerlink" title="调优思路"></a>调优思路</h3><ul>
+<li>找到数据倾斜发生在哪个stage中: 只要看到Spark代码中出现了一个shuffle类算子或者是Spark SQL的SQL语句中出现了会导致shuffle的语句（比如group by语句），那么就可以判定，以那个地方为界限划分出了前后两个stage</li>
+<li>通过Spark Web UI查看报错的那个stage的各个task的运行时间以及分配的数据量, 然后通过log异常栈定位到具体代码</li>
+<li>查看导致数据倾斜的key的数据分布情况，选择不同的方案解决:<ol>
+<li>如果是Spark SQL中的group by、join语句导致的数据倾斜，那么就查询一下SQL中使用的表的key分布情况。</li>
+<li>如果是对Spark RDD执行shuffle算子导致的数据倾斜，那么可以在Spark作业中加入查看key分布的代码，比如RDD.countByKey()。然后对统计出来的各个key出现的次数，collect/take到客户端打印一下，就可以看到key的分布情况</li>
+</ol>
+</li>
+</ul>
+<h3 id="数据倾斜的解决方案"><a href="#数据倾斜的解决方案" class="headerlink" title="数据倾斜的解决方案"></a>数据倾斜的解决方案</h3><h4 id="解决方案一：过滤少数导致倾斜的key"><a href="#解决方案一：过滤少数导致倾斜的key" class="headerlink" title="解决方案一：过滤少数导致倾斜的key"></a>解决方案一：过滤少数导致倾斜的key</h4><p>如果我们判断那少数几个数据量特别多的key，对作业的执行和计算结果不是特别重要的话，那么干脆就直接过滤掉那少数几个key。比如在Spark SQL中可以使用where子句过滤掉这些key或者在Spark Core中对RDD执行filter算子过滤掉这些key</p>
+<h4 id="解决方案二：提高shuffle操作的并行度"><a href="#解决方案二：提高shuffle操作的并行度" class="headerlink" title="解决方案二：提高shuffle操作的并行度"></a>解决方案二：提高shuffle操作的并行度</h4><p><strong>方案实现思路：</strong><br>在对RDD执行shuffle算子时，给shuffle算子传入一个参数，比如reduceByKey(1000)，该参数就设置了这个shuffle算子执行时shuffle read task的数量。对于Spark SQL中的shuffle类语句，比如group by、join等，需要设置一个参数，即spark.sql.shuffle.partitions，该参数代表了shuffle read task的并行度，该值默认是200，对于很多场景来说都有点过小</p>
+<p><strong>方案实现原理：</strong><br>增加shuffle read task的数量，可以让原本分配给一个task的多个key分配给多个task，从而让每个task处理比原来更少的数据。举例来说，如果原本有5个key，每个key对应10条数据，这5个key都是分配给一个task的，那么这个task就要处理50条数据。而增加了shuffle read task以后，每个task就分配到一个key，即每个task就处理10条数据，那么自然每个task的执行时间都会变短了</p>
+<h4 id="解决方案三：两阶段聚合（局部聚合-全局聚合）"><a href="#解决方案三：两阶段聚合（局部聚合-全局聚合）" class="headerlink" title="解决方案三：两阶段聚合（局部聚合+全局聚合）"></a>解决方案三：两阶段聚合（局部聚合+全局聚合）</h4><p><strong>实现思路:</strong><br>进行两阶段聚合。第一次是局部聚合，先给每个key都打上一个随机数，比如10以内的随机数，此时原先一样的key就变成不一样的了，比如(hello, 1) (hello, 1) (hello, 1) (hello, 1)，就会变成(1_hello, 1) (1_hello, 1) (2_hello, 1) (2_hello, 1)。接着对打上随机数后的数据，执行reduceByKey等聚合操作，进行局部聚合，那么局部聚合结果，就会变成了(1_hello, 2) (2_hello, 2)。然后将各个key的前缀给去掉，就会变成(hello,2)(hello,2)，再次进行全局聚合操作，就可以得到最终结果了，比如(hello, 4)</p>
+<p><strong>实现代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一步，给RDD中的每个key都打上一个随机前缀。</span></span><br><span class="line">JavaPairRDD&lt;String, Long&gt; randomPrefixRdd = rdd.mapToPair(<span class="keyword">new</span> PairFunction&lt;Tuple2&lt;Long,Long&gt;, String, Long&gt;() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Tuple2&lt;String, Long&gt; <span class="title">call</span><span class="params">(Tuple2&lt;Long, Long&gt; tuple)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">int</span> prefix = random.nextInt(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;String, Long&gt;(prefix + <span class="string">"_"</span> + tuple._1, tuple._2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 第二步，对打上随机前缀的key进行局部聚合。</span></span><br><span class="line">JavaPairRDD&lt;String, Long&gt; localAggrRdd = randomPrefixRdd.reduceByKey(</span><br><span class="line"><span class="keyword">new</span> Function2&lt;Long, Long, Long&gt;() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">(Long v1, Long v2)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> v1 + v2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 第三步，去除RDD中每个key的随机前缀。</span></span><br><span class="line">JavaPairRDD&lt;Long, Long&gt; removedRandomPrefixRdd = localAggrRdd.mapToPair(</span><br><span class="line"><span class="keyword">new</span> PairFunction&lt;Tuple2&lt;String,Long&gt;, Long, Long&gt;() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Tuple2&lt;Long, Long&gt; <span class="title">call</span><span class="params">(Tuple2&lt;String, Long&gt; tuple)</span><span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> originalKey = Long.valueOf(tuple._1.split(<span class="string">"_"</span>)[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;Long, Long&gt;(originalKey, tuple._2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 第四步，对去除了随机前缀的RDD进行全局聚合。</span></span><br><span class="line">JavaPairRDD&lt;Long, Long&gt; globalAggrRdd = removedRandomPrefixRdd.reduceByKey(</span><br><span class="line"><span class="keyword">new</span> Function2&lt;Long, Long, Long&gt;() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">call</span><span class="params">(Long v1, Long v2)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> v1 + v2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>方案优点：</strong><br>对于聚合类的shuffle操作导致的数据倾斜，效果是非常不错的。通常都可以解决掉数据倾斜，或者至少是大幅度缓解数据倾斜，将Spark作业的性能提升数倍以上。</p>
+<p><strong>方案缺点：</strong><br>仅仅适用于聚合类的shuffle操作，适用范围相对较窄。如果是join类的shuffle操作，还得用其他的解决方案</p>
+<h4 id="解决方案四：将reduce-join转为map-join"><a href="#解决方案四：将reduce-join转为map-join" class="headerlink" title="解决方案四：将reduce join转为map join"></a>解决方案四：将reduce join转为map join</h4><p><strong>实现思路：</strong><br>不使用join算子进行连接操作，而使用Broadcast变量与map类算子实现join操作，进而完全规避掉shuffle类的操作，彻底避免数据倾斜的发生和出现</p>
+<p>实现原理：<br>普通的join是会走shuffle过程的，而一旦shuffle，就相当于会将相同key的数据拉取到一个shuffle read task中再进行join，此时就是reduce join。但是如果一个RDD是比较小的，则可以采用广播小RDD全量数据+map算子来实现与join同样的效果，也就是map join，此时就不会发生shuffle操作，也就不会发生数据倾斜</p>
+<p>实现代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先将数据量比较小的RDD的数据，collect到Driver中来。</span></span><br><span class="line">List&lt;Tuple2&lt;Long, Row&gt;&gt; rdd1Data = rdd1.collect()</span><br><span class="line"><span class="comment">// 然后使用Spark的广播功能，将小RDD的数据转换成广播变量，这样每个Executor就只有一份RDD的数据。</span></span><br><span class="line"><span class="comment">// 可以尽可能节省内存空间，并且减少网络传输性能开销。</span></span><br><span class="line"><span class="keyword">final</span> Broadcast&lt;List&lt;Tuple2&lt;Long, Row&gt;&gt;&gt; rdd1DataBroadcast = sc.broadcast(rdd1Data);</span><br><span class="line"><span class="comment">// 对另外一个RDD执行map类操作，而不再是join类操作。</span></span><br><span class="line">JavaPairRDD&lt;String, Tuple2&lt;String, Row&gt;&gt; joinedRdd = rdd2.mapToPair(</span><br><span class="line"><span class="keyword">new</span> PairFunction&lt;Tuple2&lt;Long,String&gt;, String, Tuple2&lt;String, Row&gt;&gt;() &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Tuple2&lt;String, Tuple2&lt;String, Row&gt;&gt; call(Tuple2&lt;Long, String&gt; tuple) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 在算子函数中，通过广播变量，获取到本地Executor中的rdd1数据。</span></span><br><span class="line">        List&lt;Tuple2&lt;Long, Row&gt;&gt; rdd1Data = rdd1DataBroadcast.value();</span><br><span class="line">        <span class="comment">// 可以将rdd1的数据转换为一个Map，便于后面进行join操作。</span></span><br><span class="line">        Map&lt;Long, Row&gt; rdd1DataMap = <span class="keyword">new</span> HashMap&lt;Long, Row&gt;();</span><br><span class="line">        <span class="keyword">for</span>(Tuple2&lt;Long, Row&gt; data : rdd1Data) &#123;</span><br><span class="line">            rdd1DataMap.put(data._1, data._2);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 获取当前RDD数据的key以及value。</span></span><br><span class="line">        String key = tuple._1;</span><br><span class="line">        String value = tuple._2;</span><br><span class="line">        <span class="comment">// 从rdd1数据Map中，根据key获取到可以join到的数据。</span></span><br><span class="line">        Row rdd1Value = rdd1DataMap.get(key);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;String, String&gt;(key, <span class="keyword">new</span> Tuple2&lt;String, Row&gt;(value, rdd1Value));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 这里得提示一下。</span></span><br><span class="line"><span class="comment">// 上面的做法，仅仅适用于rdd1中的key没有重复，全部是唯一的场景。</span></span><br><span class="line"><span class="comment">// 如果rdd1中有多个相同的key，那么就得用flatMap类的操作，在进行join的时候不能用map，而是得遍历rdd1所有数据进行join。</span></span><br><span class="line"><span class="comment">// rdd2中每条数据都可能会返回多条join后的数据。</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="解决方案五：采样倾斜key并分拆join操作"><a href="#解决方案五：采样倾斜key并分拆join操作" class="headerlink" title="解决方案五：采样倾斜key并分拆join操作"></a>解决方案五：采样倾斜key并分拆join操作</h4><p><strong>方案适用场景：</strong><br>两个RDD/Hive表进行join的时候，如果数据量都比较大，那么此时可以看一下两个RDD/Hive表中的key分布情况。如果出现数据倾斜，是因为其中某一个RDD/Hive表中的少数几个key的数据量过大，而另一个RDD/Hive表中的所有key都分布比较均匀，那么采用这个解决方案是比较合适的。<br><strong>方案实现思路：</strong></p>
+<ol>
+<li>对包含少数几个数据量过大的key的那个RDD，通过sample算子采样出一份样本来，然后统计一下每个key的数量，计算出来数据量最大的是哪几个key。</li>
+<li>然后将这几个key对应的数据从原来的RDD中拆分出来，形成一个单独的RDD，并给每个key都打上n以内的随机数作为前缀，而不会导致倾斜的大部分key形成另外一个RDD。</li>
+<li>接着将需要join的另一个RDD，也过滤出来那几个倾斜key对应的数据并形成一个单独的RDD，将每条数据膨胀成n条数据，这n条数据都按顺序附加一个0~n的前缀，不会导致倾斜的大部分key也形成另外一个RDD。</li>
+<li>再将附加了随机前缀的独立RDD与另一个膨胀n倍的独立RDD进行join，此时就可以将原先相同的key打散成n份，分散到多个task中去进行join了。</li>
+<li>而另外两个普通的RDD就照常join即可。</li>
+<li>最后将两次join的结果使用union算子合并起来即可，就是最终的join结果。</li>
+</ol>
+<p><strong>方案实现原理：</strong><br>对于join导致的数据倾斜，如果只是某几个key导致了倾斜，可以将少数几个key分拆成独立RDD，并附加随机前缀打散成n份去进行join，此时这几个key对应的数据就不会集中在少数几个task上，而是分散到多个task进行join了,如图：<br><img src="media/15836712191496/15836742492433.jpg" alt></p>
+<h4 id="解决方案六：使用随机前缀和扩容RDD进行join"><a href="#解决方案六：使用随机前缀和扩容RDD进行join" class="headerlink" title="解决方案六：使用随机前缀和扩容RDD进行join"></a>解决方案六：使用随机前缀和扩容RDD进行join</h4><p>方案适用场景：如果在进行join操作时，RDD中有大量的key导致数据倾斜，那么进行分拆key也没什么意义，此时就只能使用最后一种方案来解决问题了。<br><strong>方案实现思路：</strong></p>
+<ol>
+<li>类似“解决方案五“，首先查看RDD/Hive表中的数据分布情况，找到那个造成数据倾斜的RDD/Hive表，比如有多个key都对应了超过1万条数据。</li>
+<li>然后将该RDD的每条数据都打上一个n以内的随机前缀。</li>
+<li>同时对另外一个正常的RDD进行扩容，将每条数据都扩容成n条数据，扩容出来的每条数据都依次打上一个0~n的前缀。</li>
+<li>最后将两个处理后的RDD进行join即可。</li>
+</ol>
+<p><strong>方案实现原理：</strong><br>将原先一样的key通过附加随机前缀变成不一样的key，然后就可以将这些处理后的“不同key”分散到多个task中去处理，而不是让一个task处理大量的相同key。该方案与“解决方案五”的不同之处就在于，上一种方案是尽量只对少数倾斜key对应的数据进行特殊处理，由于处理过程需要扩容RDD，因此上一种方案扩容RDD后对内存的占用并不大；而这一种方案是针对有大量倾斜key的情况，没法将部分key拆分出来进行单独处理，因此只能对整个RDD进行数据扩容，对内存资源要求很高。</p>
+<p><strong>方案优点：</strong>对join类型的数据倾斜基本都可以处理，而且效果也相对比较显著，性能提升效果非常不错。<br><strong>方案缺点：</strong>该方案更多的是缓解数据倾斜，而不是彻底避免数据倾斜。而且需要对整个RDD进行扩容，对内存资源要求很高</p>
+<h2 id="shuffle调优"><a href="#shuffle调优" class="headerlink" title="shuffle调优"></a>shuffle调优</h2><p>参考: <a href="http://sharkdtu.com/posts/spark-shuffle.html" target="_blank" rel="noopener">Spark Shuffle原理及相关调优</a></p>
+<p>在Spark 1.2以后的版本中，默认的<code>HashShuffleManager</code>改成了<code>SortShuffleManager</code>。SortShuffleManager相较于HashShuffleManager来说，有了一定的改进。主要就在于，每个Task在进行shuffle操作时，虽然也会产生较多的临时磁盘文件，但是最后会将所有的临时文件合并（merge）成一个磁盘文件，因此每个Task就只有一个磁盘文件。在下一个stage的shuffle read task拉取自己的数据时，只要根据索引读取每个磁盘文件中的部分数据即可</p>
+<h3 id="HashShuffleManager的优化"><a href="#HashShuffleManager的优化" class="headerlink" title="HashShuffleManager的优化"></a>HashShuffleManager的优化</h3><p>设置<code>spark.shuffle.consolidateFiles</code>, 默认为false。<br>开启<code>consolidate机制</code>之后，会出现<code>shuffleFileGroup</code>的概念。consolidate机制<strong>允许不同的task复用同一批磁盘文件</strong>，这样就可以有效将多个task的磁盘文件进行一定程度上的合并，从而大幅度减少磁盘文件的数量，进而提升shuffle write的性能</p>
+<h3 id="SortShuffleManager"><a href="#SortShuffleManager" class="headerlink" title="SortShuffleManager"></a>SortShuffleManager</h3><p>SortShuffleManager的运行机制主要分成两种：</p>
+<ul>
+<li>一种是普通运行机制</li>
+<li>另一种是bypass运行机制。当shuffle read task的数量小于等于<code>spark.shuffle.sort.bypassMergeThreshold</code>参数的值时（默认为200），就会启用bypass机制</li>
+</ul>
+<h3 id="shuffle相关参数调优"><a href="#shuffle相关参数调优" class="headerlink" title="shuffle相关参数调优"></a>shuffle相关参数调优</h3><ul>
+<li><p><code>spark.shuffle.file.buffer</code><br>默认值：<code>32k</code><br>参数说明：该参数用于设置shuffle write task的BufferedOutputStream的buffer缓冲大小。将数据写到磁盘文件之前，会先写入buffer缓冲中，待缓冲写满之后，才会溢写到磁盘</p>
+</li>
+<li><p><code>spark.reducer.maxSizeInFlight</code><br>默认值：<code>48m</code><br>参数说明：该参数用于设置shuffle read task的buffer缓冲大小，而这个buffer缓冲决定了每次能够拉取多少数据。如果作业可用的内存资源较为充足的话，可以适当增加这个参数的大小</p>
+</li>
+<li><p><code>spark.shuffle.io.maxRetries</code><br>默认值：<code>3</code><br>参数说明：shuffle read task从shuffle write task所在节点拉取属于自己的数据时，如果因为网络异常导致拉取失败，是会自动进行重试的。该参数就代表了可以重试的最大次数。如果在指定次数之内拉取还是没有成功，就可能会导致作业执行失败</p>
+</li>
+<li><p><code>spark.shuffle.io.retryWait</code><br>默认值：<code>5s</code><br>参数说明：代表了每次重试拉取数据的等待间隔。建议加大间隔时长（比如60s），以增加shuffle操作的稳定性</p>
+</li>
+<li><p><code>spark.shuffle.memoryFraction</code><br>默认值：<code>0.2</code><br>参数说明：该参数代表了Executor内存中，分配给shuffle read task进行聚合操作的内存比例，默认是20%</p>
+</li>
+<li><p><code>spark.shuffle.manager</code><br>默认值：<code>sort</code><br>参数说明：该参数用于设置ShuffleManager的类型。Spark 1.5以后，有三个可选项：<code>hash</code>、<code>sort</code>和<code>tungsten-sort</code>。HashShuffleManager是Spark 1.2以前的默认选项，但是Spark 1.2以及之后的版本默认都是SortShuffleManager了。<strong>tungsten-sort与sort类似，但是使用了tungsten计划中的堆外内存管理机制，内存使用效率更高</strong></p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2020/03/09/Spark-optimize-summary/">http://cjwdream.top/2020/03/09/Spark-optimize-summary/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Spark/"># Spark</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/03/06/Kylin-Overview/">数仓系列-Kylin概览</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">113.9k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
