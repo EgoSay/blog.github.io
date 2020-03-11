@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Hadoop系列-MapReduce | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Hadoop系列-MapReduce</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 13, 2018&nbsp;&nbsp;22:45:57</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">1.7k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Hadoop系列-MapReduce"><a href="#Hadoop系列-MapReduce" class="headerlink" title="Hadoop系列-MapReduce"></a>Hadoop系列-MapReduce</h1><p>MapReduce的主要思想：自动将一个大的计算程序拆分成Map（映射）和Reduce（化简）, <code>分冶思想</code></p>
+<h2 id="流程概括"><a href="#流程概括" class="headerlink" title="流程概括"></a>流程概括</h2><p>input –&gt; map –&gt; shuffle –&gt;reduce —&gt;output<br><img src="https://i.loli.net/2020/03/08/QSq5EXDgAsYW8wF.png" alt="image.png"></p>
+<h3 id="Map端流程"><a href="#Map端流程" class="headerlink" title="Map端流程"></a>Map端流程</h3><p><img src="https://i.loli.net/2020/03/08/AJ14nPQygSiUmvu.png" alt="image.png"></p>
+<ul>
+<li>Map: 自定义Map函数处理数据</li>
+<li>Partition: 对数据进行根据key进行分区,总的partition的数目等于reducer的数量,可以通过<code>job.setPartitionerClass(MyPartition.class)</code>自定义</li>
+<li>Sort: 按照 key 将数据排序好</li>
+<li>Combine: 提前进行统计，进行局部合并，减少Map端到Reduce端的数据传输消耗。如果map输出比较大，溢出文件个数大于3（此值可以通过属性<code>min.num.spills.for.combine</code>配置）时，在merge的过程中还会执行combine操作</li>
+</ul>
+<h3 id="Reduce端流程"><a href="#Reduce端流程" class="headerlink" title="Reduce端流程"></a>Reduce端流程</h3><ul>
+<li>Copy: Reducer节点向各个mapper节点下载属于自己分区的数据，相同Partition的数据会落到同一节点</li>
+<li>Merge:Reducer将不同Mapper节点上拉取的数据进行合并成一个文件</li>
+<li>Reduce: 对数据进行统计</li>
+</ul>
+<h3 id="提交MR作业到Yarn流程"><a href="#提交MR作业到Yarn流程" class="headerlink" title="提交MR作业到Yarn流程"></a>提交MR作业到Yarn流程</h3><ol>
+<li>产生RunJar进程，客户端向RM申请执行一个job</li>
+<li>RM返回job相关的资源提交的路径staging-dir和本job产生的job ID</li>
+<li>客户端会将job相关资源提交到相应的共享文件系统的路径下(/yarn-staging/jobID)</li>
+<li>客户端向RM汇报提交结果</li>
+<li>RM将job加入任务队列</li>
+<li>NM通过与RM的心跳连接，从RM的任务队列中获取新的任务</li>
+<li>RM 向 NM 分配运行资源容器container</li>
+<li>RM在容器中启用 MRAppMaster 进程</li>
+<li>由创建的 MRAppmaster 负责分配在哪些NodeManager上运行map（即yarnchild进程）和reduce任务</li>
+<li>运行map和reduce任务的NM从共享文件系统中获取job相关资源，包括jar文件，配置文件等。然后运行map和reduce任务</li>
+<li>job执行完成后， MRAppMaster向RM注销自己，释放资源</li>
+</ol>
+<h2 id="Shuffle机制"><a href="#Shuffle机制" class="headerlink" title="Shuffle机制"></a>Shuffle机制</h2><p>从Map输出到Reduce输入的整个过程可以广义的称为Shuffle。Shuffle横跨Map端和Reduce端，在Map端包括Partition分区和Spill分割过程，在Reduce 端包括copy复制和Merge过程。</p>
+<h3 id="Collect阶段"><a href="#Collect阶段" class="headerlink" title="Collect阶段"></a>Collect阶段</h3><p>在map方法()中，最后一步通过<code>OutputCollector.collect(key,value)</code>或<code>context.write(key,value)</code>输出中间处理结果，在相关的<code>collect(key,value)</code>方法中，会调用<code>Partitioner.getPartition(K2 key, V2 value, int numPartitions)</code>方法获得输出的key/value对应的分区号(分区号可以认为对应着一个要执行Reduce Task的节点)，然后将<code>&lt;key,value,partition&gt;</code>暂时保存在内存中的<code>MapOutputBuffer内部的环形数据缓冲区</code>，该缓冲区的默认大小是<strong>100MB</strong>，可以通过参数<code>io.sort.mb</code>来调整其大小</p>
+<p>MapOutputBuffer内部存数的数据采用了两个索引结构，涉及三个环形内存缓冲区：</p>
+<ul>
+<li><p><code>kvoffsets缓冲区</code>：也叫偏移量索引数组，用于保存key/value信息在位置索引 kvindices 中的偏移量。当 <code>kvoffsets</code> 的使用率超过 <code>io.sort.spill.percent (默认为80%)</code>后，便会触发一次 SpillThread 线程的“溢写”操作，也就是开始一次 Spill 阶段的操作。</p>
+</li>
+<li><p><code>kvindices缓冲区</code>：也叫位置索引数组，用于保存 key/value 在数据缓冲区 kvbuffer 中的起始位置。</p>
+</li>
+<li><p><code>kvbuffer即数据缓冲区</code>：用于保存实际的 key/value 的值。默认情况下该缓冲区最多可以使用 <code>io.sort.mb</code> 的95%，当 <code>kvbuffer 使用率超过 io.sort.spill.percent (默认为80%)</code>后，便会出发一次 SpillThread 线程的“溢写”操作，也就是开始一次 Spill 阶段的操作</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/03/08/AYZjHRrSxqPUWs7.png" alt="image.png"></p>
+<h3 id="Spill阶段"><a href="#Spill阶段" class="headerlink" title="Spill阶段"></a>Spill阶段</h3><p>当MapOutputBuffer内部的<code>kvoffsets缓冲区</code>和<code>kvbuffer即数据缓冲区</code>达到阈值时触发进行spill操作。把内存缓冲区中的数据写入到本地磁盘，在写入本地磁盘时先按照partition、再按照key进行排序</p>
+<ul>
+<li>这个spill操作是由<strong>另外的单独线程</strong>来操作，不影响往缓冲区写map结果的线程</li>
+<li>在将数据写入磁盘之前，先要对要写入磁盘的数据进行一次<strong>排序操作</strong>，先按&lt;key,value,partition&gt;中的partition分区号排序，然后再按key排序，这个就是sort操作，最后溢出的小文件是分区的，且同一个分区内是保证key有序的</li>
+</ul>
+<h3 id="Copy阶段"><a href="#Copy阶段" class="headerlink" title="Copy阶段"></a>Copy阶段</h3><p>默认情况下，当整个MapReduce作业的所有已执行完成的Map Task任务数超过Map Task总数的5%后，JobTracker便会开始调度执行Reduce Task任务。然后Reduce Task任务默认启动<code>mapred.reduce.parallel.copies(默认为5）</code>个MapOutputCopier线程到已完成的Map Task任务节点上分别copy一份属于自己的数据。 这些copy的数据会首先保存的内存缓冲区中，当<strong>内存缓冲区</strong>的使用率达到一定阀值后，则写到磁盘上</p>
+<p><strong>补充</strong><br>这个内存缓冲区大小的控制就不像map端的内存缓冲区那样通过<code>io.sort.mb</code>来设定了，而是通过另外一个参数来设置：<code>mapred.job.shuffle.input.buffer.percent（default 0.7）</code>， 这个参数意思是：shuffile在reduce内存中的数据最多使用内存量为：0.7 × maxHeap of reduce task。如果该reduce task的最大heap使用量, 通常通过<code>mapred.child.java.opts</code>来设置，比如设置为-Xmx1024m，reduce会使用其<strong>heapsize的70%</strong>来在内存中缓存数据。如果reduce的heap由于业务原因调整的比较大，相应的缓存大小也会变大，这也是为什么reduce用来做缓存的参数是一个百分比，而不是一个固定的值了</p>
+<h3 id="Merge过程"><a href="#Merge过程" class="headerlink" title="Merge过程"></a>Merge过程</h3><p>有三种形式：</p>
+<ul>
+<li>内存到内存</li>
+<li>内存到磁盘</li>
+<li>磁盘到磁盘</li>
+</ul>
+<p>默认情况下第一种形式是不启用的。当内存中的数据量到达一定阈值，就启动内存到磁盘的 merge（之所以进行merge是因为reduce端在从多个map端copy数据的时候，并没有进行sort，只是把它们加载到内存，当达到阈值写入磁盘时，需要进行merge）。这种merge方式一直在运行，直到没有 map 端的数据时才结束，然后才会启动第三种磁盘到磁盘的 merge 方式生成最终的文件</p>
+<h2 id="MR调优思路"><a href="#MR调优思路" class="headerlink" title="MR调优思路"></a>MR调优思路</h2><ul>
+<li><code>数据倾斜</code>：数据到Reduce进行汇总，如果有一个ReduceTask中的数据过大，会导致整个程序的效率很低</li>
+<li>Map和Reduce 任务数量设置不合理</li>
+<li>Map运行时间过长，导致Reduce等待过久</li>
+<li><code>小文件过多</code>：因无论文件多大，都会分配元数据信息，如果过多就导致浪费资源、存储空间</li>
+<li>MR中有大量不可分块的超大文件，在shuffle阶段会不断溢写</li>
+<li>多个溢写的小文件，需要多级Merge</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://matt33.com/2016/03/02/hadoop-shuffle/" target="_blank" rel="noopener">MapReduce之Shuffle过程详述</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2018/11/13/MapReduce-Overview/">http://cjwdream.top/2018/11/13/MapReduce-Overview/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Hadoop/"># Hadoop</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2019/01/19/Spark基础-Spark中的一些基本概念/">Spark基础-Spark基本概念</a>
+            
+            
+            <a class="next" rel="next" href="/2018/11/07/HDFS-Overview/">Hadoop系列-HDFS</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">115.6k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
