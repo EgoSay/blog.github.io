@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Hive概览 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Hive概览</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">December 2, 2018&nbsp;&nbsp;22:25:29</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">3.7k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Hive概览"><a href="#Hive概览" class="headerlink" title="Hive概览"></a>Hive概览</h1><h2 id="Hive基本架构"><a href="#Hive基本架构" class="headerlink" title="Hive基本架构"></a>Hive基本架构</h2><p><img src="https://i.loli.net/2020/03/12/7JlkNYv5Xj4HqmR.png" alt="image.png"></p>
+<ul>
+<li><p><code>用户接口</code>: CLI、JDBC/ODBC、Web UI层</p>
+</li>
+<li><p><code>Trift Server</code>: 支持多种语言程序来操纵Hive</p>
+</li>
+<li><p><code>Driver</code>: Driver驱动器、Compiler编译器、Optimizer优化器、Executor执行器</p>
+<blockquote>
+<p>Hive 的核心是驱动引擎， 驱动引擎由四部分组成:</p>
+<ol>
+<li>解释器: 将HiveSQL语句转换成抽象语法树(AST)</li>
+<li>编译器: 将抽象语法树转换成逻辑执行计划</li>
+<li>优化器: 对逻辑执行计划进行优化</li>
+<li>执行器: 调用底层的执行框架执行逻辑计划</li>
+</ol>
+</blockquote>
+</li>
+<li><p><code>元数据存储系统</code> : Hive 中的元数据通常包括表的名字，表的列和分区及其属性，表的属性（内部表和 外部表），表的数据所在目录.</p>
+<p>  Metastore 默认存在自带的 <code>Derby</code> 数据库中,缺点就是不适合多用户操作，并且数据存 储目录不固定。数据库跟着 Hive 走，极度不方便管理<br>  <strong>解决方案：</strong>通常存我们自己创建的 MySQL 库（本地 或 远程）,Hive 和 MySQL 之间通过 MetaStore 服务交互</p>
+</li>
+</ul>
+<h2 id="Hive中的表"><a href="#Hive中的表" class="headerlink" title="Hive中的表"></a>Hive中的表</h2><p>Hive 中的表对应为 HDFS 上的指定目录，在查询数据时候，默认会对全表进行扫描，这样时间和性能的消耗都非常大</p>
+<h3 id="分区表和分桶表"><a href="#分区表和分桶表" class="headerlink" title="分区表和分桶表"></a>分区表和分桶表</h3><h4 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h4><p>按照数据表的某列或某些列分为多个区，分区为 HDFS 上表目录的子目录，数据按照分区存储在子目录中。如果查询的 where 字句的中包含分区条件，则直接从该分区去查找，而不是扫描整个表目录，合理的分区设计可以极大提高查询速度和性能</p>
+<p><strong>创建分区表</strong><br>在 Hive 中可以使用 <code>PARTITIONED BY</code> 子句创建分区表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> emp_partition(</span><br><span class="line">    empno <span class="built_in">INT</span>,</span><br><span class="line">    ename <span class="keyword">STRING</span>,</span><br><span class="line">    job <span class="keyword">STRING</span>,</span><br><span class="line">    mgr <span class="built_in">INT</span>,</span><br><span class="line">    hiredate <span class="built_in">TIMESTAMP</span>,</span><br><span class="line">    sal <span class="built_in">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">    comm <span class="built_in">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>)</span><br><span class="line">    )</span><br><span class="line">    PARTITIONED <span class="keyword">BY</span> (deptno <span class="built_in">INT</span>)   <span class="comment">-- 按照部门编号进行分区</span></span><br><span class="line">    <span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span> <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">"\t"</span></span><br><span class="line">    LOCATION <span class="string">'/hive/emp_partition'</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>加载数据到分区表</strong><br>加载数据到分区表时候必须要指定数据所处的分区</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载部门编号为20的数据到表中</span></span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">LOCAL</span> INPATH <span class="string">"/usr/file/emp20.txt"</span> OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_partition <span class="keyword">PARTITION</span> (deptno=<span class="number">20</span>)</span><br><span class="line"><span class="comment"># 加载部门编号为30的数据到表中</span></span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">LOCAL</span> INPATH <span class="string">"/usr/file/emp30.txt"</span> OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_partition <span class="keyword">PARTITION</span> (deptno=<span class="number">30</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="分桶"><a href="#分桶" class="headerlink" title="分桶"></a>分桶</h4><p>并非所有的数据集都可以形成合理的分区，分区的数量也不是越多越好，过多的分区条件可能会导致很多分区上没有数据。分桶是相对分区进行更细粒度的划分,将整个数据内容<strong>按照某列属性值得hash值进行区分</strong></p>
+<p><strong>创建分桶表</strong><br>在 Hive 中，我们可以通过 <code>CLUSTERED BY</code> 指定分桶列，并通过 SORTED BY 指定桶中数据的排序参考列</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> emp_bucket(</span><br><span class="line">    empno <span class="built_in">INT</span>,</span><br><span class="line">    ename <span class="keyword">STRING</span>,</span><br><span class="line">    job <span class="keyword">STRING</span>,</span><br><span class="line">    mgr <span class="built_in">INT</span>,</span><br><span class="line">    hiredate <span class="built_in">TIMESTAMP</span>,</span><br><span class="line">    sal <span class="built_in">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">    comm <span class="built_in">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">    deptno <span class="built_in">INT</span>)</span><br><span class="line">    CLUSTERED <span class="keyword">BY</span>(empno) SORTED <span class="keyword">BY</span>(empno <span class="keyword">ASC</span>) <span class="keyword">INTO</span> <span class="number">4</span> BUCKETS  <span class="comment">--按照员工编号散列到四个 bucket 中</span></span><br><span class="line">    <span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span> <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">"\t"</span></span><br><span class="line">    LOCATION <span class="string">'/hive/emp_bucket'</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>加载数据到分桶表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--1. 设置强制分桶,Hive 2.x 不需要这一步</span></span><br><span class="line"><span class="keyword">set</span> hive.enforce.bucketing = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">--2. 导入数据</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_bucket <span class="keyword">SELECT</span> *  <span class="keyword">FROM</span> emp;  <span class="comment">--这里的 emp 表就是一张普通的雇员表</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="内部表和外部表"><a href="#内部表和外部表" class="headerlink" title="内部表和外部表"></a>内部表和外部表</h3><p><strong>区别</strong></p>
+<ul>
+<li>创建表时：创建内部表时，会将数据移动到数据仓库指向的路径；若创建外部表，仅记录数据所在的路径，不对数据的位置做任何改变。</li>
+<li>删除表时：在删除表的时候，内部表的元数据和数据会被一起删除， 而外部表只删除元数据，不删除数据。这样外部表相对来说更加安全些，数据组织也更加灵活，方便共享源数据</li>
+<li>建表的时候外部表额外加上一个 <code>external</code>关键字</li>
+</ul>
+<p><strong>使用选择</strong></p>
+<ul>
+<li>如果数据的所有处理都在Hive中进行，那么倾向于选择内部表</li>
+<li>使用外部表的场景主要是共享数据源的情况，可以使用外部表访问存储在 HDFS 上的初始数据，然后通过 Hive 转换数据并存到内部表中</li>
+</ul>
+<h2 id="自定义UDF"><a href="#自定义UDF" class="headerlink" title="自定义UDF"></a>自定义UDF</h2><blockquote>
+<p>参考链接: <a href="https://waltyou.github.io/Hive-UDF/" target="_blank" rel="noopener">Hive UDF</a></p>
+</blockquote>
+<p>UDF（User Defined Function），即用户自定义函数，主要包含：</p>
+<ul>
+<li><code>UDF（user-defined function）</code>: 一进一出，给定一个参数，输出一个处理后的数据 ​</li>
+<li><code>UDAF（user-defined aggregate function）</code>: 多进一出，属于聚合函数，类似于count、sum等函数 ​</li>
+<li><code>UDTF（user-defined table function）</code>: 一进多出，属于一个参数，返回一个列表作为结果</li>
+</ul>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><h3 id="1-数据倾斜"><a href="#1-数据倾斜" class="headerlink" title="(1) 数据倾斜"></a>(1) 数据倾斜</h3><p><strong>原因</strong></p>
+<ul>
+<li>key分布不均匀</li>
+<li>业务数据本身的特性</li>
+<li>SQL语句造成数据倾斜</li>
+</ul>
+<p><strong>解决方法</strong></p>
+<ul>
+<li><p>hive设置<code>hive.map.aggr=true</code>和<code>hive.groupby.skewindata=true</code></p>
+</li>
+<li><p>有数据倾斜的时候进行负载均衡，当设定<code>hive.groupby.skewindata=true</code>,生成的查询计划会有两个MR Job。第一个MR Job中，Map的输出结果集合会随机分布到Reduce中，每个Reduce做部分聚合操作，并输出结果，这样处理的结果是相同Group By Key有可能被分发到不同的Reduce中，从而达到负载均衡的目的；第二个MR Job在根据预处理的数据结果按照 Group By Key 分布到Reduce中(这个过程可以保证相同的 Group By Key 被分布到同一个Reduce中)，最后完成最终的聚合操作。</p>
+</li>
+<li><p>SQL语句调整:</p>
+<ol>
+<li><code>选用join key 分布最均匀的表作为驱动表</code>。做好列裁剪和filter操作，以达到两表join的时候，数据量相对变小的效果。</li>
+<li><code>大小表Join</code>： 使用map join让小的维度表（1000条以下的记录条数）先进内存, 在Map端完成Reduce。</li>
+<li><code>大表Join大表</code>：把空值的Key变成一个字符串加上一个随机数，把倾斜的数据分到不同的reduce上，由于null值关联不上，处理后并不影响最终的结果。</li>
+<li><code>count distinct大量相同特殊值</code>：count distinct时，将值为空的情况单独处理，如果是计算count distinct，可以不用处理，直接过滤，在做后结果中加1。如果还有其他计算，需要进行group by，可以先将值为空的记录单独处理，再和其他计算结果进行union.</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-通用设置"><a href="#2-通用设置" class="headerlink" title="(2)通用设置"></a>(2)通用设置</h3><ul>
+<li><code>hive.optimize.cp=true</code>：列裁剪</li>
+<li><code>hive.optimize.prunner</code>：分区裁剪</li>
+<li><code>hive.limit.optimize.enable=true</code>：优化LIMIT n语句</li>
+<li><code>hive.limit.row.max.size=1000000：</code></li>
+<li><code>hive.limit.optimize.limit.file=10：最大文件数</code></li>
+</ul>
+<h3 id="3-本地模式-小任务"><a href="#3-本地模式-小任务" class="headerlink" title="(3)本地模式(小任务)"></a>(3)本地模式(小任务)</h3><p>开启本地模式 <code>hive&gt; set hive.exec.mode.local.auto=true</code></p>
+<ul>
+<li><p>job的输入数据大小必须小于参数：<code>hive.exec.mode.local.auto.inputbytes.max(默认128MB)</code></p>
+</li>
+<li><p>job的map数必须小于参数：<code>hive.exec.mode.local.auto.tasks.max(默认4)</code></p>
+</li>
+<li><p>job的reduce数必须为0或者1</p>
+</li>
+</ul>
+<h3 id="4-并发执行"><a href="#4-并发执行" class="headerlink" title="(4)并发执行"></a>(4)并发执行</h3><p>开启并行计算 <code>hive&gt; set hive.exec.parallel=true</code><br>相关参数 <code>hive.exec.parallel.thread.number</code>：一次sql计算中允许并执行的 job 数量</p>
+<h3 id="5-Strict-Mode-严格模式"><a href="#5-Strict-Mode-严格模式" class="headerlink" title="(5)Strict Mode(严格模式)"></a>(5)Strict Mode(严格模式)</h3><p>主要是防止一群sql查询将集群压力大大增加</p>
+<p>开启严格模式: <code>hive&gt; set hive.mapred.mode = strict</code></p>
+<p><strong>一些限制：</strong></p>
+<ul>
+<li>对于分区表，必须添加where对于分区字段的 条件过滤</li>
+<li>orderby语句必须包含limit输出限制</li>
+<li>限制执行笛卡尔积 查询</li>
+</ul>
+<h3 id="6-推测执行"><a href="#6-推测执行" class="headerlink" title="(6)推测执行"></a>(6)推测执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mapred.map.tasks.speculative.execution=true</span><br><span class="line">mapred.reduce.tasks.speculative.execution=true</span><br><span class="line">hive.mapred.reduce.tasks.speculative.execution=true;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-分组"><a href="#7-分组" class="headerlink" title="(7)分组"></a>(7)分组</h3><ul>
+<li><p>两个聚集函数不能有不同的DISTINCT列，以下表达式是错误的：</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> pv_gender_agg <span class="keyword">SELECT</span> pv_users.gender, <span class="keyword">count</span>(<span class="keyword">DISTINCT</span> pv_users.userid), <span class="keyword">count</span>(<span class="keyword">DISTINCT</span> pv_users.ip) <span class="keyword">FROM</span> pv_users <span class="keyword">GROUP</span> <span class="keyword">BY</span> pv_users.gender;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>SELECT语句中只能有GROUP BY的列或者聚集函数</p>
+</li>
+<li><p><code>hive.multigroupby.singlemar=true</code>：当多个GROUP BY语句有相同的分组列，则会优化为一个MR任务</p>
+</li>
+</ul>
+<h3 id="8-聚合"><a href="#8-聚合" class="headerlink" title="(8)聚合"></a>(8)聚合</h3><p>开启map聚合 <code>hive&gt; set hive.map.aggr=true</code></p>
+<p><strong>相关参数</strong></p>
+<ul>
+<li><p><code>hive.groupby.mapaggr.checkinterval</code>： map端group by执行聚合时处理的多少行数据（默认：100000）</p>
+</li>
+<li><p><code>hive.map.aggr.hash.min.reduction</code>： 进行聚合的最小比例（预先对100000条数据做聚合，若聚合之后的数据量 /100000的值大于该配置0.5，则不会聚合）</p>
+</li>
+<li><p><code>hive.map.aggr.hash.percentmemory</code>：map端聚合使用的内存的最大值</p>
+</li>
+<li><p><code>hive.map.aggr.hash.force.flush.memory.threshold</code>： map端做聚合操作是hash表的最大可用内容，大于该值则会触发flush</p>
+</li>
+<li><p><code>hive.groupby.skewindata</code> ：是否对GroupBy产生的数据倾斜做优化，默认为false</p>
+</li>
+</ul>
+<h3 id="9-合并小文件"><a href="#9-合并小文件" class="headerlink" title="(9)合并小文件"></a>(9)合并小文件</h3><ul>
+<li><code>hive.merg.mapfiles=true</code>：合并map输出</li>
+<li><code>hive.merge.mapredfiles=false</code>：合并reduce输出</li>
+<li><code>hive.merge.size.per.task=256*1000*1000</code>：合并文件的大小</li>
+<li><code>hive.mergejob.maponly=true</code>：如果支持CombineHiveInputFormat则生成只有Map的任务执行merge</li>
+<li><code>hive.merge.smallfiles.avgsize=16000000</code>：文件的平均大小小于该值时，会启动一个MR任务执行merge。</li>
+</ul>
+<h3 id="10-自定义map-reduce数目"><a href="#10-自定义map-reduce数目" class="headerlink" title="(10)自定义map/reduce数目"></a>(10)自定义map/reduce数目</h3><p><strong>Map数量相关的参数</strong></p>
+<ul>
+<li><p><code>mapred.max.split.size</code>：一个split的最大值，即每个map处理文件的最大值</p>
+</li>
+<li><p><code>mapred.min.split.size.per.node</code>：一个节点上split的最小值</p>
+</li>
+<li><p><code>mapred.min.split.size.per.rack</code>：一个机架上split的最小值</p>
+</li>
+</ul>
+<p><strong>Reduce数量相关的参数</strong></p>
+<ul>
+<li><p><code>mapred.reduce.tasks</code>： 强制指定reduce任务的数量</p>
+</li>
+<li><p><code>hive.exec.reducers.bytes.per.reducer</code> 每个reduce任务处理的数据量</p>
+</li>
+<li><p><code>hive.exec.reducers.max</code> 每个任务最大的reduce数 [Map数量 &gt;= Reduce数量 ]</p>
+</li>
+</ul>
+<h3 id="11-使用索引："><a href="#11-使用索引：" class="headerlink" title="(11)使用索引："></a>(11)使用索引：</h3><ul>
+<li><code>hive.optimize.index.filter</code>：自动使用索引</li>
+<li><code>hive.optimize.index.groupby</code>：使用聚合索引优化GROUP BY操作</li>
+</ul>
+<h2 id="支持的存储格式"><a href="#支持的存储格式" class="headerlink" title="支持的存储格式"></a>支持的存储格式</h2><blockquote>
+<p>ORC 和 Parquet 的综合性能突出，使用较为广泛，推荐使用</p>
+</blockquote>
+<ul>
+<li><p><code>TextFile    存储为纯文本文件</code>。 这是 Hive 默认的文件存储格式。这种存储方式数据不做压缩，磁盘开销大，数据解析开销大。</p>
+</li>
+<li><p><code>SequenceFile</code>:     SequenceFile 是 Hadoop API 提供的一种二进制文件，它将数据以&lt;key,value&gt;的形式序列化到文件中。这种二进制文件内部使用 Hadoop 的标准的 Writable 接口实现序列化和反序列化。它与 Hadoop API 中的 MapFile 是互相兼容的。Hive 中的 SequenceFile 继承自 Hadoop API 的 SequenceFile，不过它的 key 为空，使用 value 存放实际的值，这样是为了避免 MR 在运行 map 阶段进行额外的排序操作。</p>
+</li>
+<li><p><code>RCFile</code>:     RCFile 文件格式是 FaceBook 开源的一种 Hive 的文件存储格式，首先将表分为几个行组，对每个行组内的数据按列存储，每一列的数据都是分开存储。</p>
+</li>
+<li><p><code>ORC Files</code>:     ORC 是在一定程度上扩展了 RCFile，是对 RCFile 的优化。</p>
+</li>
+<li><p><code>Avro Files</code>:     Avro 是一个数据序列化系统，设计用于支持大批量数据交换的应用。它的主要特点有：支持二进制序列化方式，可以便捷，快速地处理大量数据；动态语言友好，Avro 提供的机制使动态语言可以方便地处理 Avro 数据。</p>
+</li>
+<li><p><code>Parquet</code>:     Parquet 是基于 Dremel 的数据模型和算法实现的，面向分析型业务的列式存储格式。它通过按列进行高效压缩和特殊的编码技术，从而在降低存储空间的同时提高了 IO 效率。</p>
+</li>
+</ul>
+<h2 id="常用操作命令"><a href="#常用操作命令" class="headerlink" title="常用操作命令"></a>常用操作命令</h2><h3 id="常用DDL操作"><a href="#常用DDL操作" class="headerlink" title="常用DDL操作"></a>常用DDL操作</h3><blockquote>
+<p>参考: <a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL" target="_blank" rel="noopener">LanguageManual DDL</a></p>
+</blockquote>
+<p><strong>查看数据列表：</strong> <code>show databases;</code></p>
+<p><strong>使用数据库：</strong><code>USE database_name;</code></p>
+<p><strong>新建数据库:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] database_name   <span class="comment">--DATABASE|SCHEMA 是等价的</span></span><br><span class="line">  [<span class="keyword">COMMENT</span> database_comment] <span class="comment">--数据库注释</span></span><br><span class="line">  [LOCATION hdfs_path] <span class="comment">--存储在 HDFS 上的位置</span></span><br><span class="line">  [<span class="keyword">WITH</span> DBPROPERTIES (property_name=property_value, ...)]; <span class="comment">--指定额外属性</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>查看数据库信息:</strong><br><code>DESC DATABASE [EXTENDED] db_name; --EXTENDED 表示是否显示额外属性</code></p>
+<p><strong>删除数据库：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 默认行为是 RESTRICT，如果数据库中存在表则删除失败。</span></span><br><span class="line"><span class="comment">-- 要想删除库及其中的表，可以使用 CASCADE 级联删除</span></span><br><span class="line"><span class="keyword">DROP</span> (<span class="keyword">DATABASE</span>|<span class="keyword">SCHEMA</span>) [<span class="keyword">IF</span> <span class="keyword">EXISTS</span>] database_name [RESTRICT | <span class="keyword">CASCADE</span>];</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> [<span class="keyword">TEMPORARY</span>] [<span class="keyword">EXTERNAL</span>] <span class="keyword">TABLE</span> [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] [db_name.]table_name     <span class="comment">--表名</span></span><br><span class="line">  [(col_name data_type [<span class="keyword">COMMENT</span> col_comment],</span><br><span class="line">    ... [constraint_specification])]  <span class="comment">--列名 列数据类型</span></span><br><span class="line">  [<span class="keyword">COMMENT</span> table_comment]   <span class="comment">--表描述</span></span><br><span class="line">  [PARTITIONED <span class="keyword">BY</span> (col_name data_type [<span class="keyword">COMMENT</span> col_comment], ...)]  <span class="comment">--分区表分区规则</span></span><br><span class="line">  [</span><br><span class="line">    CLUSTERED <span class="keyword">BY</span> (col_name, col_name, ...)</span><br><span class="line">   [SORTED <span class="keyword">BY</span> (col_name [<span class="keyword">ASC</span>|<span class="keyword">DESC</span>], ...)] <span class="keyword">INTO</span> num_buckets BUCKETS</span><br><span class="line">  ]  <span class="comment">--分桶表分桶规则</span></span><br><span class="line">  [SKEWED <span class="keyword">BY</span> (col_name, col_name, ...) <span class="keyword">ON</span> ((col_value, col_value, ...), (col_value, col_value, ...), ...)</span><br><span class="line">   [<span class="keyword">STORED</span> <span class="keyword">AS</span> DIRECTORIES]</span><br><span class="line">  ]  <span class="comment">--指定倾斜列和值</span></span><br><span class="line">  [</span><br><span class="line">   [<span class="keyword">ROW</span> <span class="keyword">FORMAT</span> row_format]</span><br><span class="line">   [<span class="keyword">STORED</span> <span class="keyword">AS</span> file_format]</span><br><span class="line">     | <span class="keyword">STORED</span> <span class="keyword">BY</span> <span class="string">'storage.handler.class.name'</span> [<span class="keyword">WITH</span> SERDEPROPERTIES (...)]</span><br><span class="line">  ]  <span class="comment">-- 指定行分隔符、存储文件格式或采用自定义存储格式</span></span><br><span class="line">  [LOCATION hdfs_path]  <span class="comment">-- 指定表的存储位置</span></span><br><span class="line">  [TBLPROPERTIES (property_name=property_value, ...)]  <span class="comment">--指定表的属性</span></span><br><span class="line">  [<span class="keyword">AS</span> select_statement];   <span class="comment">--从查询结果创建表</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>支持从查询语句的结果创建表：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> emp_copy <span class="keyword">AS</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> deptno=<span class="string">'20'</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改表"><a href="#修改表" class="headerlink" title="修改表"></a>修改表</h4><p><strong>重命名表:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name <span class="keyword">RENAME</span> <span class="keyword">TO</span> new_table_name;</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改列:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name [<span class="keyword">PARTITION</span> partition_spec]</span><br><span class="line"><span class="keyword">CHANGE</span> [<span class="keyword">COLUMN</span>] col_old_name col_new_name column_type</span><br><span class="line">[<span class="keyword">COMMENT</span> col_comment] [<span class="keyword">FIRST</span> | <span class="keyword">AFTER</span> column_name] [<span class="keyword">CASCADE</span> | RESTRICT];</span><br><span class="line"></span><br><span class="line"><span class="comment">--示例</span></span><br><span class="line"><span class="comment">-- 修改字段名和类型</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> emp_temp <span class="keyword">CHANGE</span> empno empno_new <span class="built_in">INT</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改字段 sal 的名称 并将其放置到 empno 字段后</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> emp_temp <span class="keyword">CHANGE</span> sal sal_new <span class="built_in">decimal</span>(<span class="number">7</span>,<span class="number">2</span>)  <span class="keyword">AFTER</span> ename;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 为字段增加注释</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> emp_temp <span class="keyword">CHANGE</span> mgr mgr_new <span class="built_in">INT</span> <span class="keyword">COMMENT</span> <span class="string">'this is column mgr'</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>新增列:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> emp_temp <span class="keyword">ADD</span> <span class="keyword">COLUMNS</span> (address <span class="keyword">STRING</span> <span class="keyword">COMMENT</span> <span class="string">'home address'</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="清空表-删除表"><a href="#清空表-删除表" class="headerlink" title="清空表/删除表"></a>清空表/删除表</h4><p><strong>清空表:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 清空整个表或表指定分区中的数据</span></span><br><span class="line"><span class="keyword">TRUNCATE</span> <span class="keyword">TABLE</span> table_name [<span class="keyword">PARTITION</span> (partition_column = partition_col_value,  ...)];</span><br></pre></td></tr></table></figure>
+
+<p>目前只有内部表才能执行 <code>TRUNCATE</code> 操作，外部表执行时会抛出异常 <code>Cannot truncate non-managed table XXXX</code></p>
+<p><strong>删除表:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> [<span class="keyword">IF</span> <span class="keyword">EXISTS</span>] table_name [<span class="keyword">PURGE</span>];</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内部表：不仅会删除表的元数据，同时会删除 HDFS 上的数据；</li>
+<li>外部表：只会删除表的元数据，不会删除 HDFS 上的数据；</li>
+<li>删除视图引用的表时，不会给出警告（但视图已经无效了，必须由用户删除或重新创建）</li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p><strong>查看视图列表:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> VIEWS [<span class="keyword">IN</span>/<span class="keyword">FROM</span> database_name] [<span class="keyword">LIKE</span> <span class="string">'pattern_with_wildcards'</span>];   <span class="comment">--仅支持 Hive 2.2.0 +</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>查看表的分区列表:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">PARTITIONS</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看表/视图的创建语句:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> ([db_name.]table_name|view_name);</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用DML操作"><a href="#常用DML操作" class="headerlink" title="常用DML操作"></a>常用DML操作</h3><blockquote>
+<p>和关系型数据库类似，具体参考: <a href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML" target="_blank" rel="noopener">LanguageManual DML</a></p>
+</blockquote>
+<h3 id="排序关键字"><a href="#排序关键字" class="headerlink" title="排序关键字"></a>排序关键字</h3><ul>
+<li><p><code>sort by</code>：不是全局排序，其在数据进入reducer前完成排序</p>
+</li>
+<li><p><code>order by</code> ：会对输入做全局排序，因此只有一个reducer(多个reducer无法保证全局有序).只有一个reducer,会导致当输入规模较大时，需要较长的计算时间。</p>
+</li>
+<li><p><code>distribute by</code> ：按照指定的字段对数据进行划分输出到不同的reduce中</p>
+</li>
+<li><p><code>cluster by</code> ： 当distribute by 和sort by的字段相同时，等同于cluster by.可以看做特殊的distribute + sort</p>
+</li>
+</ul>
+<h3 id="Hive中追加导入数据方式"><a href="#Hive中追加导入数据方式" class="headerlink" title="Hive中追加导入数据方式"></a>Hive中追加导入数据方式</h3><ul>
+<li><p>从本地导入： <code>load data local inpath ‘/home/1.txt’ (overwrite)into table student;</code></p>
+</li>
+<li><p>从HDFS导入： <code>load data inpath ‘/user/hive/warehouse/1.txt’ (overwrite)into table student;</code></p>
+</li>
+<li><p>查询导入： <code>create table student1 as select * from student;(也可以具体查询某项数据)</code></p>
+</li>
+<li><p>查询结果导入：<code>insert （overwrite）into table staff select * from track_log;</code></p>
+</li>
+</ul>
+<h3 id="Hive导出数据方式"><a href="#Hive导出数据方式" class="headerlink" title="Hive导出数据方式"></a>Hive导出数据方式</h3><ul>
+<li><p>用insert overwrite导出方式<br>  1.导出到本地：</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">local</span> <span class="keyword">directory</span> ‘/home/robot/<span class="number">1</span>/<span class="number">2</span>’ rom  <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> ‘\t’ <span class="keyword">select</span> * <span class="keyword">from</span> staff;</span><br></pre></td></tr></table></figure>
+
+<p>  2.导出到HDFS</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">directory</span> ‘/<span class="keyword">user</span>/hive/<span class="number">1</span>/<span class="number">2</span>’ rom <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> ‘\t’ <span class="keyword">select</span> * <span class="keyword">from</span> staff;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Bash shell覆盖追加导出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/hive -e “select * from staff;” &gt; /home/z/backup.log</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>sqoop把hive数据导出到外部</p>
+</li>
+</ul>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><ul>
+<li><a href="https://tech.meituan.com/2014/02/12/hive-sql-to-mapreduce.html" target="_blank" rel="noopener">Hive SQL的编译过程</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2018/12/02/Hive-Overview/">http://cjwdream.top/2018/12/02/Hive-Overview/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Hive/"># Hive</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2019/01/19/Spark基础-Spark中的一些基本概念/">Spark基础-Spark基本概念</a>
+            
+            
+            <a class="next" rel="next" href="/2018/11/13/MapReduce-Overview/">Hadoop系列-MapReduce</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">119.3k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
