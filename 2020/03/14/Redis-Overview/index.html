@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>Redis概览 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Redis概览</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 14, 2020&nbsp;&nbsp;19:16:44</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">3.5k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="基础数据结构"><a href="#基础数据结构" class="headerlink" title="基础数据结构"></a>基础数据结构</h2><ul>
+<li><code>string字符串</code></li>
+<li><code>list列表</code></li>
+<li><code>set集合</code></li>
+<li><code>hash哈希字典</code></li>
+<li><code>zset有序集合</code></li>
+</ul>
+<h3 id="string字符串"><a href="#string字符串" class="headerlink" title="string字符串"></a>string字符串</h3><ul>
+<li>Redis 中的字符串是可以修改的字符串, 在内存中是以字节数组的形式存在, 内部结构实现上类似于<code>Java中的ArrayList</code></li>
+<li>采用预分配冗余空间的方式来减少内存的分配, 不过刚开始创建字符串的时候不会多分配冗余空间，因为大多时候不会使用 <code>append</code> 操作来修改字符串, 也就不会存在字符串扩容导致的内存重新分配</li>
+<li>扩容的时候，1M以下扩容是直接加倍，1M以上每次扩容只会增加1M内存，字符串最大长度为512M</li>
+<li>字符串底层有两种存储方式，长度特别短的时候，使用<code>emb(embstr)</code>形式存储，长度比较长的情况下采用 <code>raw</code>形式存储</li>
+</ul>
+<h3 id="list列表"><a href="#list列表" class="headerlink" title="list列表"></a>list列表</h3><ul>
+<li>Redis中的列表是一种链表结构，不是数组，所以插入和删除比较快，但是索引定位较慢，相对来说查找元素也就比较慢了</li>
+<li>早期版本的话列表元素较少的情况下会使用一块连续的内存存储，也就是<code>ziplist 压缩列表</code>的结构实现. 元素较多的情况下，使用的是普通双向链表LinkedList的结构。但因为链表附加的指针占用空间消耗问题，后面代替使用了<code>quicklist快速链表</code>的结构</li>
+</ul>
+<h4 id="quicklist快速链表"><a href="#quicklist快速链表" class="headerlink" title="quicklist快速链表"></a>quicklist快速链表</h4><p><code>quicklist</code>是<code>ziplist</code>和<code>linkedlist</code>的混合体，它<code>linkedlist</code>按段切分，每一段使用<code>ziplist</code>来紧凑存储，多个<code>ziplist</code>用双向指针串接起来<br><img src="https://i.loli.net/2020/03/13/q4dvzJEg1kwpN8U.png" alt="image.png"></p>
+<ul>
+<li>quicklist内部默认单个 ziplist 长度为 8k字节，由配置参数<code>list-max-ziplist-size</code>决定, 超出规定长度的话就会新起一个</li>
+<li>为了进一步节约内存空间，Redis还会对ziplist进行压缩存储，使用<code>LZF算法</code>压缩， 压缩的实际深度可以通过配置参数<code>list-compress-depth</code>决定</li>
+</ul>
+<p><strong>常用操作:</strong><br>Redis 的列表结构常用来做异步队列使用。将需要延后处理的任务结构体序列化成字符串塞进 Redis 的列表，另一个线程从这个列表中轮询数据进行处理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; rpush</span><br><span class="line">&gt; lpop</span><br><span class="line">&gt; rpop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下操作为O(n)操作，慎用</span></span><br><span class="line">&gt; lindex   <span class="comment"># 获取指定索引位置的值</span></span><br><span class="line">&gt; lrange   <span class="comment"># 遍历指定索引范围的值</span></span><br><span class="line">&gt; ltrim books 1 -1  <span class="comment"># 保留books列表索引【1 到 -1】区间的值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="hash哈希"><a href="#hash哈希" class="headerlink" title="hash哈希"></a>hash哈希</h3><p>Redis中的hash实现跟Java中的HashMap实现基本类似，底层也是基于数组+链表的数据结构<br>不同的是:</p>
+<ul>
+<li>Redis字典中的值只能是字符串</li>
+<li>扩容条件不一样</li>
+<li>Java的HashMap的rehash操作是一次性全部rehash。Redis为了高性能，不能堵塞服务，所以采用了<code>渐进式rehash策略</code></li>
+</ul>
+<h4 id="扩容实现"><a href="#扩容实现" class="headerlink" title="扩容实现"></a>扩容实现</h4><p><strong>扩容条件:</strong><br>一般来说，当元素个数达到一维数组的长度时就会进行扩容，扩容的新数组是原来的两倍。不过如果Redis正在做<code>bgsave</code>(后台异步执行快照操作进行RDB持久化)，为了减少内存页的过多分离（<code>Copy On Write机制</code>，详细参考: <a href="https://juejin.im/post/5bd96bcaf265da396b72f855" target="_blank" rel="noopener">COW奶牛！Copy On Write机制了解一下</a>），Redis尽量不去扩容，但是如果hash表已经非常满了，达到了<strong>数组长度的5倍</strong>还是会进行强制扩容</p>
+<p><strong>扩容实现:</strong><br>渐进式 rehash 会在 rehash 的同时，保留新旧两个 hash 结构，查询时会同时查询两个 hash 结构，然后在后续的定时任务中以及 hash 操作指令中，循序渐进地将旧 hash 的内容一点点迁移到新的 hash 结构中, 当搬迁完成了，就会使用新的hash结构取而代之</p>
+<p><strong>常用操作:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; hset</span><br><span class="line">&gt; hmset <span class="comment"># 批量set</span></span><br><span class="line">&gt; hget</span><br><span class="line">&gt; hgetall <span class="comment"># entries(), 同时获取所有的key、value</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="set集合"><a href="#set集合" class="headerlink" title="set集合"></a>set集合</h3><p>Redis中的set集合类似于Java中的<code>HashSet</code>, 内部实现相当于一个特殊的字典，元素全部当作key来存放，value值全部为空值，其内部键值对是无序且唯一的。</p>
+<p><strong>常用操作:</strong> <code>sadd,spop,smembers,sunion 等</code><br>set结构可以用来存储活动中奖的用户ID，因为有去重功能</p>
+<h3 id="zset"><a href="#zset" class="headerlink" title="zset"></a>zset</h3><p>类似于 Java 的 SortedSet 和 HashMap 的结合体，一方面它是一个 set，保证了内部 value 的唯一性，另一方面它可以给每个 value 赋予一个 score，代表这个 value 的排序权重。<br><strong>实现方式:</strong></p>
+<ul>
+<li>ziplist：满足元素数量少于128的时候每个元素的长度小于64字两个条件的时候使用此结构</li>
+<li>skiplist：不满足上述两个条件就会使用跳表，具体来说是组合了map和skiplistmap用来存储member到score的映射，这样就可以在O(1)时间内找到member对应的分数skiplist按从小到大的顺序存储分数skiplist每个元素的值都是[score,value]对</li>
+</ul>
+<p><strong>常用操作:</strong> <code>zadd,zrange,zrem,zcard等</code></p>
+<h4 id="跳跃列表"><a href="#跳跃列表" class="headerlink" title="跳跃列表"></a>跳跃列表</h4><p>链表+多层索引</p>
+<p><strong>思考:为什么使用跳表而不是红黑树(平衡二叉树)？</strong></p>
+<ul>
+<li>两者时间复杂度一样，跳表实现起来更为简单</li>
+<li>并发插入或者删除元素的时候，平衡二叉树可能需要做一些rebalance的操作，这样的操作可能会涉及到整个树的其他部分，而跳表的操作影响更局部一点，这方面性能稍微好点</li>
+<li>在使用<code>ZRANGE</code>命令这种范围查找的情况下利用跳表里面的双向链表，可以方便地操作。另外还有缓存区域化（cache locality），所以效率不会比平衡树差</li>
+</ul>
+<p><strong>参考链接:</strong></p>
+<ul>
+<li><a href="https://lotabout.me/2018/skip-list/" target="_blank" rel="noopener">跳表──没听过但很犀利的数据结构</a></li>
+<li><a href="https://www.cnblogs.com/charlesblc/p/5987812.html" target="_blank" rel="noopener">红黑树、B(+)树、跳表、AVL等数据结构，应用场景及分析</a></li>
+</ul>
+<h2 id="Redis的线程IO模型"><a href="#Redis的线程IO模型" class="headerlink" title="Redis的线程IO模型"></a>Redis的线程IO模型</h2><p>Redis是单线程的, 虽然在新版本中引入了多线程，但多线程部分只是<strong>用来处理网络数据的读写和协议解析</strong>, 提升网络IO效率</p>
+<h3 id="单线程的Redis为什么那么快"><a href="#单线程的Redis为什么那么快" class="headerlink" title="单线程的Redis为什么那么快"></a>单线程的Redis为什么那么快</h3><ul>
+<li>绝大部分是内存操作，非常快</li>
+<li>因为是单线程，也就避免了上下文切换和资源竞争的问题</li>
+<li>采用了非阻塞IO-多路复用</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://ruby-china.org/topics/38957" target="_blank" rel="noopener">多线程的 Redis</a></li>
+<li><a href="http://cjwdream.top/2018/08/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%80%BB%E7%BB%93/#%E4%B9%9D%E3%80%81IO%E6%A8%A1%E5%9E%8B">操作系统总结-IO模型</a></li>
+</ul>
+<h2 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h2><p>Redis为持久化提供了两种方式:</p>
+<ul>
+<li>RDB快照：在指定时间间隔内对数据进行快照存储，是一次全量备份</li>
+<li>AOF日志文件: 内存记录数据修改的指令日志记录，是连续增量备份</li>
+</ul>
+<p>Redis4.0后提供了混合持久化的功能</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>相关配置:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 时间策略, 定时自动触发</span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line"></span><br><span class="line"># 文件名称</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line"></span><br><span class="line"># 文件保存路径</span><br><span class="line">dir /home/work/app/redis/data/</span><br><span class="line"></span><br><span class="line"># 如果持久化出错，主进程是否停止写入</span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line"></span><br><span class="line"># 是否压缩</span><br><span class="line">rdbcompression yes</span><br><span class="line"></span><br><span class="line"># 导入时是否检查</span><br><span class="line">rdbchecksum yes</span><br></pre></td></tr></table></figure>
+
+<p>RDB持久化的触发有两种: 自己手动触发与Redis定时触发</p>
+<h4 id="手动触发"><a href="#手动触发" class="headerlink" title="手动触发"></a>手动触发</h4><ul>
+<li><code>save</code>: 会阻塞当前Redis服务器，直到持久化完成，线上禁止使用</li>
+<li><code>bgsave</code>: 会fork出一个子进程，由子进程负责持久化过程，因此阻塞只会发生在fork子进程的时候</li>
+</ul>
+<p>save命令不常用，bgsave的执行流程如下:<br><img src="https://i.loli.net/2020/03/14/43OU9FClV6XiDJs.png" alt="image.png"></p>
+<p><strong>bgsave的原理</strong></p>
+<ul>
+<li><code>fork</code>: redis通过fork创建子进程来进行bgsave操作</li>
+<li><code>cow</code>：copy on write，子进程创建后，父子进程共享数据段，父进程继续提供读写服务，写脏的页面数据会逐渐和子进程分离开来</li>
+</ul>
+<h4 id="自动触发"><a href="#自动触发" class="headerlink" title="自动触发"></a>自动触发</h4><p>自动触发的场景:</p>
+<ul>
+<li>根据配置文件里配置的 <code>save m n</code>规则自动触发</li>
+<li>从节点全量复制时，主节点发送rdb文件给从节点完成复制操作，主节点会触发<code>bgsave</code></li>
+<li>执行<code>debug reload</code>时</li>
+<li>执行<code>shutdown</code>时，如果没有开启aof，也会触发</li>
+</ul>
+<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h3><p><strong>相关配置:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># 是否开启aof</span><br><span class="line">appendonly yes</span><br><span class="line"></span><br><span class="line"># 文件名称</span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># 同步方式</span><br><span class="line">appendfsync everysec</span><br><span class="line"></span><br><span class="line"># aof重写期间是否同步</span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line"></span><br><span class="line"># 重写触发配置</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line"></span><br><span class="line"># 加载aof时如果有错如何处理</span><br><span class="line">aof-load-truncated yes</span><br><span class="line"></span><br><span class="line"># 文件重写策略</span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br></pre></td></tr></table></figure>
+
+<p>AOF的整个流程大体来看可以分为两步，<strong>一步是命令的实时写入</strong>（如果是 <code>appendfsync everysec</code> 配置，会有1s损耗），<strong>第二步是对aof文件的重写</strong>。</p>
+<p>Redis 会在收到客户端修改指令后，进行参数校验进行逻辑处理后，如果没问题，就立即将该指令文本存储到 AOF 日志中，也就是先执行指令才将日志存盘。这点不同于leveldb、HBase等存储引擎，它们都是先存储日志再做逻辑处理。</p>
+<h4 id="AOF重写"><a href="#AOF重写" class="headerlink" title="AOF重写"></a>AOF重写</h4><p>Redis 在长期运行的过程中，AOF 的日志会越变越长。如果实例宕机重启，重放整个 AOF 日志会非常耗时，导致长时间 Redis 无法对外提供服务。所以需要对 AOF 日志瘦身，也就是重写。</p>
+<p>Redis 提供了 <code>bgrewriteaof</code> 指令用于对 AOF 日志进行瘦身。其原理就是开辟一个子进程对内存进行遍历转换成一系列 Redis 的操作指令，序列化到一个新的 AOF 日志文件中。序列化完毕后再将操作期间发生的增量 AOF 日志追加到这个新的 AOF 日志文件中，追加完毕后就立即替代旧的 AOF 日志文件了</p>
+<h4 id="日志丢失"><a href="#日志丢失" class="headerlink" title="日志丢失"></a>日志丢失</h4><p>AOF 日志是以文件的形式存在的，当程序对 AOF 日志文件进行写操作时，实际上是将内容写到了内核为文件描述符分配的一个内存缓存中，然后内核异步将数据刷回到磁盘. 那么机器如果突然宕机，日志内容还没完全写入到磁盘中就会出现日志丢失的情况。</p>
+<p>Linux 的<code>glibc</code>提供了<code>fsync(int fd)</code>函数可以将指定文件的内容强制从内核缓存刷到磁盘。在生产环境的服务器中，Redis 通常是每隔 1s 左右执行一次 fsync 操作，周期 1s 是可以配置的。这是在数据安全性和性能之间做了一个折中，在保持高性能的同时，尽可能使得数据少丢失</p>
+<h3 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://juejin.im/post/5b70dfcf518825610f1f5c16" target="_blank" rel="noopener">一文看懂Redis的持久化原理</a></li>
+</ul>
+<h2 id="Redis的同步机制"><a href="#Redis的同步机制" class="headerlink" title="Redis的同步机制"></a>Redis的同步机制</h2><p>Redis可以使用主从同步，从从同步。第一次同步时，主节点做一次bgsave，并同时将后续修改操作记录到内存buffer，待完成后将rdb文件全量同步到复制节点，复制节点接受完成后将rdb镜像加载到内存。加载完成后，再通知主节点将期间修改的操作记录同步到复制节点进行重放就完成了同步过程</p>
+<h2 id="Redis事务"><a href="#Redis事务" class="headerlink" title="Redis事务"></a>Redis事务</h2><p>得益于Redis的单线程模型，所以其事务模型使用起来很简单。</p>
+<p>每个事务的操作都有 begin、commit 和 rollback，begin 指示事务的开始，commit 指示事务的提交，rollback 指示事务的回滚。</p>
+<p>Redis 在形式上看起来也差不多，分别是 <code>multi/exec/discard</code>。<code>multi</code> 指示事务的开始，<code>exec</code> 指示事务的执行，<code>discard</code>指示事务的丢弃</p>
+<h2 id="Redis的缓存失效机制"><a href="#Redis的缓存失效机制" class="headerlink" title="Redis的缓存失效机制"></a>Redis的缓存失效机制</h2><p>作为缓存系统都要定期清理无效数据，就需要一个主键失效和淘汰策略</p>
+<h3 id="过期删除策略"><a href="#过期删除策略" class="headerlink" title="过期删除策略"></a>过期删除策略</h3><p>redis 会将<strong>每个设置了过期时间的 key 放入到一个独立的字典中</strong>，以后会<code>定期遍历</code>这个字典来删除到期的 key。除了定期删除之外，它还会使用<code>惰性策略</code>来删除过期的 key，所谓惰性策略就是在客户端访问这个 key 的时候，redis 对 key 的过期时间进行检查，如果过期了就立即删除。定时删除是集中处理，惰性删除是零散处理</p>
+<h3 id="6种淘汰策略"><a href="#6种淘汰策略" class="headerlink" title="6种淘汰策略"></a>6种淘汰策略</h3><p>当Redis内存超出 <code>maxmemory</code> 限制时，内存的数据会开始和磁盘产生频繁的交换 (swap)，这会让 Redis 的性能急剧下降，因此Redis 提供了几种淘汰策略:</p>
+<ul>
+<li><p><code>noeviction</code>: 不会继续服务写请求 (DEL 请求可以继续服务)，读请求可以继续进行。这样可以保证不会丢失数据，但是会让线上的业务不能持续进行。这是默认的淘汰策略。</p>
+</li>
+<li><p><code>volatile-lru</code>: 尝试淘汰设置了过期时间的 key，最少使用的 key 优先被淘汰。没有设置过期时间的 key 不会被淘汰，这样可以保证需要持久化的数据不会突然丢失。</p>
+</li>
+<li><p><code>volatile-ttl</code>: 淘汰设置了过期时间的 key, key 的剩余寿命 <code>ttl</code> 的值越小越优先被淘汰。</p>
+</li>
+<li><p><code>volatile-random</code>: 淘汰设置了过期时间的 key, 不过淘汰的 key 是过期 key 集合中随机的 key。</p>
+</li>
+<li><p><code>allkeys-lru</code>: 区别于 volatile-lru，这个策略要淘汰的 key 对象是全体的 key 集合，而不只是过期的 key 集合。这意味着没有设置过期时间的 key 也会被淘汰。</p>
+</li>
+<li><p><code>allkeys-random</code>: 从全体的 key 集合中随机挑选淘汰</p>
+</li>
+</ul>
+<h2 id="Redis的哈希槽"><a href="#Redis的哈希槽" class="headerlink" title="Redis的哈希槽"></a>Redis的哈希槽</h2><p>Redis集群没有使用一致性hash,而是引入了哈希槽的概念，Redis集群有16384个哈希槽，每个key通过CRC16校验后对16384取模来决定放置哪个槽，集群的每个节点负责一部分hash槽</p>
+<h2 id="Redis中的管道"><a href="#Redis中的管道" class="headerlink" title="Redis中的管道"></a>Redis中的管道</h2><p>将多个命令发送到服务器，而不用等待回复，最后在一个步骤中读取该答复，提升IO效率。</p>
+<h2 id="Redis的集群"><a href="#Redis的集群" class="headerlink" title="Redis的集群"></a>Redis的集群</h2><ul>
+<li><p>Redis Sentinal着眼于高可用，在master宕机时会自动将slave提升为master，继续提供服务。</p>
+</li>
+<li><p>Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储</p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2020/03/14/Redis-Overview/">http://cjwdream.top/2020/03/14/Redis-Overview/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Redis/"># Redis</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/03/09/Spark-optimize-summary/">Spark进阶-Spark调优总结</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">124.4k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
