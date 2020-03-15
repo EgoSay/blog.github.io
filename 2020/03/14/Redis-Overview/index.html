@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">3.5k</font>
+						<font color="#2d96bd">4.6k</font>
 					</span>
                     
                 </div>
@@ -206,7 +206,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="基础数据结构"><a href="#基础数据结构" class="headerlink" title="基础数据结构"></a>基础数据结构</h2><ul>
+            <h1 id="Redis概览"><a href="#Redis概览" class="headerlink" title="Redis概览"></a>Redis概览</h1><h2 id="基础数据结构"><a href="#基础数据结构" class="headerlink" title="基础数据结构"></a>基础数据结构</h2><ul>
 <li><code>string字符串</code></li>
 <li><code>list列表</code></li>
 <li><code>set集合</code></li>
@@ -340,6 +340,59 @@
 <li><p>Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储</p>
 </li>
 </ul>
+<h2 id="缓存场景问题"><a href="#缓存场景问题" class="headerlink" title="缓存场景问题"></a>缓存场景问题</h2><h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p>要查询的数据在缓存和数据库中都不存在，可能因此恶意高并发请求攻击导致后台DB崩溃</p>
+<p><strong>解决思路:</strong></p>
+<ul>
+<li>缓存空值: 第一次查询后，针对不存在的key设置其值为空值，后续对这个key的请求直接就返回空, 但要注意设置好过期时间</li>
+<li>BloomFilter: 利用布隆过滤器判断元素（某个key）是否存在</li>
+</ul>
+<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>设置缓存时采用了相同的过期时间，然后某一时刻出现大规模的缓存失效，从而导致去查询数据库，进一步可能导致数据库压力过大的情况</p>
+<p><strong>解决思路:</strong></p>
+<ul>
+<li>打散过期时间设置: 比如在原有过期时间设置的基础上加上一个随机值，降低缓存过期时间的重复率</li>
+<li>限流 &amp;&amp; 降级, 避免后台DB因请求压力过大而崩溃</li>
+<li>使用锁或队列，避免过多请求同一时刻落到后台DB上</li>
+<li>给每一个缓存数据value值添加一个缓存标记时间，这个时间比实际设置的缓存时间要早，当读取到缓存标记失效时，会通知其他线程去更新缓存，实际还能返回旧缓存的数据直到更新缓存完成</li>
+</ul>
+<h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><p>某个时间点这个缓存过期了，恰好此时有很多针对这个缓存的查询请求，发现缓存失效后会从后端DB加载数据并更新到缓存，请求量过大的情况下可能会导致DB压力过大而崩溃</p>
+<p><strong>注意:</strong><br>缓存击穿和缓存雪崩是不同的，前者针对的是单个key，而雪崩是很多key</p>
+<p><strong>解决思路:</strong><br>参考缓存雪崩，类似</p>
+<h3 id="缓存预热"><a href="#缓存预热" class="headerlink" title="缓存预热"></a>缓存预热</h3><p>系统上线后，先将相关的缓存数据加载到缓存中，避免了第一次请求查询从DB中加载更新缓存</p>
+<h3 id="缓存更新"><a href="#缓存更新" class="headerlink" title="缓存更新"></a>缓存更新</h3><h4 id="先更新数据库再更新缓存"><a href="#先更新数据库再更新缓存" class="headerlink" title="先更新数据库再更新缓存"></a>先更新数据库再更新缓存</h4><p>不适用，有以下问题：</p>
+<ul>
+<li>线程不安全，可能造成脏数据。比如多个写请求到达，本来应该是将最后的写请求数据更新到缓存，但可能因为网络波动原因，实际更新到缓存中的数据是前面其中某一次写的数据</li>
+<li>不适合写多读少的场景，缓存被频繁更新，浪费性能</li>
+</ul>
+<h4 id="先删缓存，再更新数据库"><a href="#先删缓存，再更新数据库" class="headerlink" title="先删缓存，再更新数据库"></a>先删缓存，再更新数据库</h4><p><strong>问题分析:</strong><br>同时有一个请求A进行更新操作，另一个请求B进行查询操作,那么会出现如下情形:</p>
+<ol>
+<li>请求A进行写操作，删除缓存</li>
+<li>请求B查询发现缓存不存在</li>
+<li>请求B去数据库查询得到旧值</li>
+<li>请求B将旧值写入缓存</li>
+<li>请求A将新值写入数据库</li>
+</ol>
+<p>上述情况就会导致不一致的情形出现。而且，如果不采用给缓存设置过期时间策略，该数据永远都是脏数据</p>
+<p><strong>解决方案:</strong> <code>延时双删策略</code></p>
+<ol>
+<li>先淘汰缓存</li>
+<li>再写数据库（这两步和原来一样）</li>
+<li>休眠一个短时间比如1s，再次淘汰缓存</li>
+</ol>
+<p>这样就可以将1s内产生的脏数据清除了，另外这个<strong>休眠时间</strong>需要根据业务实际场景评估</p>
+<h4 id="先更新数据库，再删除缓存-常用策略"><a href="#先更新数据库，再删除缓存-常用策略" class="headerlink" title="先更新数据库，再删除缓存(常用策略)"></a>先更新数据库，再删除缓存(常用策略)</h4><ol>
+<li><code>失效</code>：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。</li>
+<li><code>命中</code>：应用程序从cache中取数据，取到后返回。</li>
+<li><code>更新</code>：先把数据存到数据库中，成功后，再让缓存失效，删除缓存</li>
+</ol>
+<p><strong>问题分析：</strong><br>同样假设有两个请求，一个请求A做查询操作，一个请求B做更新操作，那么会有如下情形产生</p>
+<ol>
+<li>缓存刚好失效</li>
+<li>请求A查询数据库，得一个旧值</li>
+<li>请求B将新值写入数据库</li>
+<li>请求B删除缓存</li>
+<li>请求A将查到的旧值写入缓存</li>
+</ol>
+<p>发生数据不一致的前提条件是需要步骤3的写数据库操作比2的读数据库操作耗时更短，但数据库的读操作的速度远快于写操作的，这种概率还是很低的。</p>
 
         </div>
 
@@ -401,7 +454,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">124.4k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">125.5k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
