@@ -8,7 +8,7 @@
 
 
 
-<title>读书笔记-《自卑与超越》 | EgoSay</title>
+<title>Spark基础-Spark缓存和checkpoint机制 | EgoSay</title>
 
 
 
@@ -177,7 +177,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">读书笔记-《自卑与超越》</h1>
+            <h1 class="post-title">Spark基础-Spark缓存和checkpoint机制</h1>
             
                 <div class="post-meta">
                     
@@ -186,19 +186,19 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 13, 2019&nbsp;&nbsp;22:51:33</a>
+                        Date: <a href="#">February 19, 2019&nbsp;&nbsp;11:58:59</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/杂记/">杂记</a>
+                                <a href="/categories/Learning/">Learning</a>
                             
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.1k</font>
+						<font color="#2d96bd">836</font>
 					</span>
                     
                 </div>
@@ -206,39 +206,55 @@
         </header>
 
         <div class="post-content">
-            <h1 id="《自卑与超越》读书笔记"><a href="#《自卑与超越》读书笔记" class="headerlink" title="《自卑与超越》读书笔记"></a>《自卑与超越》读书笔记</h1><h2 id="一些读后感"><a href="#一些读后感" class="headerlink" title="一些读后感"></a>一些读后感</h2><p>这本书算是心理学的一本经典了, 不过我感觉是把它当作一本儿童教育的书籍在看了🤣哈哈</p><p></p>
-<p>从书名来看会觉得这是一本教你怎么培养自信心的的书籍，读完后却发现不尽如此, 虽然也有讲自卑感和优越感，但更多的是描述这两种心理产生的原因以及对人的影响</p><p></p>
-<p>这本书应该带点论证思考去看, 很多事情看似很简单, 追溯起来都会发现是有根本因素在里头的, 哪怕是做梦可能你以为是随机的其实也有着你自己潜意识的作用在里头</p><p></p>
-<p>童年成长的重要性, 家庭的影响, 学校的影响对人未来都起着决定因素, 把自己代入进去后, 嗯只能说， 感谢小时候爸爸的严训, 妈妈的鼓励, 感谢学校, 感谢一路遇见的朋友（略略略，变成发表获奖感言了似的）</p><p></p>
-<p>逆境成长, 学会合作, 培养社会兴趣, 追求自己的价值体现, 主要就是这几点吧, 都是大道理大家都懂, 多的不说, 还是想说等以后有娃了我觉得可以再回顾一下这本书, 好好培养！😂</p>
-<h2 id="部分摘抄"><a href="#部分摘抄" class="headerlink" title="部分摘抄"></a>部分摘抄</h2><h3 id="生活的意义"><a href="#生活的意义" class="headerlink" title="生活的意义"></a>生活的意义</h3><ul>
-<li>我们会发现, 每一种个体自认为正确的生活的意义可能多少都含有错误的成分在里头, 没有人拥有绝对正确的生活意义</li>
-<li>我们不能单凭猜测，也不能希图侥幸，我们必须用尽我们力所能及的各种方法, 坚定地寻求答案</li>
-<li>所谓真正“生活意义”的标准是：它们都是共同的意义，也就是说，它们是别人能够分享的意义，也是能被别人认定为有效的意义</li>
-<li>事实上，属于私人的意义是完全没有意义的，意义只有在和他人交往时才有存在的可能</li>
+            <h1 id="Spark缓存和checkpoint机制"><a href="#Spark缓存和checkpoint机制" class="headerlink" title="Spark缓存和checkpoint机制"></a>Spark缓存和checkpoint机制</h1><h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>在实际开发中，经常会选择复用RDD来减少性能消耗，这个时候就会通过<code>cache()</code>和<code>persist()</code>方法来缓存复用RDD</p>
+<h3 id="存储级别"><a href="#存储级别" class="headerlink" title="存储级别"></a>存储级别</h3><ul>
+<li><p><code>MEMORY_ONLY</code>: 默认存储级别，存储在JVM内存中。如果内存空间不足，部分数据分区将不再缓存，以后需要的时候重新计算</p>
+</li>
+<li><p><code>MEMORY_AND_DISK</code>: 先使用内存缓存，如果内存空间不足将数据缓存到磁盘上</p>
+</li>
+<li><p><code>DISK_ONLY</code>: 只在磁盘上缓存</p>
+</li>
+<li><p><code>MEMORY_ONLY_SER</code>: 以序列化的方式存储数据到内存中，能节省较多的空间，但在读取的时候会增加计算负担</p>
+</li>
+<li><p><code>MEMORY_AND_DISK_SER</code></p>
+</li>
+<li><p><code>MEMORY_ONLY_2</code>、<code>DISK_ONLY_2</code>、<code>MEMORY_AND_DISK_SER_2</code>: 类似上面，只不过每个分区在集群中两个节点上建立副本</p>
+</li>
+<li><p><code>OFF_HEAP</code>: 类似于 MEMORY_ONLY_SER ，但是将数据存储在 off-heap memory堆外内存</p>
+</li>
 </ul>
-<p>ps: 探索自己生活的意义, 欣赏他人生活的精彩, 掩埋人性的自私, 个人价值的体现在于他人的肯定欣赏</p>
-<h3 id="心灵与肉体"><a href="#心灵与肉体" class="headerlink" title="心灵与肉体"></a>心灵与肉体</h3><ul>
-<li>你当然有思虑, 否则你就不会有动作</li>
-<li>心理学的领域是: 探讨个人各种表情的意义, 找寻了解其目标的想法, 并以之和别人的目标互相比较</li>
-<li>感情绝不会和生活方式互相对立, 目标一旦定下, 感情就会为了要获得它而适应自身</li>
-<li>感情是依照他人获取其目标所必要的方向和程度而成长和发展的</li>
+<h3 id="存储级别的选择"><a href="#存储级别的选择" class="headerlink" title="存储级别的选择"></a>存储级别的选择</h3><p>Spark 的存储级别的选择，核心问题是在内存使用率和 CPU 效率之间进行权衡:</p>
+<ul>
+<li>如果内存充足，那么就选择默认的存储级别即可</li>
+<li>如果内存不能存储全部的RDD，那么选择<code>MEMORY_ONLY_SER</code>，并挑选合适的序列化库进行序列化存储，节省空间</li>
+<li>除了计算代价特别高的情况下，尽量不要选择磁盘方式存储，因为重新计算的耗时跟从磁盘方式读取耗时差不多</li>
+<li>如果想要快速复原故障，那么建议使用多副本存储策略</li>
 </ul>
-<h3 id="早期的记忆"><a href="#早期的记忆" class="headerlink" title="早期的记忆"></a>早期的记忆</h3><ul>
-<li>早期的回忆是特别重要的, 它们显示出个人的生活样式的根源, 及其最简单的表现方式</li>
-<li>各种记忆中最富有启发性的，是他开始述说故事的方式，以及他能够记起的最早事件<br>ps: 去加深了解一个人, 不妨和他聊聊最早的记忆.</li>
+<h3 id="cache和persist区别"><a href="#cache和persist区别" class="headerlink" title="cache和persist区别"></a>cache和persist区别</h3><ul>
+<li><code>cache()</code>底层就是直接调用的<code>persist()</code>方法，设置的就是默认的<code>MEMORY_ONLY</code>存储级别</li>
+<li><code>persist()</code>方法可以通过传递一个 StorageLevel 对象来设置缓存的存储级别</li>
 </ul>
-<h3 id="梦"><a href="#梦" class="headerlink" title="梦"></a>梦</h3><ul>
-<li>梦是想要找出问题解决办法的企图，它们显露出个人勇气的丧失</li>
-<li>梦本身并没有什么重要性, 重要的是梦后面的潜伏思想</li>
-<li>梦是想在个人的生活样式和他当前的问题之间建立起联系，而又不愿意对生活样式提出新要求的一种企图</li>
-<li>在梦里，我们欺骗着自己，每一个梦都是自我陶醉和自我催眠，他的全部目的就是引起一种让我们准备应付某种问题的心境</li>
-<li>在人类的心灵样式中，已经预存有执行生活样式，并使之固定和加强的各种方法，最重要的方法之一就是激发起心境的能力</li>
+<h2 id="checkpoint机制"><a href="#checkpoint机制" class="headerlink" title="checkpoint机制"></a>checkpoint机制</h2><p>分布式环境中难免因为网络，存储等原因出现计算失败的情况，为了避免计算失败后从头开始计算的大量开销，可以利用checkpoint机制保存计算过程中的信息，这样作业失败后直接从checkpoint点重新计算即可，提高效率</p>
+<ul>
+<li>当RDD的action算子触发计算结束后会执行checkpoint</li>
+<li>在spark streaming中每generate一个batch的RDD也会触发checkpoint操作</li>
+<li>task计算失败的时候会从checkpoint读取数据进行计算</li>
 </ul>
-<h3 id="家庭和学校的影响"><a href="#家庭和学校的影响" class="headerlink" title="家庭和学校的影响"></a>家庭和学校的影响</h3><ul>
-<li>在孩子们成长的过程之中，有一件非常重要的事情，就是让他们知道家庭是社会的一个单位，在家庭之外还有许多值得信赖的人和朋友</li>
-<li>在教育过程中，我们应该全力设法增强儿童的勇气和信心，并帮他消除由于他对生活的解释而为自己的能力订下的各种限制</li>
+<h3 id="checkpoint的具体实现"><a href="#checkpoint的具体实现" class="headerlink" title="checkpoint的具体实现"></a>checkpoint的具体实现</h3><ul>
+<li><p><code>LocalRDDCheckpointData</code>：临时存储在本地executor的磁盘和内存上（不能仅使用内存，因为内存的eviction机制可能造成data loss）。该实现的特点是比较快，适合lineage信息需要经常被删除的场景（如GraphX），可容忍executor挂掉。</p>
+</li>
+<li><p><code>ReliableRDDCheckpointData</code>：存储在外部可靠存储（如hdfs），可以达到容忍driver 挂掉情况。虽然效率没有存储本地高，但是容错级别最好</p>
+</li>
 </ul>
+<h3 id="缓存和checkpoint区别"><a href="#缓存和checkpoint区别" class="headerlink" title="缓存和checkpoint区别"></a>缓存和checkpoint区别</h3><ul>
+<li>缓存会把RDD的所有依赖关系一并缓存下来，因为如果某个节点挂了，缓存在内存中的数据就会丢失，这个时候需要通过依赖关系重新计算</li>
+<li>checkpoint是将RDD的分区数据持久化存储起来，是多副本可靠存储，因此不需要保存依赖关系。不过checkpoint是需要把 job 重新从头算一遍， 所以最好先cache一下，可以提升性能</li>
+</ul>
+<p><strong>详细原理参考</strong>:</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/54327668" target="_blank" rel="noopener">深入浅出Spark的Checkpoint机制</a></li>
+<li><a href="https://www.jianshu.com/p/653ebabc8f87" target="_blank" rel="noopener">spark源码分析之Checkpoint的过程</a></li>
+</ol>
 
         </div>
 
@@ -253,7 +269,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://cjwdream.top/2019/10/13/读书笔记-《自卑与超越》/">http://cjwdream.top/2019/10/13/读书笔记-《自卑与超越》/</a></span>
+                        <span><a href="http://cjwdream.top/2019/02/19/Spark-Caching-and-Checkpoint-Mechanism/">http://cjwdream.top/2019/02/19/Spark-Caching-and-Checkpoint-Mechanism/</a></span>
                     </p>
                 
                 
@@ -272,7 +288,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/读书笔记/"># 读书笔记</a>
+                        <a href="/tags/Spark/"># Spark</a>
                     
                         
                 </span>
@@ -285,10 +301,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/11/05/Spark进阶-DAGSchduler分析/">Spark进阶-DAGSchduler分析</a>
+                <a class="prev" rel="prev" href="/2019/03/02/Livy-Introduction/">Livy系列-基于Spark的REST服务Livy简介</a>
             
             
-            <a class="next" rel="next" href="/2019/10/09/搭建博客记录/">搭建博客记录</a>
+            <a class="next" rel="next" href="/2019/02/14/Spark基础-RDD总结/">Spark基础-RDD总结</a>
             
         </section>
 
