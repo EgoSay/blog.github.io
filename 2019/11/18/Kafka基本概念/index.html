@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.9k</font>
+						<font color="#2d96bd">3.1k</font>
 					</span>
                     
                 </div>
@@ -246,7 +246,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --describe --zookeeper hadoop2:2181</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>消费者列表查询</li>
+<li>topic列表查询</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/kafka-topics.sh --zookeeper hadoop2:2181 --list</span><br></pre></td></tr></table></figure>
 
@@ -285,13 +285,13 @@
 </li>
 <li><p><code>retries</code><br>生产者可以重发消息的次数</p>
 </li>
-<li><p><code>batch.size</code><br>当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里一起发送，该参数指定了一个批次可以使用的内存大小, 按照字节数计算(而不是消息个数). 不过批次没满的时候如果达到了 <code>linger.ms</code> 设置的上限也会把批次发送出去</p>
+<li><p><code>batch.size</code><br>当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里一起发送，该参数指定了一个批次可以使用的内存大小, 按照字节数计算(而不是消息个数). 不过批次没满的时候如果达到了 <code>linger.ms</code> 设置的上限也会把批次发送出去 </p>
 </li>
 <li><p><code>linger.ms</code><br>指定生产者在发送批次之前的等待时间, 配合<code>batch.size</code>设置</p>
 </li>
 <li><p><code>client.id</code><br>消息来源的识别标志</p>
 </li>
-<li><p><code>max.in.flight.requests.per.connection</code><br>指定了生产者在收到服务器响应之前可以发送多少个消息。它的值越高，就会占用<br>越多的内存，不过也会提升吞吐量。把它设为 1 可以保证消息是按照发送的顺序写入服务<br>器的，即使发生了重试</p>
+<li><p><code>max.in.flight.requests.per.connection</code><br>指定了生产者在收到服务器响应之前可以发送多少个消息。它的值越高，就会占用越多的内存，不过也会提升吞吐量。把它设为 1 可以保证消息是按照发送的顺序写入服务器的，即使发生了重试</p>
 </li>
 <li><p><code>超时时间配置</code></p>
 <ul>
@@ -330,20 +330,50 @@
 </li>
 </ol>
 <h2 id="五、Kafka消息事务"><a href="#五、Kafka消息事务" class="headerlink" title="五、Kafka消息事务"></a>五、Kafka消息事务</h2><h3 id="消息投递语义"><a href="#消息投递语义" class="headerlink" title="消息投递语义"></a>消息投递语义</h3><ul>
-<li>At-most-once（最多一次）</li>
-<li>At-least-once（最少一次）</li>
-<li>Exactly-once（正好一次）</li>
+<li>At-most-once（最多一次）: 可能出现消息丢失的情况</li>
+<li>At-least-once（最少一次）: 可能出现消息重复的情况</li>
+<li>Exactly-once（正好一次）: 理想的语义实现，但实现难度较高</li>
 </ul>
-<h3 id="事务保证"><a href="#事务保证" class="headerlink" title="事务保证"></a>事务保证</h3><ul>
-<li>内部重试问题， 比如Procedure幂等处理</li>
-<li>多分区原子写入</li>
-<li>避免僵尸实例</li>
+<h3 id="灾难场景分析"><a href="#灾难场景分析" class="headerlink" title="灾难场景分析"></a>灾难场景分析</h3><p><strong>Broker失败</strong><br>Kafka有自己的备份机制，保证消息写入leader replica成功后会冗余n份，同步到其他replica，所以理论上可以容忍n-1个broker节点宕机</p>
+<p><strong>Producer 到 Broker的RPC失败</strong><br>Kafka的消息可靠性是基于producer接收到broker的ack确认信息为准的，但是Broker在消息已经写入但还未返回ack确认信息之前就可能会发生故障，也可能在消息被写入topic之前就宕机了，因为producer端无法知道失败的原因，只能尝试重发消息，因此某些下游场景可能就会存在消息乱序或者consumer重复消费的情况</p>
+<p><strong>客户端失败</strong><br>客户端也可能存在永久宕机或者暂时性心跳丢失的情况，追求正确的性的话，broker和consumer应该丢弃从zombie producer发送的消息。同时新的客户端实例启动后它需要能从失败实例的任何状态中恢复，并从安全点(safe checkpoint)开始处理，这需要消费的偏移量位置和实际产生的消息输出保持同步</p>
+<h3 id="Kafka的Exactly-once语义保证"><a href="#Kafka的Exactly-once语义保证" class="headerlink" title="Kafka的Exactly-once语义保证"></a>Kafka的Exactly-once语义保证</h3><h4 id="幂等-partition内部的exactly-once语义保证"><a href="#幂等-partition内部的exactly-once语义保证" class="headerlink" title="幂等: partition内部的exactly-once语义保证"></a>幂等: partition内部的exactly-once语义保证</h4><p>幂等是指执行多次同样的操作得到的结果是一致的， <code>Producer的send()</code>操作现在就是幂等的。在任何导致producer重试的情况下，相同的消息如果被producer发送多次，也只会写入一次。需要修改broker的配置: <code>enable.idempotence = true</code>开启此功能</p>
+<p><strong>原理</strong>，类似于TCP中可靠传输的累积确认机制实现:<br><code>Producer</code>中每个RecordBatch都有一个单调递增的seq; <code>Broker</code>上每个topic也会维护<code>pid-seq</code>的映射，并且每Commit都会更新<code>lastSeq</code>。这样recordBatch到来时，broker会先检查RecordBatch再保存数据：如果batch中 <code>baseSeq(第一条消息的seq)</code>比Broker维护的序号<code>(lastSeq)</code>大1，则保存数据，否则将其丢弃:</p>
+<ul>
+<li>如果大1以上，说明中间有数据尚未写入，此时Broker拒绝此消息，Producer抛出<code>InvalidSequenceNumber</code>。解决了前一条消息发送失败，后一条消息发送成功，前一条消息重试后成功，造成的数据乱序问题</li>
+<li>如果小于等于Broker维护的序号，说明是重复消息，Broker直接丢弃该消息，Producer抛出<code>DuplicateSequenceNumber</code></li>
 </ul>
+<h4 id="事务性保证-跨partition分区的原子操作"><a href="#事务性保证-跨partition分区的原子操作" class="headerlink" title="事务性保证: 跨partition分区的原子操作"></a>事务性保证: 跨partition分区的原子操作</h4><p>Kafka提供事务API对消息进行跨partition分区的原子性写操作:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">producer.initTransactions();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  producer.beginTransaction();</span><br><span class="line">  producer.send(record1);</span><br><span class="line">  producer.send(record2);</span><br><span class="line">  producer.commitTransaction();</span><br><span class="line">&#125; <span class="keyword">catch</span>(ProducerFencedException e) &#123;</span><br><span class="line">  producer.close();</span><br><span class="line">&#125; <span class="keyword">catch</span>(KafkaException e) &#123;</span><br><span class="line">  producer.abortTransaction();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>引入<code>Transaction ID</code>和<code>epoch</code>, Transaction ID与PID可能一一对应，区别在于Transaction ID由用户提供，而PID是Kafka内部实现的，对用户透明, 可以保证:</p>
+<ul>
+<li><p><code>跨Session的数据幂等发送</code>: 当具有相同Transaction ID的新的Producer实例被创建且工作时，<code>epoch</code>会单调递增，由于旧的Producer的epoch比新Producer的epoch小，旧的且拥有相同Transaction ID的Producer将不再工作</p>
+</li>
+<li><p><code>跨Session的事务恢复</code>: 如果某个应用实例宕机，新的实例可以保证任何未完成的旧的事务要么Commit要么Abort，使得新实例从一个正常状态开始工作</p>
+</li>
+</ul>
+<p>从Consumer的角度来看，事务保证会相对弱一些。尤其是不能保证所有被某事务Commit过的所有消息都被一起消费，因为：</p>
+<ul>
+<li>对于压缩的Topic而言，同一事务的某些消息可能被其它版本覆盖</li>
+<li>事务包含的消息可能分布在多个Segment中（即使在同一个Partition内），当老的Segment被删除时，该事务的部分数据可能会丢失</li>
+<li>Consumer在一个事务内可能通过seek方法访问任意Offset的消息，从而可能丢失部分消息</li>
+<li>Consumer可能并不需要消费某一事务内的所有Partition，因此它将永远不会读取组成该事务的所有消息</li>
+</ul>
+<h4 id="开发实现思路"><a href="#开发实现思路" class="headerlink" title="开发实现思路"></a>开发实现思路</h4><p>自定义offset管理, 需要保证对消息的处理和offset偏移量在同一个事务中，例如在消息处理的数据写入到MySQL的同时更新此时的消息offset消息偏移量</p>
+<p><strong>实现:</strong></p>
+<ol>
+<li>设置<code>enable.auto.commit = false</code>, 关闭消息偏移量自动提交</li>
+<li>处理消息的同时将offset消息偏移量保存，比如保存到MySQL</li>
+<li>当partition分区发生变化的时候可能会发生分区再平衡，需要自定义类实现<code>ConsumerRebalanceListener</code>接口捕捉事件变化，对偏移量进行处理</li>
+<li>在重新完成分配分区后，消费者开始读取消息之前 通过调用<code>seek(TopicPartition, long)</code>方法，移动到指定的分区的偏移量位置</li>
+</ol>
 <h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
 <li><a href="https://blog.csdn.net/laojiaqi/article/details/79034798" target="_blank" rel="noopener">Kafka client 消息接收的三种模式</a></li>
 <li><a href="https://www.jianshu.com/p/5d889a67dcd3" target="_blank" rel="noopener">Kafka 0.11.0.0 是如何实现 Exactly-once 语义的</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/42046847" target="_blank" rel="noopener">Kafka 事务特性分析</a></li>
 <li><a href="https://www.jianshu.com/p/d3e963ff8b70" target="_blank" rel="noopener">Kafka详解</a></li>
+<li><a href="http://www.jasongj.com/kafka/transaction/" target="_blank" rel="noopener">Kafka设计解析（八）- Exactly Once语义与事务机制原理</a></li>
 </ul>
 
         </div>
@@ -408,7 +438,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">126.4k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">127.6k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
