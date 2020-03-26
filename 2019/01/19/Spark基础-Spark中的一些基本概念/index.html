@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">582</font>
+						<font color="#2d96bd">598</font>
 					</span>
                     
                 </div>
@@ -207,7 +207,7 @@
 
         <div class="post-content">
             <h2 id="Spark中的基本概念"><a href="#Spark中的基本概念" class="headerlink" title="Spark中的基本概念"></a>Spark中的基本概念</h2><h3 id="RDD"><a href="#RDD" class="headerlink" title="RDD"></a>RDD</h3><p><code>Resilient Distributed Dataset</code>, 弹性分布式数据集, Spark中基本的数据类型，还有<code>DataFrame</code> 以及 <code>DataSet</code></p><p><br>        三者的关系：<br>    - <code>RDD</code>: 最基本的数据类型, 类比于数据库中列的概念, 即单个字段的一列数据<code>DataFrame</code> 和 <code>Dataset</code> 也是基于 RDD 提供的<br>    - <code>DataFrame</code>: <code>DataFrame[Row]</code>, 分布式的<code>Row</code>的集合, 类比于数据库中的一张表, 有很多行数据(Row), 每一行的数据又有许多不同字段的值<br>    - <code>DataSet</code>: 相当于<code>DataFrame</code>的一个特例, 特例在于<code>DataSet</code>中存储的是强类型的数据, 不再是<code>Row</code></p>
-<h3 id="算子"><a href="#算子" class="headerlink" title="算子"></a>算子</h3><p>计算的类型, 分为<code>Transformation</code>和<code>Action</code>两种算子, 这就涉及到惰性运算的概念了, 参考<a href="http://allenn.cn/articles/2016-10/2016-10-26-spark-is-lazy/" target="_blank" rel="noopener">Spark中的惰性运算</a></p><p></p>
+<h3 id="算子"><a href="#算子" class="headerlink" title="算子"></a>算子</h3><p>计算的类型, 分为<code>Transformation</code>和<code>Action</code>两种算子, 这就涉及到惰性运算的概念了, 参考<a href="http://allenn.cn/articles/2016-10/2016-10-26-spark-is-lazy/" target="_blank" rel="noopener">Spark中的惰性运算</a></p><p>, 底层区别是执行<code>Action</code>算子会调用 <code>runJob()</code>方法</p>
 <ul>
 <li><code>Transformation</code>算子主要包括：map、mapPartitions、flatMap、filter、union、groupByKey、repartition、cache等</li>
 <li><code>Action</code>算子主要包括：reduce、collect、show、count、foreach、saveAsTextFile等<p><br>注意: 如果声明了数据需要cache或者persist，但在action操作前释放掉的话，该数据实际上并没有被缓存</p></li>
