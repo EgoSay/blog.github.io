@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">381</font>
+						<font color="#2d96bd">1.7k</font>
 					</span>
                     
                 </div>
@@ -206,15 +206,71 @@
         </header>
 
         <div class="post-content">
-            <h1 id="Flink基础"><a href="#Flink基础" class="headerlink" title="Flink基础"></a>Flink基础</h1><h2 id="Flink时间语义"><a href="#Flink时间语义" class="headerlink" title="Flink时间语义"></a>Flink时间语义</h2><h3 id="处理时间-Processing-Time"><a href="#处理时间-Processing-Time" class="headerlink" title="处理时间(Processing Time)"></a>处理时间(Processing Time)</h3><p>Process Time 模拟我们真实世界的时间,通过直接去调用本地机器的时间获取</p>
-<h3 id="事件时间-Event-Time"><a href="#事件时间-Event-Time" class="headerlink" title="事件时间(Event Time)"></a>事件时间(Event Time)</h3><p>Event Time 是数据世界的时间，根据每一条处理记录所携带的时间戳来判定</p>
-<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><ul>
+            <h1 id="Flink基础"><a href="#Flink基础" class="headerlink" title="Flink基础"></a>Flink基础</h1><blockquote>
+<p>内容参考自:</p>
+<ol>
+<li><a href="https://mp.weixin.qq.com/s/oBmRhRA-52CLRLXp6sZwEw" target="_blank" rel="noopener">Apache Flink 零基础入门（一）：基础概念解析</a></li>
+</ol>
+</blockquote>
+<h2 id="有状态流式处理"><a href="#有状态流式处理" class="headerlink" title="有状态流式处理"></a>有状态流式处理</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>传统批次处理: 持续收集数据，以时间作为批次划分的依据，周期性执行批次运算，这样可能存在的场景问题:</p>
+<ul>
+<li>假如一个小时作为一个批次划分的依据，需要统计特定事件转换次数，开始转换发生在第58分钟，结束转换在下一个小时的第7分钟，那么如何完成跨批次的数据统计？</li>
+<li>数据从产生到被接收中间耗时不一定，可能某个事件发生早于A，但到达时间晚于A，如何处理这种接收到的时间顺序颠倒问题？</li>
+</ul>
+<p>理想方法就是:</p>
+<ul>
+<li>引入<code>状态(State)</code>机制，可以累积状态和维护状态，累积状态代表着过去历史中接受过的所有历史事件，对输出结果有影响</li>
+<li><code>Time时间机制</code>: 有机制可以做到对数据完整性的操作，比如设定只有某个时间段上的数据全部都接收到后，再计算输出结果</li>
+</ul>
+<p>这就是所谓的有状态流式处理</p>
+<h3 id="有状态流式处理的挑战"><a href="#有状态流式处理的挑战" class="headerlink" title="有状态流式处理的挑战"></a>有状态流式处理的挑战</h3><ul>
+<li>状态容错(State Fault Tolerance):</li>
+<li>状态维护(State Management):</li>
+<li>Event-time处理 (Event-time processing):</li>
+<li>状态保存与迁移(Savepoints and Job Migration):</li>
+</ul>
+<h4 id="状态容错"><a href="#状态容错" class="headerlink" title="状态容错"></a>状态容错</h4><p><strong>简单场景的精确一次(Exactly-once)容错保证:</strong><br>无限流的数据进入，但后面是单一Process的计算，这种情况下如果要确保 Process 产生精确一次的状态容错，每处理完一笔数据，更改完状态后进行一次快照，快照包含在队列中并与相应的状态进行对比，完成一致的快照，就能确保精确一次</p>
+<h5 id="分布式状态容错"><a href="#分布式状态容错" class="headerlink" title="分布式状态容错"></a>分布式状态容错</h5><ul>
+<li><p>在分布式场景中，多个节点计算进行本地状态的修改，但只产生一个<code>Global consistent snapshot</code>(全域一致性的快照)</p>
+</li>
+<li><p>基于<code>checkpoint</code>检查点机制进行容错恢复</p>
+</li>
+<li><p>基于<code>simple lamport</code> 演算法机制的延伸实现<code>分布式快照</code>，Flink可以做到再不中断计算的状态下持续完成<code>Global consistent snapshot</code>(全域一致性的快照)。大致方法就是Flink会在数据流中插入 checkpoint barrier标志位，后续的Operator在数据流中收到checkpoint barrier N后就会将自己的状态保存，这样从最开始的数据源到计算完成后都建立了这次的checkpoint保存状态，后面还有checkpoint barrier N+1、N+2也同时在数据流中同步进行，这样就可以做到在不阻挡运算的状况下持续地产生Checkpoint</p>
+</li>
+</ul>
+<h4 id="状态维护"><a href="#状态维护" class="headerlink" title="状态维护"></a>状态维护</h4><p>Flink目前支持的方式有:</p>
+<ul>
+<li><p><code>JVM Heap存储状态</code>: 适合状态量不大的情况下，因为直接存储在JVM heap上，当需要读取状态时，是直接用Java object进行的读写，不需要序列化。但当 Checkpoint 需要将每一个运算值的本地状态放入 Distributed Snapshots 的时候，就需要进行序列化了</p>
+</li>
+<li><p><code>RocksDB存储状态</code>: 一种 out of core 的状态后端。在 Runtime 的本地状态后端让使用者去读取状态的时候会经过磁盘，相当于将状态维护在磁盘里，与之对应的代价可能就是每次读取状态时，都需要经过序列化和反序列化的过程,性能可能相对来说差一点</p>
+</li>
+</ul>
+<h4 id="Event-time处理"><a href="#Event-time处理" class="headerlink" title="Event-time处理"></a>Event-time处理</h4><ul>
+<li><code>处理时间(Processing Time)</code>: Process Time 相当于事件到达处理的时间，是不一定的，比如网络原因这个时间都会变化</li>
+<li><code>事件时间(Event Time)</code>: Event Time 就是时间实际发生的时间，根据每一条处理记录所携带的时间戳来判定，这个是唯一且不变的</li>
+</ul>
+<p><strong>对比</strong></p>
+<ul>
 <li>Processing Time 处理起来更加的简单，而 Event Time 要更麻烦一些</li>
 <li>使用 Processing Time 的时候，我们得到的处理结果（或者说流处理应用的内部状态）是不确定的。而因为 Flink 内部对 Event Time 做了各种保障，使用 Event Time 的情况下，无论重放数据多少次，都能得到一个相对确定可重现的结果</li>
-<li>判断应该使用 Processing Time 还是 Event Time 的时候，可以遵循一个原则：当你的应用遇到某些问题要从上一个 checkpoint 或者 savepoint 进行重放，是不是希望结果完全相同。如果希望结果完全相同，就只能用 Event Time；如果接受结果不同，则可以用 Processing Time。Processing Time 的一个常见的用途是，我们要根据现实时间来统计整个系统的吞吐，比如要计算现实时间一个小时处理了多少条数据，这种情况只能使用 Processing Time<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3></li>
+<li>判断应该使用 Processing Time 还是 Event Time 的时候，可以遵循一个原则：当你的应用遇到某些问题要从上一个 checkpoint 或者 savepoint 进行重放，是不是希望结果完全相同。如果希望结果完全相同，就只能用 Event Time；如果接受结果不同，则可以用 Processing Time。Processing Time 的一个常见的用途是，我们要根据现实时间来统计整个系统的吞吐，比如要计算现实时间一个小时处理了多少条数据，这种情况只能使用 Processing Time</li>
+</ul>
+<p><strong>参考链接</strong></p>
+<ul>
 <li><a href="https://cloud.tencent.com/developer/article/1509642" target="_blank" rel="noopener">Flink进阶- Time深度解析</a></li>
 </ul>
-<h2 id="Flink-Window-详解"><a href="#Flink-Window-详解" class="headerlink" title="Flink Window 详解"></a>Flink Window 详解</h2><p>Flink 有 3 个内置 Window</p>
+<h4 id="状态保存与迁移"><a href="#状态保存与迁移" class="headerlink" title="状态保存与迁移"></a>状态保存与迁移</h4><p>基于Savepoint机制实现，Savepoint跟checkpoint类似，不同在于Savepoint是手动触发用于全局状态保存的，具体参考链接:<br><a href="https://zhuanlan.zhihu.com/p/79526638" target="_blank" rel="noopener">Flink实时计算-深入理解 Checkpoint和Savepoint</a></p>
+<h2 id="Flink基本概念"><a href="#Flink基本概念" class="headerlink" title="Flink基本概念"></a>Flink基本概念</h2><ul>
+<li><p><code>Streams</code>: 流，分为有限数据流与无限数据流，<code>unbounded stream</code> 是有始无终的数据流，即无限数据流；而 <code>bounded stream</code> 是限定大小的有始有终的数据集合，即有限数据流，二者的区别在于无限数据流的数据会随时间的推演而持续增加，计算持续进行且不存在结束的状态，相对的有限数据流数据大小固定，计算最终会完成并处于结束的状态。</p>
+</li>
+<li><p><code>State</code>: 状态是计算过程中的数据信息，在容错恢复和 Checkpoint 中有重要的作用，流计算在本质上是 Incremental Processing，因此需要不断查询保持状态；另外，为了确保 Exactly- once 语义，需要数据能够写入到状态中；而持久化存储，能够保证在整个分布式系统运行失败或者挂掉的情况下做到 Exactly- once，这是状态的另外一个价值。</p>
+</li>
+<li><p><code>Time</code>: 分为 <code>Event time</code>、<code>Ingestion time</code>、<code>Processing time</code>，Flink 的无限数据流是一个持续的过程，时间是我们判断业务状态是否滞后，数据处理是否及时的重要依据。</p>
+</li>
+<li><p><code>API</code>: API 通常分为三层，由上而下可分为 <code>SQL / Table API</code>、<code>DataStream API</code>、<code>ProcessFunction</code> 三层，API 的表达能力及业务抽象能力都非常强大，但越接近 SQL 层，表达能力会逐步减弱，抽象能力会增强，反之，ProcessFunction 层 API 的表达能力非常强，可以进行多种灵活方便的操作，但抽象能力也相对越小</p>
+</li>
+</ul>
+<h2 id="Flink-Window"><a href="#Flink-Window" class="headerlink" title="Flink Window"></a>Flink Window</h2><p>Flink 有 3 个内置 Window</p>
 <ul>
 <li>以事件数量驱动的Count Window</li>
 <li>以会话间隔驱动的Session Window</li>
@@ -283,7 +339,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">127.8k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">129.1k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
