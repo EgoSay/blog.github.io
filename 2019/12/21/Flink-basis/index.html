@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.7k</font>
+						<font color="#2d96bd">1.8k</font>
 					</span>
                     
                 </div>
@@ -246,8 +246,9 @@
 </li>
 </ul>
 <h4 id="Event-time处理"><a href="#Event-time处理" class="headerlink" title="Event-time处理"></a>Event-time处理</h4><ul>
-<li><code>处理时间(Processing Time)</code>: Process Time 相当于事件到达处理的时间，是不一定的，比如网络原因这个时间都会变化</li>
-<li><code>事件时间(Event Time)</code>: Event Time 就是时间实际发生的时间，根据每一条处理记录所携带的时间戳来判定，这个是唯一且不变的</li>
+<li><code>处理时间(Processing Time)</code>: Process Time 相当于事件到达然后开始进行处理的时间，是不一定的，比如网络原因这个时间都会变化</li>
+<li><code>事件时间(Event Time)</code>: Event Time 就是事件实际发生的时间，根据每一条处理记录所携带的时间戳来判定，这个是唯一且不变的</li>
+<li><code>接入时间（Ingestion Time）</code>: 是指事件在 source 运算符中进入 Flink 数据流的时间</li>
 </ul>
 <p><strong>对比</strong></p>
 <ul>
@@ -270,8 +271,7 @@
 <li><p><code>API</code>: API 通常分为三层，由上而下可分为 <code>SQL / Table API</code>、<code>DataStream API</code>、<code>ProcessFunction</code> 三层，API 的表达能力及业务抽象能力都非常强大，但越接近 SQL 层，表达能力会逐步减弱，抽象能力会增强，反之，ProcessFunction 层 API 的表达能力非常强，可以进行多种灵活方便的操作，但抽象能力也相对越小</p>
 </li>
 </ul>
-<h2 id="Flink-Window"><a href="#Flink-Window" class="headerlink" title="Flink Window"></a>Flink Window</h2><p>Flink 有 3 个内置 Window</p>
-<ul>
+<h2 id="Flink-Window"><a href="#Flink-Window" class="headerlink" title="Flink Window"></a>Flink Window</h2><ul>
 <li>以事件数量驱动的Count Window</li>
 <li>以会话间隔驱动的Session Window</li>
 <li>以时间驱动的Time Window</li>
@@ -339,7 +339,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">129.1k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">129.5k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
