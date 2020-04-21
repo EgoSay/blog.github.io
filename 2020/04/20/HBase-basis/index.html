@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">1.5k</font>
+						<font color="#2d96bd">1.7k</font>
 					</span>
                     
                 </div>
@@ -279,6 +279,16 @@
 <h3 id="Column-列"><a href="#Column-列" class="headerlink" title="Column(列)"></a>Column(列)</h3><p>HBase 中的列由列族和列限定符组成，它们由 <code>:</code>(冒号) 进行分隔，即一个完整的列名应该表述为 <code>列族名 ：列限定符</code></p>
 <h3 id="Cell"><a href="#Cell" class="headerlink" title="Cell"></a>Cell</h3><p>HBase 中通过 <code>row key</code> 和 <code>column</code> 确定的为一个存储单元称为 <code>Cell</code>,是行，列族和列限定符的组合，并包含值和时间戳</p>
 <h3 id="TimeStamp-时间戳"><a href="#TimeStamp-时间戳" class="headerlink" title="TimeStamp(时间戳)"></a>TimeStamp(时间戳)</h3><p>每个 <code>Cell</code> 都保存着同一份数据的多个版本。版本<code>通过时间戳来索引</code>，时间戳的类型是 64 位整型，时间戳可以由 HBase 在数据写入时自动赋值，也可以由客户显式指定。每个 <code>Cell</code> 中，不同版本的数据按照时间戳倒序排列，即最新的数据排在最前面</p>
+<h3 id="Rowkey设计原则"><a href="#Rowkey设计原则" class="headerlink" title="Rowkey设计原则"></a>Rowkey设计原则</h3><blockquote>
+<p>参考: <a href="https://mp.weixin.qq.com/s/z8daWk2ozPDp6MaunAvXpw" target="_blank" rel="noopener">设计HBase RowKey需要注意的二三事</a></p>
+</blockquote>
+<p><strong>打散Rowkey</strong><br>HBase中的行是按照RowKey字典序排序的。这对Scan操作非常友好，因为RowKey相近的行总是存储在相近的位置，顺序读的效率比随机读要高。但是，如果大量的读写操作总是集中在某个RowKey范围，那么就会造成Region热点，拖累RegionServer的性能。因此，要适当地将RowKey打散</p>
+<p><strong>控制RowKey长度</strong></p>
+<ul>
+<li>在HBase的底层存储HFile中，RowKey是KeyValue结构中的一个域。假设RowKey长度100B，那么1000万条数据中，只算RowKey就占用掉将近1G空间，会影响HFile的存储效率</li>
+<li>HBase中设计有MemStore和BlockCache，分别对应列族/Store级别的写入缓存，和RegionServer级别的读取缓存。如果RowKey过长，缓存中存储数据的密度就会降低，影响数据落地或查询效率</li>
+</ul>
+<p><strong>保证RowKey唯一性</strong></p>
 <h2 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h2><h3 id="Regions"><a href="#Regions" class="headerlink" title="Regions"></a>Regions</h3><p><img src="https://i.loli.net/2020/04/20/aX2bGhFlMQf1Btd.png" alt="image.png"></p>
 <ul>
 <li>HBase Table 中的所有行按照 <code>Row Key</code> 的字典序排列。HBase Tables <strong>通过行键的范围</strong> (row key range) 被水平切分成多个 <code>Region</code>, 一个 <code>Region</code> 包含了在 start key 和 end key 之间的所有行</li>
@@ -295,7 +305,7 @@
 <li><strong>WAL(Write Ahead Log，预写日志)</strong>：用于存储尚未进持久化存储的数据记录，以便在发生故障时进行恢复。</li>
 <li><strong>BlockCache</strong>：读缓存。它将频繁读取的数据存储在内存中，如果存储不足，它将按照 <code>最近最少使用原则</code> 清除多余的数据。</li>
 <li><strong>MemStore</strong>：写缓存。它存储尚未写入磁盘的新数据，并会在数据写入磁盘之前对其进行排序。每个 Region 上的每个列族都有一个 MemStore。</li>
-<li><strong>HFile</strong> ：将行数据按照 Key\Values 的形式存储在文件系统上</li>
+<li><strong>StoreFile</strong> ：StoreFile底层是<code>HFile</code>，HFile是Hadoop的二进制格式文件, 将行数据按照 Key\Values 的形式存储在文件系统上</li>
 </ul>
 <p>Region Server 存取一个子表时，会创建一个 Region 对象，然后对表的每个列族创建一个 <code>Store</code> 实例，每个 <code>Store</code> 会有 0 个或多个 <code>StoreFile</code> 与之对应，每个 <code>StoreFile</code> 则对应一个 <code>HFile</code>，HFile 就是实际存储在 HDFS 上的文件</p>
 <p><img src="https://i.loli.net/2020/04/20/iGh2HxwX4nvkgJU.png" alt="image.png"></p>
@@ -388,7 +398,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">131k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">131.3k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
