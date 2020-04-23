@@ -111,6 +111,68 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
 
     
     <article class="post-wrap">
@@ -136,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">0</font>
+						<font color="#2d96bd">1.3k</font>
 					</span>
                     
                 </div>
@@ -144,7 +206,72 @@
         </header>
 
         <div class="post-content">
-            
+            <h1 id="HBase系列-HBase读写流程"><a href="#HBase系列-HBase读写流程" class="headerlink" title="HBase系列-HBase读写流程"></a>HBase系列-HBase读写流程</h1><blockquote>
+<p>内容整理自:</p>
+<ul>
+<li><a href="http://hbasefly.com/2016/03/23/hbase_writer/" target="_blank" rel="noopener">HBase － 数据写入流程解析</a></li>
+<li><a href="http://hbasefly.com/2016/12/21/hbase-getorscan/" target="_blank" rel="noopener">HBase原理－数据读取流程解析</a></li>
+</ul>
+</blockquote>
+<h2 id="写数据流程"><a href="#写数据流程" class="headerlink" title="写数据流程"></a>写数据流程</h2><h3 id="客户端写流程"><a href="#客户端写流程" class="headerlink" title="客户端写流程"></a>客户端写流程</h3><ol>
+<li><p>用户提交put请求后，HBase客户端会根据设置<code>autoflush=true/false(默认为true)</code>判断是否直接提交给服务器进行处理，如果为<code>false</code>则会将请求添加到<code>本地buffer</code>, 超过一定阈值（默认为2M，可以通过配置文件配置）之后才会提交。这样可以提高写入性能，但会存在因为客户端崩溃导致请求丢失的情况</p>
+</li>
+<li><p>在提交之前，HBase会在<code>元数据表.meta.</code>中根据rowkey找到它们归属的region server，这个定位的过程是通过<code>HConnection的locateRegion</code>方法获得的。如果是批量请求的话还会把这些rowkey按照<code>HRegionLocation</code>分组，每个分组可以对应一次RPC请求</p>
+</li>
+<li><p>HBase会为每个HRegionLocation构造一个远程RPC请求<code>MultiServerCallable&lt;Row&gt;</code>，然后通过<code>rpcCallerFactory.&lt;MultiResponse&gt; newCaller()</code>执行调用，忽略掉失败重新提交和错误处理，客户端的提交操作到此结束</p>
+</li>
+</ol>
+<h3 id="服务器端写流程"><a href="#服务器端写流程" class="headerlink" title="服务器端写流程"></a>服务器端写流程</h3><p>服务器端Region Server接收到客户端的写入请求后，首先会反序列化为<code>Put对象</code>, 然后检查<code>region是否是只读</code>、<code>memstore大小是否超过blockingMemstoreSize</code>等检查操作，然后执行以下核心操作:<br><img src="https://i.loli.net/2020/04/21/JikFdTnyo1bQ7S3.png" alt="image.png"></p>
+<ol>
+<li><p><code>获取行锁、Region更新共享锁</code>： HBase中使用行锁保证对同一行数据的更新都是互斥操作，用以保证更新的原子性，要么更新成功，要么失败。</p>
+</li>
+<li><p><code>开始写事务</code>：<strong>获取write number，用于实现MVCC</strong>，实现数据的非锁定读，在保证读写一致性的前提下提高读取性能。</p>
+</li>
+<li><p><code>写缓存memstore</code>：HBase中每列族都会对应一个store，用来存储该列数据。每个store都会有个写缓存memstore，用于缓存写入数据。HBase并不会直接将数据落盘，而是先写入缓存，等缓存满足一定大小之后再一起落盘。</p>
+</li>
+<li><p><code>Append HLog</code>：HBase<strong>使用WAL机制</strong>保证数据可靠性，即首先写日志再写缓存，即使发生宕机，也可以通过恢复HLog还原出原始数据。该步骤就是将数据构造为WALEdit对象，然后顺序写入HLog中，此时不需要执行sync操作。0.98版本采用了新的写线程模式实现HLog日志的写入，可以使得整个数据更新性能得到极大提升。</p>
+</li>
+<li><p><code>释放行锁以及共享锁</code></p>
+</li>
+<li><p><code>Sync HLog</code>：HLog真正sync到HDFS，<strong>在释放行锁之后执行sync操作是为了尽量减少持锁时间，提升写性能</strong>。如果Sync失败，执行回滚操作将memstore中已经写入的数据移除。</p>
+</li>
+<li><p><code>结束写事务</code>：此时该线程的更新操作才会对其他读请求可见，更新才实际生效。</p>
+</li>
+<li><p><code>flush memstore</code>：当写缓存满64M之后，会启动flush线程将数据刷新到硬盘。当HBase中的memstore数据flush到磁盘的时候，就会形成一个storefile，当storefile的数量达到一定程度的时候，就需要将storefile文件进行<code>compaction操作</code>，<strong>Compact作用：合并文件、清除过期，多余版本数据、提高读写效率</strong></p>
+</li>
+</ol>
+<h3 id="WAL持久化等级"><a href="#WAL持久化等级" class="headerlink" title="WAL持久化等级"></a>WAL持久化等级</h3><ul>
+<li><code>SKIP_WAL</code>: 只写缓存，不写HLog，因为只用内存，性能很好，但容易丢失数据，不推荐</li>
+<li><code>ASYNC_WAL</code>: 异步将数据写入HLog日志中</li>
+<li><code>SYNC_WAL</code>: 同步将数据写入日志文件中，需要注意的是数据只是被写入文件系统中，并没有真正落盘</li>
+<li><code>FSYNC_WAL</code>: 同步将数据写入日志文件并强制落盘。最严格的日志写入等级，可以保证数据不会丢失，但是性能相对比较差</li>
+<li><code>USER_DEFALUT</code>: 默认如果用户没有指定持久化等级，HBase使用SYNC_WAL等级持久化数据</li>
+</ul>
+<p>用户可以通过客户端设置WAL持久化等级，代码：<code>put.setDurability(Durability. SYNC_WAL );</code></p>
+<h2 id="读流程"><a href="#读流程" class="headerlink" title="读流程"></a>读流程</h2><p>客户端首次读写 HBase 上数据的流程：</p>
+<ol>
+<li>客户端从 Zookeeper 获取 <code>META</code> 表所在的 Region Server；</li>
+<li>客户端访问 <code>META</code> 表所在的 Region Server，从 <code>META</code> 表中查询到访问行键所在的 Region Server，之后客户端将缓存这些信息以及 <code>META</code> 表的位置；</li>
+<li>客户端从行键所在的 Region Server 上获取数据。</li>
+</ol>
+<p>如果再次读取，客户端将从缓存中获取行键所在的 Region Server。这样客户端就不需要再次查询 <code>META</code> 表，除非 Region 移动导致缓存失效，这样的话，则将会重新查询并更新缓存。</p>
+<p>注：<code>META</code> 表是 HBase 中一张特殊的表，它保存了所有 Region 的位置信息，META 表自己的位置信息则存储在 ZooKeeper 上。</p>
+<p><img src="https://i.loli.net/2020/04/21/qKF6iCRjrAW3aGo.png" alt="-w816"></p>
+<blockquote>
+<p>更为详细读取数据流程参考：</p>
+<p><a href="http://hbasefly.com/2016/12/21/hbase-getorscan/" target="_blank" rel="noopener">HBase 原理－数据读取流程解析</a></p>
+<p><a href="http://hbasefly.com/2017/06/11/hbase-scan-2/" target="_blank" rel="noopener">HBase 原理－迟到的‘数据读取流程部分细节</a></p>
+</blockquote>
+<h3 id="HBase查询方式"><a href="#HBase查询方式" class="headerlink" title="HBase查询方式"></a>HBase查询方式</h3><ul>
+<li><p>全表查询：<code>scan tableName</code></p>
+</li>
+<li><p>基于rowkey的单行查询：<code>get tableName，&#39;1&#39;</code></p>
+</li>
+<li><p>基于rowkey的范围扫描：<code>scan tableName， {STARTROW=&gt;&#39;1&#39;，STOPROW=&gt;&#39;2&#39;}</code></p>
+</li>
+</ul>
+<p><strong>setCache()和setBatch()方法</strong><br>Cache设置了服务器一次返回的行数，而Batch设置了服务器一次返回的列数</p>
+
         </div>
 
         
@@ -205,7 +332,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">131.3k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">132.6k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
