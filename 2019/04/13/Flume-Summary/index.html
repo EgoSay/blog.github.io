@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">941</font>
+						<font color="#2d96bd">1.2k</font>
 					</span>
                     
                 </div>
@@ -227,6 +227,19 @@
 </ul>
 <p>内置<code>Memory Channel</code>，<code>JDBC Channel</code>，<code>Kafka Channel</code>，<code>File Channel</code> 等</p>
 <h3 id="Sink"><a href="#Sink" class="headerlink" title="Sink"></a>Sink</h3><p>Sink 的主要功能从 Channel 中读取 Event，并将其存入外部存储系统或将其转发到下一个 Source，成功后再从 Channel 中移除 Event。包含<code>HDFS Sink</code>，<code>Hive Sink</code>，<code>HBaseSinks</code>，<code>Avro Sink</code> 等</p>
+<h2 id="Flume事务"><a href="#Flume事务" class="headerlink" title="Flume事务"></a>Flume事务</h2><p>数据在传输到下个节点时(一般是批量数据)，假设接收节点出现异常，比方网络异常。则回滚这一批数据，因此有可能导致数据重发（是重发不是重复）。<br>同个节点内，Source写入数据到Channel,数据在一个批次内的数据出现异常，则不写入到Channel，已接收到的部分数据直接抛弃，靠上一个节点重发数据</p>
+<p>source -&gt; channel: <strong>put事务</strong><br>channel -&gt; sink: <strong>take事务</strong></p>
+<p><strong>put事务步骤：</strong></p>
+<ul>
+<li><code>doput</code> :先将批数据写入临时缓冲区putlist里面</li>
+<li><code>docommit</code>：去检查channel里面有没有空位置，如果有就传入数据，如果没有那么dorollback就把数据回滚到putlist里面。</li>
+</ul>
+<p><strong>take事务步骤：</strong></p>
+<ul>
+<li><code>dotake</code>：将数据读取到临时缓冲区takelist，并将数据传到hdfs上。</li>
+<li><code>docommit</code> :去判断数据发送是否成功，若成功那么清除临时缓冲区takelist<br>若不成功（比如hdfs系统服务器崩溃等）那么dorollback将数据回滚到channel里面</li>
+</ul>
+<p>参考链接: <a href="http://bigdatadecode.club/flume%E4%BA%8B%E5%8A%A1%E8%A7%A3%E6%9E%90.html" target="_blank" rel="noopener">flume事务解析</a></p>
 <h2 id="Flume-的可靠性"><a href="#Flume-的可靠性" class="headerlink" title="Flume 的可靠性"></a>Flume 的可靠性</h2><p>当节点出现故障时，日志能够被传送到其他节点上而不会丢失。Flume 提供了三种级别的可靠性保障，从强到弱依次分别为：</p>
 <ul>
 <li><code>end-to-end</code>: 收到数据agent首先将event 写到磁盘上，当数据传送成功后，再删除；如果数据发送失败，可以重新发送</li>
@@ -305,7 +318,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">132.6k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">132.9k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://cjwdream.top/2019/04/13/Flume-Summary/</loc>
+    <lastmod>2020-04-29</lastmod>
+  </url>  <url>
     <loc>http://cjwdream.top/2020/04/21/HBase-Read-Write/</loc>
     <lastmod>2020-04-22</lastmod>
   </url>  <url>
@@ -78,9 +81,6 @@
   </url>  <url>
     <loc>http://cjwdream.top/2019/04/15/Airflow-Overview/</loc>
     <lastmod>2020-02-24</lastmod>
-  </url>  <url>
-    <loc>http://cjwdream.top/2019/04/13/Flume-Summary/</loc>
-    <lastmod>2020-02-23</lastmod>
   </url>  <url>
     <loc>http://cjwdream.top/2019/03/10/Livy-Session/</loc>
     <lastmod>2020-02-22</lastmod>
