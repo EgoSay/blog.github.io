@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>sparkStreaming-Kafka | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">sparkStreaming-Kafka</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 30, 2020&nbsp;&nbsp;21:18:35</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">1.7k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Spark-Streaming-Kafka实战"><a href="#Spark-Streaming-Kafka实战" class="headerlink" title="Spark Streaming + Kafka实战"></a>Spark Streaming + Kafka实战</h1><blockquote>
+<p>内容整理自:</p>
+<ul>
+<li><a href="https://juejin.im/post/5c997d9e5188252da22514e6" target="_blank" rel="noopener">Spark streaming消费Kafka的正确姿势</a></li>
+<li><a href="https://spark.apache.org/docs/latest/streaming-kafka-0-8-integration.html" target="_blank" rel="noopener">Spark Streaming + Kafka Integration Guide</a></li>
+</ul>
+</blockquote>
+<h2 id="接收Kafka数据"><a href="#接收Kafka数据" class="headerlink" title="接收Kafka数据"></a>接收Kafka数据</h2><p>接收数据的方式有两种:</p>
+<ul>
+<li>利用Receiver接收数据</li>
+<li>直接从Kafka读取数据</li>
+</ul>
+<h3 id="利用Receiver接收数据"><a href="#利用Receiver接收数据" class="headerlink" title="利用Receiver接收数据"></a>利用Receiver接收数据</h3><p>从kafka接收来的数据会存储在spark的executor中，之后spark streaming提交的job会处理这些数据<br><img src="media/15875408018657/15876338371991.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import org.apache.spark.streaming.kafka.*;</span><br><span class="line"></span><br><span class="line"> JavaPairReceiverInputDStream&lt;String, String&gt; kafkaStream =</span><br><span class="line">     KafkaUtils.createStream(streamingContext,</span><br><span class="line">     [ZK quorum], [consumer group id], [per-topic number of Kafka partitions to consume]);</span><br></pre></td></tr></table></figure>
+
+<p><strong>需要注意的地方:</strong></p>
+<ul>
+<li><p>在Receiver的方式中，<code>Spark中的partition和kafka中的partition并不是相关的</code>，所以如果我们加大每个topic的partition数量，仅仅是增加线程来处理由单一Receiver消费的主题。但是这并没有增加Spark在处理数据上的并行度</p>
+</li>
+<li><p>对于不同的Group和topic我们可以使用<code>多个Receiver</code>创建不同的Dstream来并行接收数据，之后可以利用<code>union</code>来统一成一个Dstream</p>
+</li>
+<li><p>如果我们启用了Write Ahead Logs复制到文件系统如HDFS，那么storage level需要设置成 <code>StorageLevel.MEMORY_AND_DISK_SER</code>，也就是<code>KafkaUtils.createStream(..., StorageLevel.MEMORY_AND_DISK_SER)</code></p>
+</li>
+</ul>
+<h3 id="直接从kafka读取数据"><a href="#直接从kafka读取数据" class="headerlink" title="直接从kafka读取数据"></a>直接从kafka读取数据</h3><p>在spark1.3之后，引入了Direct方式。不同于Receiver的方式，Direct方式没有receiver这一层，其会周期性的获取Kafka中每个topic的每个partition中的最新offsets，之后根据设定的maxRatePerPartition来处理每个batch</p>
+<p><img src="media/15875408018657/15876482077009.jpg" alt></p>
+<p>这种方法相较于Receiver方式的优势在于：</p>
+<ul>
+<li><p><strong>简化的并行</strong>：在Receiver的方式中我们提到创建多个Receiver之后利用union来合并成一个Dstream的方式提高数据传输并行度。而在Direct方式中，Kafka中的partition与RDD中的partition是一一对应的并行读取Kafka数据，这种映射关系也更利于理解和优化。</p>
+</li>
+<li><p><strong>高效</strong>：在Receiver的方式中，为了达到0数据丢失需要将数据存入Write Ahead Log中，这样在Kafka和日志中就保存了两份数据，浪费！而第二种方式不存在这个问题，只要我们Kafka的数据保留时间足够长，我们都能够从Kafka进行数据恢复。</p>
+</li>
+<li><p><strong>精确一次</strong>：在Receiver的方式中，使用的是Kafka的高阶API接口从Zookeeper中获取offset值，这也是传统的从Kafka中读取数据的方式，但由于Spark Streaming消费的数据和Zookeeper中记录的offset不同步，这种方式偶尔会造成数据重复消费。而第二种方式，直接使用了简单的低阶Kafka API，Offsets则利用Spark Streaming的checkpoints进行记录，消除了这种不一致性</p>
+</li>
+</ul>
+<h2 id="向Kafka写入数据"><a href="#向Kafka写入数据" class="headerlink" title="向Kafka写入数据"></a>向Kafka写入数据</h2><p>Spark没有提供统一的接口用于写数据入Kafka, 因此我们需要使用Kafka接口自定义包装</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">input.foreachRDD(rdd =&gt; &#123;</span><br><span class="line">  <span class="comment">// 不能在这里新建KafkaProducer，因为KafkaProducer是不可序列化的</span></span><br><span class="line">  rdd.foreachPartition(partition =&gt; &#123;</span><br><span class="line">    partition.foreach&#123;</span><br><span class="line">      <span class="keyword">case</span> x: <span class="type">String</span>=&gt;&#123;</span><br><span class="line">        <span class="keyword">val</span> props = <span class="keyword">new</span> <span class="type">Properties</span>()</span><br><span class="line">        props.put(<span class="type">ProducerConfig</span>.<span class="type">BOOTSTRAP_SERVERS_CONFIG</span>, <span class="string">"hadoop1:9092"</span>)</span><br><span class="line">        props.put(<span class="type">ProducerConfig</span>.<span class="type">VALUE_SERIALIZER_CLASS_CONFIG</span>,</span><br><span class="line">          <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>)</span><br><span class="line">        props.put(<span class="type">ProducerConfig</span>.<span class="type">KEY_SERIALIZER_CLASS_CONFIG</span>,</span><br><span class="line">          <span class="string">"org.apache.kafka.common.serialization.StringSerializer"</span>)</span><br><span class="line">        println(x)</span><br><span class="line">        <span class="keyword">val</span> producer = <span class="keyword">new</span> <span class="type">KafkaProducer</span>[<span class="type">String</span>, <span class="type">String</span>](props)</span><br><span class="line">        <span class="keyword">val</span> message=<span class="keyword">new</span> <span class="type">ProducerRecord</span>[<span class="type">String</span>, <span class="type">String</span>](<span class="string">"KafkaPushTest1"</span>,<span class="literal">null</span>,x)</span><br><span class="line">        producer.send(message)</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>上面这种方法实现最简单，但缺点也很明显，我们并不能将KafkaProducer的新建任务放在foreachPartition外边，因为KafkaProducer是不可序列化的<br><img src="media/15875408018657/15877147741093.jpg" alt="-w1366"></p>
+<p>因此对于每个partition的每条记录都需要创建KafkaProducer，相当于都要建立一次连接，低效且不灵活，优化方案:</p>
+<ul>
+<li>懒加载方式定义KafkaProducer</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KafkaSink</span>[<span class="type">K</span>, <span class="type">V</span>](<span class="params">createProducer: (</span>) <span class="title">=&gt;</span> <span class="title">KafkaProducer</span>[<span class="type">K</span>, <span class="type">V</span>]) <span class="keyword">extends</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">lazy</span> <span class="keyword">val</span> producer = createProducer()</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">send</span></span>(topic: <span class="type">String</span>, key: <span class="type">K</span>, value: <span class="type">V</span>): <span class="type">Future</span>[<span class="type">RecordMetadata</span>] =</span><br><span class="line">    producer.send(<span class="keyword">new</span> <span class="type">ProducerRecord</span>[<span class="type">K</span>, <span class="type">V</span>](topic, key, value))</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">send</span></span>(topic: <span class="type">String</span>, value: <span class="type">V</span>): <span class="type">Future</span>[<span class="type">RecordMetadata</span>] =</span><br><span class="line">    producer.send(<span class="keyword">new</span> <span class="type">ProducerRecord</span>[<span class="type">K</span>, <span class="type">V</span>](topic, value))</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">KafkaSink</span> </span>&#123;</span><br><span class="line">  <span class="keyword">import</span> scala.collection.<span class="type">JavaConversions</span>._</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>[<span class="type">K</span>,<span class="type">V</span>](config: <span class="type">Map</span>[<span class="type">String</span>,<span class="type">Object</span>]):<span class="type">KafkaSink</span>[<span class="type">K</span>,<span class="type">V</span>]= &#123;</span><br><span class="line">    <span class="keyword">val</span> createProducerFunc = () =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> producer = <span class="keyword">new</span> <span class="type">KafkaProducer</span>[<span class="type">K</span>,<span class="type">V</span>](config)</span><br><span class="line">      sys.addShutdownHook&#123;</span><br><span class="line">        producer.close()</span><br><span class="line">      &#125;</span><br><span class="line">      producer</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">new</span> <span class="type">KafkaSink</span>(createProducerFunc)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>[<span class="type">K</span>, <span class="type">V</span>](config: java.util.<span class="type">Properties</span>): <span class="type">KafkaSink</span>[<span class="type">K</span>, <span class="type">V</span>] = apply(config.toMap)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用广播变量的形式，将KafkaProducer广播到每一个executor</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 广播KafkaSink</span></span><br><span class="line"><span class="keyword">val</span> kafkaProducer: <span class="type">Broadcast</span>[<span class="type">KafkaSink</span>[<span class="type">String</span>, <span class="type">String</span>]] = &#123;</span><br><span class="line">  <span class="keyword">val</span> kafkaProducerConfig = &#123;</span><br><span class="line">    <span class="keyword">val</span> p = <span class="keyword">new</span> <span class="type">Properties</span>()</span><br><span class="line">    p.setProperty(<span class="string">"bootstrap.servers"</span>, <span class="string">"10.111.32.81:9092"</span>)</span><br><span class="line">    p.setProperty(<span class="string">"key.serializer"</span>, classOf[<span class="type">StringSerializer</span>].getName)</span><br><span class="line">    p.setProperty(<span class="string">"value.serializer"</span>, classOf[<span class="type">StringSerializer</span>].getName)</span><br><span class="line">    p</span><br><span class="line">  &#125;</span><br><span class="line">  log.warn(<span class="string">"kafka producer init done!"</span>)</span><br><span class="line">  ssc.sparkContext.broadcast(<span class="type">KafkaSink</span>[<span class="type">String</span>, <span class="type">String</span>](kafkaProducerConfig))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在每个executor中数据写入Kafka</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">input.foreachRDD(rdd =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (!rdd.isEmpty()) &#123;</span><br><span class="line">    rdd.foreach(record =&gt; &#123;</span><br><span class="line">      kafkaProducer.value.send(<span class="string">"KafkaPushTest2"</span>,<span class="string">"KafkaPushTest2"</span>, record)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Spark-Streaming-Kafka调优"><a href="#Spark-Streaming-Kafka调优" class="headerlink" title="Spark Streaming+Kafka调优"></a>Spark Streaming+Kafka调优</h2><p>Spark streaming+Kafka的使用中，当数据量较小，很多时候默认配置和使用便能够满足情况，但是当数据量大的时候，就需要进行一定的调整和优化，而这种调整和优化本身也是不同的场景需要不同的配置</p>
+<h3 id="合理的批处理时间（batchDuration）"><a href="#合理的批处理时间（batchDuration）" class="headerlink" title="合理的批处理时间（batchDuration）"></a>合理的批处理时间（batchDuration）</h3><p>初始化<code>StreamingContext</code>时设置，代表job处理的时间。不能过小，会导致Spark Streaming频繁提交作业，如果batchDuration所产生的Job并不能在这期间完成处理，那么就会造成数据不断堆积, 最终导致Spark Streaming发生阻塞.</p>
+<h3 id="合理的Kafka拉取量（maxRatePerPartition"><a href="#合理的Kafka拉取量（maxRatePerPartition" class="headerlink" title="合理的Kafka拉取量（maxRatePerPartition)"></a>合理的Kafka拉取量（maxRatePerPartition)</h3><p>配置参数：<code>spark.streaming.kafka.maxRatePerPartition</code>, 默认没有上线，即Kafka中有多少数据都会全部拉出。<br>这个参数需要结合上面的<code>batchDuration</code>配置，使得每个partition拉取在每个batchDuration期间拉取的数据能够顺利的处理完毕，做到尽可能高的吞吐量</p>
+<h3 id="缓存反复使用的DStream（RDD）"><a href="#缓存反复使用的DStream（RDD）" class="headerlink" title="缓存反复使用的DStream（RDD）"></a>缓存反复使用的DStream（RDD）</h3><p>对经常复用的RDD，我们会选择cache()将其缓存下来，同理在Spark Streaming我们也可以选择将DStream缓存下来,防止过度的调度资源造成的网络开销</p>
+<h3 id="设置合理的GC"><a href="#设置合理的GC" class="headerlink" title="设置合理的GC"></a>设置合理的GC</h3><h3 id="设置合理的资源配置"><a href="#设置合理的资源配置" class="headerlink" title="设置合理的资源配置"></a>设置合理的资源配置</h3><ul>
+<li><code>num-executors</code>: 用于设置Spark作业总共要用多少个Executor进程来执行</li>
+<li><code>executor-memory</code>: 该参数用于设置每个Executor进程的内存。Executor内存的大小，很多时候直接决定了Spark作业的性能，而且跟常见的JVM OOM异常，也有直接的关联</li>
+<li><code>executor-cores</code>: 该参数用于设置每个Executor进程的CPU core数量。这个参数决定了每个Executor进程并行执行task线程的能力</li>
+</ul>
+<h3 id="设置合理的parallelism"><a href="#设置合理的parallelism" class="headerlink" title="设置合理的parallelism"></a>设置合理的parallelism</h3><p><strong>partition和parallelism</strong></p>
+<ul>
+<li><p><code>partition</code>: partition指的就是数据分片的数量，每一次task只能处理一个partition的数据，这个值太小了会导致每片数据量太大，导致内存压力，或者诸多executor的计算能力无法利用充分；但是如果太大了则会导致分片太多，执行效率降低</p>
+</li>
+<li><p><code>parallelism</code>: parallelism则指的是在RDD进行reduce类操作的时候，默认返回数据的partition数量, 而在进行map类操作的时候，partition数量通常取自parent RDD中较大的一个，而且也不会涉及shuffle，因此这个parallelism的参数没有影响</p>
+</li>
+</ul>
+<p>通过<code>spark.default.parallelism</code>可以设置默认的分片数量，也可以在创建RDD时指定. 在SparkStreaming+Kafka的使用中，如果采用Direct连接方式，Spark中的partition和Kafka中的Partition是一一对应的，一般默认设置为<code>Kafka中Partition的数量</code></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>参考: <a href="https://cjwdream.top/2020/03/09/Spark-optimize-summary">Spark进阶-Spark调优总结</a></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2020/04/30/sparkStreaming-Kafka/">http://cjwdream.top/2020/04/30/sparkStreaming-Kafka/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Spark/"># Spark</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/04/21/HBase-Read-Write/">HBase系列-HBase读写流程</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">134.6k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
