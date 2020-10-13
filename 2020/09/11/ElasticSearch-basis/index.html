@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="baidu-site-verification" content="aU3q538RMY">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>ElasticSearch系列 - ElasticSearch基础总结 | EgoSay</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+</head>
+<body>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<!--<script src="https://cdn.bootcss.com/canvas-nest.js/2.0.4/canvas-nest.js"></script>-->
+	<script type="text/javascript" src="/js/canvas-colorful-nest.js"></script>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">EgoSay&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">EgoSay&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                    <a class="menu-item" href="/books">Reading</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">ElasticSearch系列 - ElasticSearch基础总结</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">EgoSay</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 11, 2020&nbsp;&nbsp;18:21:39</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Learning/">Learning</a>
+                            
+                        </span>
+						<span class="post-count">
+					Words:
+						<font color="#2d96bd">2.7k</font>
+					</span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><ul>
+<li><p><strong>NRT</strong>:<br>Near Realtime，近实时，有两个层面的含义，一是从写入一条数据到这条数据可以被搜索，有一段非常小的延迟（大约1秒左右），二是基于Elasticsearch的搜索和分析操作，耗时可以达到秒级。</p>
+</li>
+<li><p><strong>Cluster</strong><br>集群，对外提供索引和搜索的服务，包含一个或多个节点，每个节点属于哪个集群是通过集群名称来决定的（默认名称是elasticsearch）</p>
+</li>
+<li><p><strong>Node</strong><br>单独一个Elasticsearch服务器实例称为一个node，node是集群的一部分，每个node有独立的名称，默认是启动时获取一个UUID作为名称，也可以自行配置. 一个node只能加入一个Elasticsearch集群当中</p>
+</li>
+<li><p><strong>primary shard</strong><br>主分片, 数据存储单位, 通过增加分片进行横向扩展, 创建索引时指定且创建后不能再修改</p>
+</li>
+<li><p><strong>replica shard</strong><br>副本分片, 作为shard的数据拷贝, 保障数据不丢失高可用, 同时分担shard的搜索请求, 提升整个集群的吞吐量和性能</p>
+</li>
+<li><p><strong>Index</strong><br>索引, 相同结构的文档集合, 类比于数据库的数据库实例(Es 6.0 废除type 后其实就相当于单个数据表了)</p>
+</li>
+<li><p><strong>type</strong><br>类型, Es 6.0以后废除, 参考链接: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html#_migrating_multi_type_indices_to_single_type" target="_blank" rel="noopener">Removal of mapping types</a></p>
+</li>
+<li><p><strong>Document</strong><br>文档，Elasticsearch最小的数据存储单元，JSON数据格式，类似于关系型数据库的表记录（一行数据），结构定义多样化，同一个索引下的document，结构尽可能相同</p>
+</li>
+</ul>
+<h2 id="Lucence检索"><a href="#Lucence检索" class="headerlink" title="Lucence检索"></a>Lucence检索</h2><h3 id="Lucence-概念"><a href="#Lucence-概念" class="headerlink" title="Lucence 概念"></a>Lucence 概念</h3><p><img src="https://gitee.com/Ever_chan/blogimg/raw/master/img/Lucence%E6%A6%82%E5%BF%B5.png" alt="image-20201012212234564"></p>
+<p>检索基本流程: 查询分析 =&gt; 分词 =&gt; 关键词检索 =&gt; 搜索排序</p>
+<h3 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h3><p>传统的我们的检索是通过文章，逐个遍历找到对应关键词的位置。而倒排索引，是通过分词策略，形成了词和文章的映射关系表，从而能够在O(1)时间里通过关键词查找到文章列表. 简单来说就是<strong>根据内容找文档</strong>, 而像MySQL等的正排索引是<strong>根据ID找文档</strong></p>
+<p>底层实现是基于：FST（Finite State Transducer）数据结构。lucene从4+版本后开始大量使用的数据结构是FST。FST有两个优点：</p>
+<ul>
+<li><p>空间占用小。通过对词典中单词前缀和后缀的重复利用，压缩了存储空间；</p>
+</li>
+<li><p>查询速度快。O(len(str))的查询时间复杂度</p>
+</li>
+</ul>
+<p>参考链接🔗:</p>
+<p><a href="https://zhuanlan.zhihu.com/p/33671444" target="_blank" rel="noopener">elasticsearch 倒排索引原理</a></p>
+<p><a href="https://www.shenyanchao.cn/blog/2018/12/04/lucene-fst/" target="_blank" rel="noopener">关于Lucene的词典FST深入剖析</a></p>
+<h2 id="二、Elasticsearch使用"><a href="#二、Elasticsearch使用" class="headerlink" title="二、Elasticsearch使用"></a>二、Elasticsearch使用</h2><h3 id="增删改查"><a href="#增删改查" class="headerlink" title="增删改查"></a>增删改查</h3><ul>
+<li>Get API</li>
+<li>Delete API</li>
+<li>Update API</li>
+<li>Bulk API</li>
+</ul>
+<h3 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h3><ul>
+<li>Search API</li>
+<li>Aggregrations</li>
+<li>Query DSL</li>
+<li>Elasticsearch SQL</li>
+</ul>
+<h3 id="Analyzer分词"><a href="#Analyzer分词" class="headerlink" title="Analyzer分词"></a>Analyzer分词</h3><ul>
+<li><code>Standard Analyzer</code>：默认的分词器，按照词切分，并作大写转小写处理</li>
+<li><code>Simple Analyzer</code>：按照非字母切分（符号被过滤），并作大写转小写处理</li>
+<li><code>Stop Anayzer</code>：停用词（the、is）切分，并作大写转小写处理</li>
+<li><code>Whitespace Anayzer</code>：空格切分，不做大写转小写处理</li>
+<li><code>IK</code>：中文分词器，需要插件安装</li>
+<li><code>ICU</code>：国际化的分词器，需要插件安装</li>
+<li><code>jieba</code>分词：时下流行的一个中文分词器</li>
+</ul>
+<h3 id="索引管理"><a href="#索引管理" class="headerlink" title="索引管理"></a>索引管理</h3><h4 id="alias别名"><a href="#alias别名" class="headerlink" title="alias别名"></a>alias别名</h4><ul>
+<li><p>给多个索引分组</p>
+<p>按照月来建立索引的时候, 可以考虑先按天建立索引，使用 索引模板(<code>indices templates</code>)可以让日志类数据按天自动创建索引，然后使用月度的索引别名完成按天索引的分类</p>
+</li>
+</ul>
+<ul>
+<li><p>灵活变更索引, 对索引进行修改的时候无需修改代码, 零停机迁移索引数据</p>
+<p>比如需要变更索引(修改分片、mapping映射、 重命名…)的时候只需要将新建的索引绑定对应的别名, 等数据迁移完毕后再将旧索引与别名绑定关系删除即可</p>
+<p><strong>零停机迁移</strong>参考官方文档: <a href="https://www.elastic.co/cn/blog/changing-mapping-with-zero-downtime" target="_blank" rel="noopener">Changing Mapping with Zero Downtime</a></p>
+</li>
+</ul>
+<ul>
+<li><p>可以用于创建相同索引的不同 “视图”</p>
+<p>适用于多租户的场景, 比如需要针对不同用户看到的某个索引下不同数据, 就可以通过创建 <code>filtered alias</code>(筛选别名)来进行筛选</p>
+</li>
+</ul>
+<ul>
+<li><p>多个物理索引并且需要通过 alias 写入的场景</p>
+<p>针对多个物理索引并且需要通过 alias 写入的时候可以通过指定 <code>write index</code>, 然后针对指向多个索引的别名的所有索引和更新请求将尝试解析为一个索引，即写索引. 每个别名只能将一个索引分配为一次write索引。 <strong>如果未指定write索引且别名引用了多个索引，则不允许写入</strong></p>
+</li>
+</ul>
+<p>示例操作:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST "localhost:9200/_aliases?pretty" -H 'Content-Type: application/json' -d'</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"actions"</span> : [</span><br><span class="line">        &#123; <span class="attr">"remove"</span> : &#123; <span class="attr">"index"</span> : <span class="string">"test1"</span>, <span class="attr">"alias"</span> : <span class="string">"alias1"</span> &#125; &#125;,</span><br><span class="line">        &#123; <span class="attr">"add"</span> : &#123; <span class="attr">"index"</span> : <span class="string">"test2"</span>, <span class="attr">"alias"</span> : <span class="string">"alias1"</span> &#125; &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST "localhost:9200/_aliases?pretty" -H 'Content-Type: application/json' -d'</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"actions"</span> : [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"add"</span> : &#123;</span><br><span class="line">                 <span class="attr">"index"</span> : <span class="string">"test1"</span>,</span><br><span class="line">                 <span class="attr">"alias"</span> : <span class="string">"alias2"</span>,</span><br><span class="line">                 <span class="attr">"filter"</span> : &#123; <span class="attr">"term"</span> : &#123; <span class="attr">"user"</span> : <span class="string">"kimchy"</span> &#125; &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考链接</strong> : <a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html#aliases-write-index" target="_blank" rel="noopener">Index Aliases</a></p>
+<h4 id="rollover-API"><a href="#rollover-API" class="headerlink" title="rollover API"></a>rollover API</h4><p>根据日期滚动创建索引</p>
+<p><strong>参考链接</strong> : <a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-rollover-index.html" target="_blank" rel="noopener">Rollover Index</a></p>
+<h4 id="索引映射"><a href="#索引映射" class="headerlink" title="索引映射"></a>索引映射</h4><ul>
+<li>Mapping设置</li>
+<li><code>Index Template</code></li>
+<li><code>Dynamic Template</code>: 根据Elasticsearch识别的数据类型，结合字段名称，来动态设定字段类型</li>
+</ul>
+<p><strong>参考链接</strong>:</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/95532434" target="_blank" rel="noopener">Elasticsearch的Index Template和Dynamic Template</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/mapping.html" target="_blank" rel="noopener">Mapping</a></li>
+</ul>
+<h3 id="routing路由"><a href="#routing路由" class="headerlink" title="routing路由"></a>routing路由</h3><p>当索引一个文档的时候，文档会被存储到一个主分片中。 Elasticsearch 如何知道一个文档应该存放到哪个分片中呢？当我们创建文档时，它如何决定这个文档应当被存储在分片 <code>1</code> 还是分片 <code>2</code> 中呢？</p>
+<p>实际上，这个过程是根据下面这个公式决定的：</p>
+<blockquote>
+<p>shard  =  hash(routing)  %  number_of_primary_shards</p>
+</blockquote>
+<p><code>routing</code> 是一个可变值，默认是文档的 <code>_id</code> ，也可以设置成一个自定义的值。 <code>routing</code> 通过 hash 函数生成一个数字，然后这个数字再除以 <code>number_of_primary_shards</code> （主分片的数量）后得到 <strong>余数</strong> 。这个分布在 <code>0</code> 到 <code>number_of_primary_shards-1</code> 之间的余数，就是我们所寻求的文档所在分片的位置</p>
+<p>这也是我们为什么要在创建索引的时候就<strong>确定好主分片的数量并且永远不会改变这个数量</strong>：因为如果数量变化了，那么所有之前路由的值都会无效，文档也再也找不到了. (新版本里Es可以支持在一定条件限制下, 对某个索引的主分片进行<a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html" target="_blank" rel="noopener">Split</a>拆分或 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html" target="_blank" rel="noopener">Shrink</a>缩小, 只能拆分成 n 倍或缩小至 主分片数/ n 个, 而不能从 8 =》9 或者 9 =》8这种)</p>
+<h2 id="三、集群架构"><a href="#三、集群架构" class="headerlink" title="三、集群架构"></a>三、集群架构</h2><h3 id="集群角色"><a href="#集群角色" class="headerlink" title="集群角色"></a><a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-node.html" target="_blank" rel="noopener">集群角色</a></h3><ul>
+<li>Master Node 主节点:  全局唯一, 集群选举. 负责集群层面的相关操作、管理集群变更. 主节点也可以作为数据节点, 但不推荐</li>
+<li>Data Node数据节点: 负责保存数据、执行数据相关操作. 一般数据读写流程也只与数据节点交互</li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html" target="_blank" rel="noopener">Ingest Node</a>预处理节点: Es 5.0版本引入的概念. 预处理操作允许在索引文档之前, 即数据写入之前通过定义<code>processors</code>处理器和<code>pipeline</code>管道对数据进行某种转换. 参考链接:<a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html" target="_blank" rel="noopener">Ingest Node</a></li>
+<li>Coordinating node协调节点:  协调节点将客户端请求转发给保存数据的Data Node, 每个数据节点在本地执行请求, 并将结果返回协调节点, 协调节点收集这些数据结果然后合并为单个全局结果</li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-tribe.html" target="_blank" rel="noopener">Tribe Node</a>部落节点, 被废除, 被<a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-cross-cluster-search.html" target="_blank" rel="noopener"> Cross-cluster search</a>取代</li>
+</ul>
+<h3 id="集群健康状态"><a href="#集群健康状态" class="headerlink" title="集群健康状态"></a>集群健康状态</h3><ul>
+<li>Green: 所有主分片和副本分片正常运行</li>
+<li>Yelloew: 主分片正常, 但不是所有的副本分片都正常运行, 这意味着可能存在单点故障风险</li>
+<li>Red: 有主分片不能正常运行</li>
+</ul>
+<p>每个索引也有以上三个状态, 假设其中某个副本分片不正常即为 Yellow状态</p>
+<p>可以通过 <code>curl -X GET &quot;localhost:9200/_cluster/health?pretty&quot;</code> 查询集群状态, 具体参考:<a href="https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-health.html" target="_blank" rel="noopener">Cluster health API</a></p>
+<h3 id="集群扩容"><a href="#集群扩容" class="headerlink" title="集群扩容"></a>集群扩容</h3><p>当扩容集群、 添加节点时, 分片会均衡地分配到集群的各个节点, 从而对索引和搜索过程进行负载均衡, 这些都是系统自动完成的</p>
+<p>参考: <a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/scale.html" target="_blank" rel="noopener">扩容设计</a></p>
+<h3 id="主要内部模块"><a href="#主要内部模块" class="headerlink" title="主要内部模块"></a>主要内部模块</h3><p>####Cluster</p>
+<p>Cluster模块是主节点执行集群管理的封装实现，管理集群状态，维护集群层面的配置信息。主要功能如下：</p>
+<ul>
+<li>管理集群状态，将新生成的集群状态发布到集群所有节点。</li>
+<li>调用allocation模块执行分片分配，决策哪些分片应该分配到哪个节点</li>
+<li>在集群各节点中直接迁移分片，保持数据平衡。</li>
+</ul>
+<h4 id="allocation"><a href="#allocation" class="headerlink" title="allocation"></a>allocation</h4><p>封装了分片分配相关的功能和策略，包括主分片的分配和副分片的分配，本模块由主节点调用。创建新索引、集群完全重启都需要分片分配的过程。</p>
+<h4 id="Discovery-发现模块"><a href="#Discovery-发现模块" class="headerlink" title="Discovery 发现模块"></a>Discovery 发现模块</h4><p>负责发现集群中的节点，以及选举主节点。当节点加入或退出集群时，主节点会采取相应的行动。从某种角度来说，发现模块起到类似ZooKeep町的作用，选主并管理集群拓扑。</p>
+<h4 id="gateway"><a href="#gateway" class="headerlink" title="gateway"></a>gateway</h4><p>负责对收到Master广播下来的集群状态（clusterstate）数据的持久化存储，并在集群完全重启时恢复它们。</p>
+<h4 id="Indices-索引模块"><a href="#Indices-索引模块" class="headerlink" title="Indices 索引模块"></a>Indices 索引模块</h4><p>管理全局级的索引设置，不包括索引级的（索引设置分为全局级和每个索引级）。它还封装了索引数据恢复功能。集群启动阶段需要的主分片恢复和副分片恢复就是在这个模块实现的。</p>
+<h4 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h4><p>HTTP模块允许通过 JSON over HTTP 的方式访问ES的API.  HTTP模块本质上是完全异步的，这意味着没有阻塞线程等待响应。使用异步通信进行HTTP的好处是解决了C10k问题。10k量级的并发连接）。在部分场景下，可考虑使用HTTP keepalive以提升性能。注意：<strong>不要在客户端使用HTTP chunking</strong>。</p>
+<h4 id="Transport传输模块"><a href="#Transport传输模块" class="headerlink" title="Transport传输模块"></a>Transport传输模块</h4><p>用于集群内节点之间的内部通信。从一个节点到另－个节点的每个请求都使用传输模块。如同HTTP模块，传输模块本质上也是完全异步的。传输模块使用TCP通信，每个节点都与其他节点维持若干TCP长连接。内部节点间的所有通信都是本模块承载的。</p>
+<h4 id="Engine"><a href="#Engine" class="headerlink" title="Engine"></a>Engine</h4><p>Engine模块封装了对Lucene的操作及translog的调用，它是对一个分片读写操作的最终提供者。</p>
+<p>ES使用Guice框架进行模块化管理。Guice是Google开发的轻量级依赖注入框架CioC）。软件设计中经常说要依赖于抽象而不是具象，IoC就是这种理念的实现方式，并且在内部实现了对象的创建和管理</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>EgoSay</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://cjwdream.top/2020/09/11/ElasticSearch-basis/">http://cjwdream.top/2020/09/11/ElasticSearch-basis/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/ElasticSearch/"># ElasticSearch</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/07/06/The-power-of-introverts/">《内向性格的竞争力：发挥你的本来优势》记</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+   <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
+    <div class="copyright">
+        <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">139.6k</font></span>
+		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
+
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
