@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">778</font>
+						<font color="#2d96bd">1.9k</font>
 					</span>
                     
                 </div>
@@ -209,7 +209,7 @@
             <h1 id="Spark调度系统"><a href="#Spark调度系统" class="headerlink" title="Spark调度系统"></a>Spark调度系统</h1><h2 id="一、主要工作流程"><a href="#一、主要工作流程" class="headerlink" title="一、主要工作流程"></a>一、主要工作流程</h2><p>两个核心：<code>DAGScheduler</code>和<code>TaskScheduler</code><br><img src="https://cjwdream.top/image/spark-scheduler.jpg" alt="-w930"></p>
 <h3 id="build-operator-DAG"><a href="#build-operator-DAG" class="headerlink" title="build operator DAG"></a><code>build operator DAG</code></h3><p>用户提交的Job将首先被转换为一系列<code>RDD</code>并通过RDD之间的依赖关系(<code>Dependency</code>)构建DAG, 然后将RDD构成的DAG提交到调度系统</p>
 <h3 id="split-graph-into-stage-of-tasks"><a href="#split-graph-into-stage-of-tasks" class="headerlink" title="split graph into stage of tasks"></a><code>split graph into stage of tasks</code></h3><p><code>DAGScheduler</code>负责接收由RDD构成的DAG，将一系列RDD划分到不同的<code>Stage</code>。根据 Stage的不同类型(<code>ResultStage和 ShuffleMapStage</code>)， 给 Stage 中未完成的 <code>Partition</code> 创建不同类型的Task(<code>ResultTask和 ShuffleMapTask</code>)。 每个Stage将因为未完成Partition的多少, 创建零到多个Task。DAGScheduler最后将每个Stage中的Task以任务集合(<code>TaskSet</code>)的形式提交给<code>TaskSchduler</code>继续处理</p>
-<h3 id="launch-tasks-via-cluster-manager"><a href="#launch-tasks-via-cluster-manager" class="headerlink" title="launch tasks via cluster manager"></a><code>launch tasks via cluster manager</code></h3><p>使用集群管理器(<code>cluster manager</code>)分配资源与任务调度, 对于失败的任务还会有一定的重试与容错机制。<code>TaskScheduler</code>负责从<code>DAGScheduler</code>接收<code>TaskSet</code>, 创建<code>TaskSetManager</code>对TaskSet进行管理，并将此TaskSetManager添加到<code>调度池</code>中, 最后将对Task的调度交给后端接口(<code>SchedulerBackend</code>)处理。SchedulerBackend首先申请TaskSheduler，安装Task调度算法(<code>FIFO和FAIR</code>)，对调度池中所有TaskSetManager进行排序，然后对TaskSet按照最大本地性原则分配资源，最后在各个分配的节点上运行TaskSet中的Task</p>
+<h3 id="launch-tasks-via-cluster-manager"><a href="#launch-tasks-via-cluster-manager" class="headerlink" title="launch tasks via cluster manager"></a><code>launch tasks via cluster manager</code></h3><p>使用集群管理器(<code>cluster manager</code>)分配资源与任务调度, 对于失败的任务还会有一定的重试与容错机制。<code>TaskScheduler</code>负责从<code>DAGScheduler</code>接收<code>TaskSet</code>, 创建<code>TaskSetManager</code>对TaskSet进行管理，并将此TaskSetManager添加到<code>调度池</code>中, 最后将对Task的调度交给后端接口(<code>SchedulerBackend</code>)处理。SchedulerBackend首先申请TaskSheduler，按照Task调度算法(<code>FIFO和FAIR</code>)，对调度池中所有TaskSetManager进行排序，然后对TaskSet按照最大本地性原则分配资源，最后在各个分配的节点上运行TaskSet中的Task</p>
 <h3 id="execute-tasks"><a href="#execute-tasks" class="headerlink" title="execute tasks"></a><code>execute tasks</code></h3><p>执行任务，并将任务中间结果和最终结果存入存储体系</p>
 <h2 id="二、RDD-详解"><a href="#二、RDD-详解" class="headerlink" title="二、RDD 详解"></a>二、RDD 详解</h2><h3 id="RDD简单总结"><a href="#RDD简单总结" class="headerlink" title="RDD简单总结"></a>RDD简单总结</h3><p>参考<a href="https://cjwdream.top/2019/02/14/RDD%E6%80%BB%E7%BB%93/">RDD总结</a></p>
 <h3 id="分区计算器Partitioner"><a href="#分区计算器Partitioner" class="headerlink" title="分区计算器Partitioner"></a><code>分区计算器Partitioner</code></h3><p>当存在shuffle依赖关系时， 利用<code>Partitioner</code>来确定上下游RDD之间的分区依赖关系</p>
@@ -219,9 +219,92 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* A stage is a set of parallel tasks all computing the same function that need to run as part</span></span><br><span class="line"><span class="comment">* of a Spark job, where all the tasks have the same shuffle dependencies. Each DAG of tasks run</span></span><br><span class="line"><span class="comment">* by the scheduler is split up into stages at the boundaries where shuffle occurs, and then the</span></span><br><span class="line"><span class="comment">* DAGScheduler runs these stages in topological order.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* Each Stage can either be a shuffle map stage, in which case its tasks' results are input for</span></span><br><span class="line"><span class="comment">* other stage(s), or a result stage, in which case its tasks directly compute a Spark action</span></span><br><span class="line"><span class="comment">* (e.g. count(), save(), etc) by running a function on an RDD. For shuffle map stages, we also</span></span><br><span class="line"><span class="comment">* track the nodes that each output partition is on.</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
 
 <p>Stage是一系列并行计算且具有相同依赖的task的集合，在执行流程中<code>DAGScheduler</code>会将一系列RDD划分到不同的<code>Stage</code>并构建它们之间的依赖关系，使不存在依赖关系的Stage并行执行，保证依赖关系的Stage顺序执行。Stage分为需要处理Shuffle的<code>ShuffleMapStage</code>和最下游的<code>ResultStage</code>,ResultStage是最后执行的Stage，比如执行<code>count()</code>等<code>action</code>算子的任务</p>
-<h2 id="四、DAGScheduler"><a href="#四、DAGScheduler" class="headerlink" title="四、DAGScheduler"></a>四、DAGScheduler</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><code>DAGScheduler</code>通过计算将DAG中一系列RDD划分到不同的Stage，然后构建这些Stage之间的关系，最后将每个Stage按照<code>Partition</code>切分为多个Task，并以Task集合(即<code>TaskSet</code>)的形式提交给底层的<code>TaskScheduler</code><br>组件向DAGScheduler投递DAGSchedulerEvent, DAGScheduler内部的DAGSchedulerEventProcessLoop将处理这些DAGSchedulerEvent，然后调用执行DAGScheduler的不同方法。</p>
-<h3 id="JobListener与JobWaiter"><a href="#JobListener与JobWaiter" class="headerlink" title="JobListener与JobWaiter"></a>JobListener与JobWaiter</h3><p>JobListener用于监听作业中每个Task执行成功或失败，JobWaiter实现了JobListener并最终确定作业的成功或失败</p>
+<h3 id="Job中所有Stage的提交过程包括反向驱动与正向提交"><a href="#Job中所有Stage的提交过程包括反向驱动与正向提交" class="headerlink" title="Job中所有Stage的提交过程包括反向驱动与正向提交"></a>Job中所有Stage的提交过程包括反向驱动与正向提交</h3><h4 id="反向驱动"><a href="#反向驱动" class="headerlink" title="反向驱动"></a>反向驱动</h4><p>所谓反向驱动，就是从最下游的ResultStage开始，由ResultStage驱动所有父Stage的执行，这个驱动过程不断向祖先方向传递，直到最上游的Stage为止</p>
+<h4 id="正向提交"><a href="#正向提交" class="headerlink" title="正向提交"></a>正向提交</h4><p>正向提交，就是前代Stage先于后代Stage将Task提交给TaskScheduler, “代代相传”，直到ResultStage最后一个将Task提交给TaskScheduler</p>
+<h2 id="四、DAGScheduler"><a href="#四、DAGScheduler" class="headerlink" title="四、DAGScheduler"></a>四、DAGScheduler</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><code>DAGScheduler</code>通过计算将DAG中一系列RDD划分到不同的Stage，然后构建这些Stage之间的关系，最后将每个Stage按照<code>Partition</code>切分为多个Task，并以Task集合(即<code>TaskSet</code>)的形式提交给底层的<code>TaskScheduler</code><br>DAGScheduler依赖的一些组件: <code>DAGSchedulerEventProcessLoop</code>, <code>JobListener</code>及<code>ActiveJob</code></p>
+<h3 id="JobListener与JobWaiter"><a href="#JobListener与JobWaiter" class="headerlink" title="JobListener与JobWaiter"></a><code>JobListener与JobWaiter</code></h3><p><code>JobListener</code>用于监听作业中每个Task执行成功或失败，<code>JobWaiter</code>继承实现了JobListener, 用于等待整个Job执行完毕，然后调用给定的处理函数对返回结果进行处理并最终确定作业的成功或失败</p>
+<p>源码实现的一些思考：</p>
+<ul>
+<li>通过Scala的异步编程 <code>Future/Promise</code> 实现了任务状态的检测监听, 这块还不太理解，等后面系统学习一下Scala再回顾一下</li>
+<li>JobWaiter中的定义了一个<code>cancel()</code>方法取消Job执行实际上调用了 DAGScheduler 的<code>cancelJob()</code>方法</li>
+<li>JobWaiter 中继承 JobListener 实现的taskSucceeded()方法中为了保证线程安全用到了<code>synchronized</code>给对象加锁, 联想到RDD中的<code>stateLock</code>，也用到了synchronized加锁</li>
+</ul>
+<h3 id="ActiveJob"><a href="#ActiveJob" class="headerlink" title="ActiveJob"></a><code>ActiveJob</code></h3><p><code>ActiveJob</code>表示已经激活的Job， 即DAGScheduler接收处理的Job</p>
+<h3 id="DAGSchedulerEventProcessLoop"><a href="#DAGSchedulerEventProcessLoop" class="headerlink" title="DAGSchedulerEventProcessLoop"></a><code>DAGSchedulerEventProcessLoop</code></h3><p>  <code>DAGSchedulerEventProcessLoop</code>是<code>DAGScheduler</code>内部的事件循环处理器, 实现原理类似于LiveListenerBus</p>
+<h3 id="DAGScheduler与Job的提交"><a href="#DAGScheduler与Job的提交" class="headerlink" title="DAGScheduler与Job的提交"></a>DAGScheduler与Job的提交</h3><p>简要流程概括, 这里以执行count算子为例:</p>
+<ul>
+<li><p>首先执行count算子会创建调用SparkContext的runJob()方法</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>(): <span class="type">Long</span> = sc.runJob(<span class="keyword">this</span>, <span class="type">Utils</span>.getIteratorSize _).sum</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后接着传递调用DAGScheduler的runJob()方法</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">runJob</span></span>[<span class="type">T</span>, <span class="type">U</span>: <span class="type">ClassTag</span>](...): <span class="type">Unit</span> = &#123;</span><br><span class="line">    ....</span><br><span class="line">    dagScheduler.runJob(rdd, cleanedFunc, partitions, callSite, resultHandler, localProperties.get)</span><br><span class="line">    ....</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DAGScheduler通过执行submitJob()方法提交Job</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">runJob</span></span>[<span class="type">T</span>, <span class="type">U</span>](...): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> start = <span class="type">System</span>.nanoTime</span><br><span class="line">    <span class="comment">// 执行submitJob()方法</span></span><br><span class="line">    <span class="keyword">val</span> waiter = submitJob(rdd, func, partitions, callSite, resultHandler, properties)</span><br><span class="line">    <span class="type">ThreadUtils</span>.awaitReady(waiter.completionFuture, <span class="type">Duration</span>.<span class="type">Inf</span>)</span><br><span class="line">    waiter.completionFuture.value.get <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> scala.util.<span class="type">Success</span>(_) =&gt;</span><br><span class="line">        logInfo(<span class="string">"Job %d finished: %s, took %f s"</span>.format(...))</span><br><span class="line">      <span class="keyword">case</span> scala.util.<span class="type">Failure</span>(exception) =&gt;</span><br><span class="line">        logInfo(<span class="string">"Job %d failed: %s, took %f s"</span>.format(...))</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>submitJob()生成一个JobWaiter的实例监听Job的执行情况, 向DAGSchedulerEventProcessLoop发送JobSubmitted事件</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> waiter = <span class="keyword">new</span> <span class="type">JobWaiter</span>(<span class="keyword">this</span>, jobId, partitions.size, resultHandler)</span><br><span class="line">eventProcessLoop.post(<span class="type">JobSubmitted</span>(....))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当eventProcessLoop对象投递了JobSubmitted事件之后，对象内的<code>eventThread</code>线程实例对事件进行处理，不断从事件队列中取出事件，调用<code>onReceive</code>函数处理事件，当匹配到JobSubmitted事件后，调用DAGScheduler的<code>handleJobSubmitted</code>函数并传入jobid、rdd等参数来处理Job</p>
+</li>
+<li><p>handleJobSubmitted执行过程</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>[scheduler] <span class="function"><span class="keyword">def</span> <span class="title">handleJobSubmitted</span></span>(...) &#123;</span><br><span class="line">    <span class="keyword">var</span> finalStage: <span class="type">ResultStage</span> = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      finalStage = createResultStage(finalRDD, func, partitions, jobId, callSite)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        ....</span><br><span class="line">    &#125;</span><br><span class="line">    .....</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> job = <span class="keyword">new</span> <span class="type">ActiveJob</span>(jobId, finalStage, callSite, listener, properties)</span><br><span class="line"></span><br><span class="line">    .....</span><br><span class="line"></span><br><span class="line">    jobIdToActiveJob(jobId) = job</span><br><span class="line">    activeJobs += job</span><br><span class="line">    finalStage.setActiveJob(job)</span><br><span class="line">    <span class="keyword">val</span> stageIds = jobIdToStageIds(jobId).toArray</span><br><span class="line">    <span class="keyword">val</span> stageInfos = stageIds.flatMap(id =&gt; stageIdToStage.get(id).map(_.latestInfo))</span><br><span class="line">    listenerBus.post(</span><br><span class="line">      <span class="type">SparkListenerJobStart</span>(job.jobId, jobSubmissionTime, stageInfos, properties))</span><br><span class="line">    submitStage(finalStage)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
+<p>由源码分析可以概括执行过程如下</p>
+<ol>
+<li><p>首先调用createResultStage方法创建ResultStage, <strong>这里就开始了Stage的构建过程</strong>， 详见下节Stage的构建过程</p>
+</li>
+<li><p>创建ActiveJob</p>
+</li>
+<li><p>将JobId与刚创建的ActiveJob的对应关系放入jobIdToActiveJob中</p>
+</li>
+<li><p>将刚创建的ActiveJob放入activeJobs集合中</p>
+</li>
+<li><p>使ResultStage的_activeJob属性持有刚创建的ActiveJob</p>
+</li>
+<li><p>获取当前Job的所有Stage对应的StageInfo(即数组stageInfos)</p>
+</li>
+<li><p>向listenerBus(LiveListenerBus)投递SparkListenerJobStart事件，进而引发所有关注此事件的监听器执行相应的操作</p>
+</li>
+<li><p>调用submitStage方法提交Stage,所有parent Stage都计算完成，才能提交<br>submitStage三种调用逻辑：<br>  <code>submitMissingTasks(stage,jobId.get)</code>：如果所有parent stage已经完成，则提交stage所包含的task</p>
+<p>  <code>submitStage(parent)</code>：有parent stage未完成，则递归提交</p>
+<p>  <code>abortStage</code>：无效stage，直接停止</p>
+</li>
+</ol>
+</li>
+<li><p>DAGScheduler完成任务提交后，在判断哪些Partition需要计算，就会为Partition生成Task，然后封装成TaskSet，提交至TaskScheduler。等待TaskScheduler最终向集群提交这些Task，监听这些Task的状态</p>
+</li>
+</ul>
+<h3 id="构建Stage"><a href="#构建Stage" class="headerlink" title="构建Stage"></a>构建Stage</h3><p>前面我们看到handleJobSubmitted执行过程中调用createResultStage方法创建ResultStage</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">createResultStage</span></span>(....): <span class="type">ResultStage</span> = &#123;</span><br><span class="line">    checkBarrierStageWithDynamicAllocation(rdd)</span><br><span class="line">    checkBarrierStageWithNumSlots(rdd)</span><br><span class="line">    checkBarrierStageWithRDDChainPattern(rdd, partitions.toSet.size)</span><br><span class="line">    <span class="keyword">val</span> parents = getOrCreateParentStages(rdd, jobId)</span><br><span class="line">    <span class="keyword">val</span> id = nextStageId.getAndIncrement()</span><br><span class="line">    <span class="keyword">val</span> stage = <span class="keyword">new</span> <span class="type">ResultStage</span>(id, rdd, func, partitions, parents, jobId, callSite)</span><br><span class="line">    stageIdToStage(id) = stage</span><br><span class="line">    updateJobIdStageIdMaps(jobId, stage)</span><br><span class="line">    stage</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据源码分析，详细的处理步骤如下:</p>
+<ul>
+<li><p>调用<code>getOrCreateParentStages</code>方法获取所有父Stage的列表，父Stage主要是宽依赖对应的Stage</p>
+</li>
+<li><p>getOrCreateParentStages处理步骤：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">getOrCreateParentStages</span></span>(rdd: <span class="type">RDD</span>[_], firstJobId: <span class="type">Int</span>): <span class="type">List</span>[<span class="type">Stage</span>] = &#123;</span><br><span class="line">    getShuffleDependencies(rdd).map &#123; shuffleDep =&gt;</span><br><span class="line">      getOrCreateShuffleMapStage(shuffleDep, firstJobId)</span><br><span class="line">    &#125;.toList</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>调用DAGScheduler的<code>getShuffleDependencies</code>方法获取当前给到的RDD的所有ShuffleDependency的序列, 逐个访问其依赖的非Shuffle的RDD，获取所有非Shuffle的RDD的ShuffleDependency依赖</li>
+<li>调用DAGScheduler的<code>getOrCreateShuffleMapStage</code>方法为每一个ShuffleDependency获取或者创建对应的ShuffleMapStage， 并返回得到的ShuffleMapStage列表</li>
+</ol>
+</li>
+<li><p>getOrCreateShuffleMapStage方法处理步骤：</p>
+</li>
+<li><p>啊</p>
+</li>
+<li><p>生成Stage的身份标识id， 并创建ResultStage</p>
+</li>
+<li><p>将ResultStage注册到stageIdToStage中</p>
+</li>
+<li><p>调用updateJobIdStageIdMaps方法更新Job的身份标识与ResultStage及其所有祖先的映射关系</p>
+</li>
+</ul>
+<h3 id="提交ResultStage"><a href="#提交ResultStage" class="headerlink" title="提交ResultStage"></a>提交ResultStage</h3><h3 id="提交还未计算的Task"><a href="#提交还未计算的Task" class="headerlink" title="提交还未计算的Task"></a>提交还未计算的Task</h3><h3 id="Task执行结果的处理"><a href="#Task执行结果的处理" class="headerlink" title="Task执行结果的处理"></a>Task执行结果的处理</h3><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://www.jianshu.com/p/ad9610bcb4d0" target="_blank" rel="noopener">Spark Scheduler模块详解-DAGScheduler实现</a></li>
+</ul>
+<h2 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h2>
         </div>
 
         
@@ -284,7 +367,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">139.6k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">141.2k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>

@@ -198,7 +198,7 @@
                         </span>
 						<span class="post-count">
 					Words:
-						<font color="#2d96bd">3.1k</font>
+						<font color="#2d96bd">3.2k</font>
 					</span>
                     
                 </div>
@@ -234,6 +234,13 @@
 <li>容错性</li>
 <li>支持水平在线扩展</li>
 <li>消息自动平衡</li>
+</ul>
+<h3 id="Kafka快的原因"><a href="#Kafka快的原因" class="headerlink" title="Kafka快的原因"></a>Kafka快的原因</h3><ul>
+<li>多partition提升了并发</li>
+<li>zero-copy零拷贝</li>
+<li>顺序写入</li>
+<li>消息batch批量操作</li>
+<li>page cache页缓存</li>
 </ul>
 <h2 id="三、Kafka基本命令使用"><a href="#三、Kafka基本命令使用" class="headerlink" title="三、Kafka基本命令使用"></a>三、Kafka基本命令使用</h2><ul>
 <li>创建主题（4个分区，2个副本）</li>
@@ -285,7 +292,7 @@
 </li>
 <li><p><code>retries</code><br>生产者可以重发消息的次数</p>
 </li>
-<li><p><code>batch.size</code><br>当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里一起发送，该参数指定了一个批次可以使用的内存大小, 按照字节数计算(而不是消息个数). 不过批次没满的时候如果达到了 <code>linger.ms</code> 设置的上限也会把批次发送出去 </p>
+<li><p><code>batch.size</code><br>当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里一起发送，该参数指定了一个批次可以使用的内存大小, 按照字节数计算(而不是消息个数). 不过批次没满的时候如果达到了 <code>linger.ms</code> 设置的上限也会把批次发送出去</p>
 </li>
 <li><p><code>linger.ms</code><br>指定生产者在发送批次之前的等待时间, 配合<code>batch.size</code>设置</p>
 </li>
@@ -373,7 +380,7 @@
 <li><a href="https://www.jianshu.com/p/5d889a67dcd3" target="_blank" rel="noopener">Kafka 0.11.0.0 是如何实现 Exactly-once 语义的</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/42046847" target="_blank" rel="noopener">Kafka 事务特性分析</a></li>
 <li><a href="https://www.jianshu.com/p/d3e963ff8b70" target="_blank" rel="noopener">Kafka详解</a></li>
-<li><a href="http://www.jasongj.com/kafka/transaction/" target="_blank" rel="noopener">Kafka设计解析（八）- Exactly Once语义与事务机制原理</a></li>
+<li>[Kafka设计解析（八）- Exactly Once语义与事务机制原理](</li>
 </ul>
 
         </div>
@@ -438,7 +445,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">139.6k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">141.2k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>

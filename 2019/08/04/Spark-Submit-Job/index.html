@@ -286,7 +286,7 @@
 <h4 id="YARN-Client-与-YARN-Cluster-区别"><a href="#YARN-Client-与-YARN-Cluster-区别" class="headerlink" title="YARN-Client 与 YARN-Cluster 区别"></a>YARN-Client 与 YARN-Cluster 区别</h4><ul>
 <li><p><code>YARN-Cluster</code>模式下，Driver运行在AM(Application Master)中，它负责向YARN申请资源，并监督作业的运行状况。当用户提交了作业之后，就可以关掉Client，作业会继续在YARN上运行，因而YARN-Cluster模式不适合运行交互类型的作业</p>
 </li>
-<li><p><code>YARN-Client</code>模式下，Application Master仅仅向YARN请求Executor，Client会和请求的Container通信来调度他们工作，也就是说Client不能离开</p>
+<li><p><code>YARN-Client</code>模式下，Application Master仅仅向YARN请求Executor，Client会和请求的Container通信来调度他们工作，也就是说Client不能离开. <strong>Driver运行在提交spark作业的客户端机器上</strong>,可以实时看到详细的日志信息, 方便追踪和排查错误,用于测试</p>
 </li>
 </ul>
 
@@ -352,7 +352,7 @@
    <!--<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>-->
     <div class="copyright">
         <span>© EgoSay | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">139.6k</font></span>
+   		<span class="post-count"> | 本站字数统计:<font color="#2d96bd">141.2k</font></span>
 		<!--<span id="busuanzi_container_site_uv"> | 本站访客数:<font color="#2d96bd"><span id="busuanzi_value_site_uv"></span></font>人次-->
 
     </div>
